@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passeport des Savoirs — Réceptionniste</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --leather:#3b1f1a;
+    --leather-dark:#2a1512;
+    --leather-light:#5a2f26;
+    --gold:#c9a35c;
+    --gold-bright:#e8c77a;
+    --cream:#f6efe1;
+    --cream-dark:#ece1c8;
+    --ink:#2b2420;
+    --green:#2e7d4f;
+    --green-bg:#e3f3e8;
+    --yellow:#c99a2e;
+    --yellow-bg:#fbf1da;
+    --grey:#9a948a;
+    --grey-bg:#efece6;
+    --shadow: 0 18px 40px rgba(0,0,0,0.35);
+
+    /* bloc themes */
+    --savoir-main:#1f3a5f;
+    --savoir-dark:#152944;
+    --savoir-accent:#7fa8d9;
+    --savoirfaire-main:#7a4a15;
+    --savoirfaire-dark:#5a3510;
+    --savoirfaire-accent:#e0a95c;
+    --savoiretre-main:#1e5c46;
+    --savoiretre-dark:#123d2e;
+    --savoiretre-accent:#7fcbab;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Cormorant Garamond', serif;
+    background: radial-gradient(ellipse at top, #4a2a22 0%, #1c0f0c 70%);
+    color:var(--ink);
+    min-height:100vh;
+    padding:40px 16px 80px;
+  }
+  h1,h2,h3,.badge-name{ font-family:'Playfair Display', serif; }
+  button{ font-family:inherit; }
+
+  /* ---------- LIBRARY VIEW ---------- */
+  #view-library{ max-width:760px; margin:0 auto; }
+  .lib-header{
+    text-align:center; color:var(--gold-bright); margin-bottom:28px;
+  }
+  .lib-header h1{ font-size:2.1em; letter-spacing:1px; margin:0 0 6px; text-transform:uppercase;}
+  .lib-header p{ color:var(--cream-dark); font-style:italic; margin:0;}
+  .lib-card{
+    background:var(--cream); border-radius:12px; box-shadow:var(--shadow); padding:22px 26px; margin-bottom:16px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap; border:1px solid #d8cfb8;
+  }
+  .lib-card .icon{ font-size:34px; flex:none; }
+  .lib-card .info{ flex:1; min-width:200px; }
+  .lib-card .info .name{ font-family:'Playfair Display'; font-weight:700; color:var(--leather); font-size:1.15em; }
+  .lib-card .info .meta{ font-family:'Courier Prime'; font-size:0.78em; color:#8a7c62; margin-top:2px; }
+  .lib-card .actions{ display:flex; gap:8px; }
+  .btn{
+    border:none; border-radius:8px; padding:10px 18px; cursor:pointer; font-family:'Playfair Display'; font-weight:700;
+    font-size:0.9em; transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); box-shadow:0 4px 10px rgba(0,0,0,0.2); }
+  .btn-primary{ background:linear-gradient(135deg,var(--gold-bright),var(--gold)); color:#3b2b0f; }
+  .btn-outline{ background:transparent; border:1.5px solid var(--leather); color:var(--leather); }
+  .btn-danger{ background:transparent; border:1.5px solid #a5433a; color:#a5433a; }
+  .new-passport-card{
+    background:var(--cream); border-radius:12px; box-shadow:var(--shadow); padding:24px 26px; border:2px dashed var(--gold);
+    margin-bottom:26px;
+  }
+  .new-passport-card h3{ margin:0 0 14px; color:var(--leather); }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:14px; }
+  @media (max-width:640px){ .form-grid{ grid-template-columns:1fr; } }
+  .form-grid label{ font-family:'Courier Prime'; font-size:0.7em; text-transform:uppercase; color:#8a7c62; display:block; margin-bottom:4px; letter-spacing:0.5px;}
+  .form-grid input{
+    width:100%; padding:9px 10px; border-radius:6px; border:1px solid #d8cfb8; font-family:'Cormorant Garamond'; font-size:1.05em; background:#fffef9;
+  }
+  .empty-lib{ text-align:center; color:var(--cream-dark); font-style:italic; padding:20px; }
+
+  .dept-section{
+    background:var(--cream); border-radius:12px; box-shadow:var(--shadow); padding:24px 26px; margin-bottom:26px; border:1px solid #d8cfb8;
+  }
+  .dept-section h3{ margin:0 0 16px; color:var(--leather); }
+  .dept-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media (max-width:640px){ .dept-grid{ grid-template-columns:repeat(2,1fr); } }
+  .dept-btn{
+    display:flex; flex-direction:column; align-items:center; gap:8px; padding:20px 10px; border-radius:10px;
+    border:2px solid var(--gold); background:var(--cream-dark); cursor:pointer; font-family:'Playfair Display'; font-weight:700;
+    color:var(--leather); font-size:0.95em; transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .dept-btn:hover{ transform:translateY(-3px); box-shadow:0 8px 16px rgba(0,0,0,0.18); }
+  .dept-btn .icon-big{ font-size:32px; }
+  .dept-btn.dept-soon{ opacity:0.7; border-style:dashed; }
+  .dept-btn .soon-tag{ font-family:'Courier Prime'; font-size:0.62em; text-transform:uppercase; letter-spacing:0.5px; color:#a5433a; }
+
+  /* ---------- POPUP / MODAL ---------- */
+  .badge-popup-overlay{
+    position:fixed; inset:0; background:rgba(20,10,8,0.6); display:none; align-items:center; justify-content:center; z-index:1000; padding:20px;
+  }
+  .badge-popup-overlay.show{ display:flex; }
+  .badge-popup-card{
+    background:linear-gradient(160deg,#fff7df,#f3dfa0); border:3px solid var(--gold); border-radius:16px; padding:38px 44px;
+    text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.5); animation:popIn .5s cubic-bezier(.34,1.56,.64,1); max-width:340px;
+  }
+  @keyframes popIn{
+    0%{ transform:scale(0.3) rotate(-15deg); opacity:0; }
+    60%{ transform:scale(1.1) rotate(5deg); opacity:1; }
+    100%{ transform:scale(1) rotate(0deg); opacity:1; }
+  }
+  .badge-popup-emoji{ font-size:66px; margin-bottom:10px; display:inline-block; animation:bounce 1s ease infinite alternate; }
+  @keyframes bounce{ from{ transform:translateY(0); } to{ transform:translateY(-8px); } }
+  .badge-popup-title{ font-family:'Playfair Display'; font-weight:800; color:#5a4210; font-size:1.3em; margin-bottom:6px; }
+  .badge-popup-name{ font-family:'Cormorant Garamond'; font-size:1.2em; color:#3b2b0f; margin-bottom:20px; }
+
+  /* ---------- PASSPORT VIEW ---------- */
+  #view-passport{ display:none; }
+  .top-actions{
+    max-width:900px; margin:0 auto 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+  }
+  .top-actions .save-indicator{ font-family:'Courier Prime'; font-size:0.78em; color:var(--cream-dark); }
+
+  .cover{
+    max-width:760px;
+    margin:0 auto 24px;
+    background: linear-gradient(160deg, var(--leather) 0%, var(--leather-dark) 100%);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:56px 40px;
+    text-align:center;
+    position:relative;
+    border:1px solid rgba(201,163,92,0.4);
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:14px;
+    border:2px solid var(--gold);
+    border-radius:8px;
+    pointer-events:none;
+    opacity:0.7;
+  }
+  .cover .crest{ font-size:50px; margin-bottom:8px; }
+  .cover h1{ color:var(--gold-bright); font-size:2.4em; letter-spacing:2px; margin:0 0 6px; text-transform:uppercase; }
+  .cover .subtitle{ color:var(--cream-dark); font-size:1.25em; font-style:italic; letter-spacing:1px; }
+  .cover .divider{ width:120px; height:2px; background:var(--gold); margin:20px auto; opacity:0.8; }
+
+  /* Identity page */
+  .id-page{
+    max-width:760px; margin:0 auto 26px; background:var(--cream); border-radius:12px; box-shadow:var(--shadow);
+    padding:26px 30px; border:1px solid #d8cfb8; position:relative; overflow:hidden;
+  }
+  .id-page::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:6px;
+    background:repeating-linear-gradient(90deg, var(--gold) 0 10px, transparent 10px 20px);
+    opacity:0.6;
+  }
+  .id-page-inner{ display:flex; gap:22px; flex-wrap:wrap; }
+  .id-photo{
+    width:90px; height:110px; flex:none; border:2px solid var(--leather); border-radius:6px;
+    background:var(--grey-bg); display:flex; align-items:center; justify-content:center; font-size:44px; color:var(--grey);
+  }
+  .id-fields{ flex:1; min-width:260px; display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:560px){ .id-fields{ grid-template-columns:1fr; } }
+  .id-fields .field label{ font-family:'Courier Prime'; font-size:0.68em; text-transform:uppercase; color:#8a7c62; letter-spacing:0.5px; display:block; margin-bottom:4px; }
+  .id-fields .field input{
+    width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d8cfb8; font-family:'Cormorant Garamond'; font-size:1.1em; background:#fffef9;
+  }
+  .mrz{
+    margin-top:18px; font-family:'Courier Prime'; letter-spacing:2px; font-size:0.72em; color:#a89a78; text-align:left;
+    border-top:1px dashed #d8cfb8; padding-top:10px; word-break:break-all;
+  }
+
+  /* Overall progress */
+  .overall-progress{
+    max-width:760px; margin:0 auto 20px; background:var(--cream); border-radius:12px; box-shadow:var(--shadow);
+    padding:18px 26px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  }
+  .overall-progress .label{ font-family:'Playfair Display'; font-weight:700; color:var(--leather); white-space:nowrap;}
+  .progress-track{ flex:1; min-width:150px; height:14px; background:var(--grey-bg); border-radius:8px; overflow:hidden; border:1px solid #d8cfb8; }
+  .progress-fill{ height:100%; background:linear-gradient(90deg,var(--gold),var(--green)); transition:width .4s ease; }
+  .overall-progress .pct{ font-family:'Courier Prime'; font-weight:700; color:var(--leather); min-width:48px; text-align:right;}
+
+  .golden-callout{
+    max-width:760px; margin:0 auto 26px; text-align:center; padding:18px; border-radius:12px;
+    background:linear-gradient(120deg,#fff7df,#f6e3a5); border:2px solid var(--gold); box-shadow:var(--shadow);
+    font-family:'Playfair Display'; color:#5a4210; font-weight:700; display:none;
+  }
+  .golden-callout.show{ display:block; }
+
+  /* section nav (visa tabs) */
+  .section-nav{
+    max-width:900px; margin:0 auto 30px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+  }
+  .section-nav button{
+    border:none; border-radius:22px; padding:10px 20px; cursor:pointer; font-weight:700; color:#fff;
+    font-family:'Playfair Display'; font-size:0.9em; box-shadow:var(--shadow); opacity:0.85; transition:opacity .15s ease, transform .15s ease;
+  }
+  .section-nav button:hover{ opacity:1; transform:translateY(-2px); }
+  .section-nav button.nav-savoir{ background:linear-gradient(135deg,var(--savoir-main),var(--savoir-dark)); }
+  .section-nav button.nav-savoirfaire{ background:linear-gradient(135deg,var(--savoirfaire-main),var(--savoirfaire-dark)); }
+  .section-nav button.nav-savoiretre{ background:linear-gradient(135deg,var(--savoiretre-main),var(--savoiretre-dark)); }
+
+  /* ---------- BLOC (page section) ---------- */
+  .bloc{
+    max-width:900px; margin:0 auto 46px; background:var(--cream); border-radius:14px; box-shadow:var(--shadow);
+    overflow:hidden; border:1px solid #d8cfb8; scroll-margin-top:20px;
+  }
+  .bloc-header{
+    color:var(--cream); padding:26px 30px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    position:relative;
+  }
+  .bloc.theme-savoir .bloc-header{ background:linear-gradient(135deg, var(--savoir-main), var(--savoir-dark)); }
+  .bloc.theme-savoirfaire .bloc-header{ background:linear-gradient(135deg, var(--savoirfaire-main), var(--savoirfaire-dark)); }
+  .bloc.theme-savoiretre .bloc-header{ background:linear-gradient(135deg, var(--savoiretre-main), var(--savoiretre-dark)); }
+  .bloc-header .bloc-eyebrow{
+    font-family:'Courier Prime'; font-size:0.7em; letter-spacing:2px; text-transform:uppercase; opacity:0.8; display:block; margin-bottom:2px;
+  }
+  .bloc-header h2{ margin:0; font-size:1.6em; letter-spacing:1px; }
+  .bloc.theme-savoir .bloc-header h2{ color:var(--savoir-accent); }
+  .bloc.theme-savoirfaire .bloc-header h2{ color:var(--savoirfaire-accent); }
+  .bloc.theme-savoiretre .bloc-header h2{ color:var(--savoiretre-accent); }
+  .bloc-header .scale-hint{ font-family:'Courier Prime'; font-size:0.78em; color:var(--cream-dark); opacity:0.85; }
+  .bloc-body{ border-top:4px solid; }
+  .bloc.theme-savoir .bloc-body{ border-color:var(--savoir-accent); }
+  .bloc.theme-savoirfaire .bloc-body{ border-color:var(--savoirfaire-accent); }
+  .bloc.theme-savoiretre .bloc-body{ border-color:var(--savoiretre-accent); }
+
+  .sousbloc{ padding:26px 30px; border-top:1px dashed #c9bd9d; }
+  .sousbloc:first-of-type{ border-top:none; }
+  .sousbloc-head{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:6px; }
+  .badge-stamp{
+    width:66px; height:66px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px;
+    border:3px dashed var(--grey); background:var(--grey-bg); color:var(--grey); flex:none; transition:all .3s ease; position:relative;
+  }
+  .badge-stamp.unlocked{
+    border-style:solid; transform:rotate(-10deg) scale(1.05); box-shadow:0 0 0 3px rgba(0,0,0,0.06);
+  }
+  .bloc.theme-savoir .badge-stamp.unlocked{ border-color:var(--savoir-main); background:#e7edf6; color:var(--savoir-main); }
+  .bloc.theme-savoirfaire .badge-stamp.unlocked{ border-color:var(--savoirfaire-main); background:#f7ecdd; color:var(--savoirfaire-main); }
+  .bloc.theme-savoiretre .badge-stamp.unlocked{ border-color:var(--savoiretre-main); background:#e4f2ec; color:var(--savoiretre-main); }
+  .badge-stamp.unlocked::after{
+    content:"✓"; position:absolute; bottom:-4px; right:-4px; background:var(--green); color:white; width:20px; height:20px;
+    border-radius:50%; font-size:12px; display:flex; align-items:center; justify-content:center; font-family:'Courier Prime';
+  }
+  .sousbloc-titles{ flex:1; min-width:220px; }
+  .sousbloc-titles h3{ margin:0 0 2px; color:var(--leather); font-size:1.25em; }
+  .badge-name{ font-size:0.9em; color:var(--gold); font-weight:700; }
+  .badge-name.unlocked{ color:var(--green); }
+  .objectif{ font-style:italic; color:#6b5f4d; margin:6px 0 16px; font-size:1.02em; }
+  .mini-progress{ width:100%; height:8px; background:var(--grey-bg); border-radius:6px; overflow:hidden; margin-bottom:16px; border:1px solid #d8cfb8; }
+  .mini-progress-fill{ height:100%; transition:width .3s ease; }
+  .bloc.theme-savoir .mini-progress-fill{ background:linear-gradient(90deg,var(--savoir-accent),var(--savoir-main)); }
+  .bloc.theme-savoirfaire .mini-progress-fill{ background:linear-gradient(90deg,var(--savoirfaire-accent),var(--savoirfaire-main)); }
+  .bloc.theme-savoiretre .mini-progress-fill{ background:linear-gradient(90deg,var(--savoiretre-accent),var(--savoiretre-main)); }
+
+  table.items{ width:100%; border-collapse:collapse; font-family:'Cormorant Garamond'; }
+  table.items th{
+    text-align:left; font-family:'Courier Prime'; font-size:0.72em; text-transform:uppercase; letter-spacing:0.5px;
+    color:#8a7c62; padding:6px 8px; border-bottom:2px solid #d8cfb8;
+  }
+  table.items td{ padding:10px 8px; border-bottom:1px solid #e4dcc6; vertical-align:top; font-size:1.05em;}
+  .item-row.validated{ background:rgba(46,125,79,0.06); }
+  .item-label{ min-width:220px; }
+  .status-group{ display:flex; gap:4px; }
+  .status-btn{
+    width:34px; height:34px; border-radius:50%; border:2px solid #ccc; background:white; cursor:pointer;
+    font-size:16px; display:flex; align-items:center; justify-content:center; transition:all .15s ease;
+  }
+  .status-btn[data-lvl="0"].active{ border-color:var(--grey); background:var(--grey-bg); }
+  .status-btn[data-lvl="1"].active{ border-color:var(--yellow); background:var(--yellow-bg); }
+  .status-btn[data-lvl="2"].active{ border-color:var(--green); background:var(--green-bg); }
+  .status-btn:hover{ transform:scale(1.12); }
+  .who-col{ text-align:center; width:100px; }
+  .who-label{ font-family:'Courier Prime'; font-size:0.68em; color:#8a7c62; display:block; margin-bottom:4px;}
+  .comment-col{ min-width:200px; }
+  textarea.comment{
+    width:100%; min-height:44px; resize:vertical; border:1px solid #d8cfb8; border-radius:6px; padding:6px 8px;
+    font-family:'Cormorant Garamond'; font-size:0.95em; background:#fffef9;
+  }
+  .item-status-final{ text-align:center; width:56px; font-size:20px; }
+
+  footer{ max-width:900px; margin:40px auto 0; text-align:center; color:var(--cream-dark); font-family:'Courier Prime'; font-size:0.78em; opacity:0.7; }
+
+  .home-fab{
+    position:fixed; top:20px; left:20px; z-index:900;
+    width:52px; height:52px; border-radius:50%; border:2px solid var(--gold);
+    background:linear-gradient(160deg, var(--leather-light), var(--leather-dark)); color:var(--gold-bright);
+    font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+    box-shadow:var(--shadow); transition:transform .15s ease;
+  }
+  .home-fab:hover{ transform:scale(1.08); }
+  @media (max-width:640px){ .home-fab{ top:12px; left:12px; width:44px; height:44px; font-size:18px; } }
+
+  @media (max-width:700px){
+    table.items, table.items thead, table.items tbody, table.items th, table.items td, table.items tr{ display:block; }
+    table.items thead{ display:none; }
+    .item-row{ border:1px solid #e4dcc6; border-radius:8px; margin-bottom:12px; padding:8px; }
+    .who-col{ width:auto; text-align:left; }
+    .status-group{ justify-content:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<button class="home-fab" id="homeFab" title="Retour au menu d'accueil" onclick="showLibrary()">🏠</button>
+
+<!-- ===================== BADGE POPUP ===================== -->
+<div class="badge-popup-overlay" id="badgePopup">
+  <div class="badge-popup-card">
+    <div class="badge-popup-emoji" id="badgePopupEmoji">🎖️</div>
+    <div class="badge-popup-title" id="badgePopupTitle">Badge débloqué !</div>
+    <div class="badge-popup-name" id="badgePopupName"></div>
+    <button class="btn btn-primary" onclick="closeBadgePopup()">Continuer</button>
+  </div>
+</div>
+
+<!-- ===================== INFO MODAL (coming soon) ===================== -->
+<div class="badge-popup-overlay" id="infoModal">
+  <div class="badge-popup-card">
+    <div class="badge-popup-emoji" id="infoModalEmoji">🚧</div>
+    <div class="badge-popup-title" id="infoModalTitle">Bientôt disponible</div>
+    <div class="badge-popup-name" id="infoModalName">Passeport en cours de développement</div>
+    <button class="btn btn-primary" onclick="closeInfoModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- ===================== LIBRARY VIEW ===================== -->
+<div id="view-library">
+  <div class="lib-header">
+    <h1>Les passeports des savoirs de l'hôtel Opéra Liège</h1>
+    <p>Sélectionnez un passeport existant ou créez-en un nouveau</p>
+  </div>
+
+  <div class="dept-section">
+    <h3>➕ Créer un nouveau passeport</h3>
+    <div class="dept-grid">
+      <button class="dept-btn" onclick="startCreateFlow()"><span class="icon-big">🛎️</span><span>Réceptionniste</span></button>
+      <button class="dept-btn dept-soon" onclick="showComingSoon('Housekeeping')"><span class="icon-big">🧹</span><span>Housekeeping</span><span class="soon-tag">Bientôt</span></button>
+      <button class="dept-btn dept-soon" onclick="showComingSoon('F&amp;B')"><span class="icon-big">🍽️</span><span>F&amp;B</span><span class="soon-tag">Bientôt</span></button>
+      <button class="dept-btn dept-soon" onclick="showComingSoon('Maintenance')"><span class="icon-big">🔧</span><span>Maintenance</span><span class="soon-tag">Bientôt</span></button>
+    </div>
+
+    <div id="create-form-wrap" class="new-passport-card" style="display:none; margin-top:18px; box-shadow:none;">
+      <h3>🛎️ Nouveau passeport Réceptionniste</h3>
+      <div class="form-grid">
+        <div><label>Nouveau collaborateur</label><input id="new-collab" placeholder="Prénom Nom"></div>
+        <div><label>COO</label><input id="new-coo" placeholder="Prénom Nom"></div>
+        <div><label>Buddy</label><input id="new-buddy" placeholder="Prénom Nom"></div>
+      </div>
+      <button class="btn btn-primary" onclick="createPassport()">Créer le passeport</button>
+    </div>
+  </div>
+
+  <div id="lib-list"></div>
+</div>
+
+<!-- ===================== PASSPORT VIEW ===================== -->
+<div id="view-passport">
+  <div class="top-actions">
+    <button class="btn btn-outline" onclick="showLibrary()">← Retour au menu principal</button>
+    <span class="save-indicator" id="saveIndicator">Sauvegarde automatique activée</span>
+  </div>
+
+  <div class="cover">
+    <div class="crest">🧭</div>
+    <h1>Passeport des Savoirs</h1>
+    <div class="subtitle">Réceptionniste</div>
+    <div class="divider"></div>
+  </div>
+
+  <div class="id-page">
+    <div class="id-page-inner">
+      <div class="id-photo">👤</div>
+      <div class="id-fields">
+        <div class="field"><label>Nouveau collaborateur</label><input id="f-collab" placeholder="Prénom Nom"></div>
+        <div class="field"><label>COO</label><input id="f-coo" placeholder="Prénom Nom"></div>
+        <div class="field"><label>Buddy</label><input id="f-buddy" placeholder="Prénom Nom"></div>
+        <div class="field"><label>Date de délivrance</label><input id="f-date" disabled></div>
+      </div>
+    </div>
+    <div class="mrz" id="mrz-line"></div>
+  </div>
+
+  <div class="overall-progress">
+    <span class="label">Progression globale</span>
+    <div class="progress-track"><div class="progress-fill" id="overallFill" style="width:0%"></div></div>
+    <span class="pct" id="overallPct">0%</span>
+  </div>
+
+  <div class="golden-callout" id="goldenCallout">🌟 Badge doré débloqué — Ambassadeur de l'hôtel 🌟</div>
+
+  <div class="section-nav">
+    <button class="nav-savoir" onclick="scrollToBloc('savoir')">📘 Savoir</button>
+    <button class="nav-savoirfaire" onclick="scrollToBloc('savoirfaire')">🧰 Savoir-faire</button>
+    <button class="nav-savoiretre" onclick="scrollToBloc('savoiretre')">🌟 Savoir-être</button>
+  </div>
+
+  <div id="blocs"></div>
+
+  <footer>Passeport des Savoirs — chaque passeport est sauvegardé automatiquement dans ce navigateur. Vous pouvez fermer la page et le retrouver depuis « Mes passeports ».</footer>
+</div>
+
+<script>
+const SCALE_LABELS = {
+  savoir: ["Non découvert","Découverte","Acquisition"],
+  savoirfaire: ["Non découvert","Découverte","Acquisition"],
+  savoiretre: ["Non observé","En développement","Acquisition"]
+};
+const SCALE_EMOJI = ["⚪","🟡","🟢"];
+const BLOC_EYEBROW = { savoir:"Bloc théorique", savoirfaire:"Bloc pratique", savoiretre:"Bloc comportemental" };
+
+const DATA = [
+  {
+    id:"savoir", title:"Savoir", scaleType:"savoir", theme:"theme-savoir",
+    sousBlocs:[
+      {
+        id:"sb-etablissement", title:"Connaissance de l'établissement", badgeEmoji:"🧭", badgeName:"Explorateur de l'hôtel",
+        objectif:"Comprendre l'identité, l'organisation et l'offre de l'établissement afin d'être capable de guider un client et de représenter l'expérience de l'hôtel.",
+        items:[
+          "Connaît l'histoire et le positionnement de l'établissement.",
+          "Connaît les valeurs et la promesse client.",
+          "Identifie les différents espaces de l'établissement.",
+          "Connaît les catégories de chambres et leurs spécificités.",
+          "Connaît les principaux services proposés aux clients, les horaires et leurs modalités.",
+          "Connaît les principales offres commerciales en cours."
+        ]
+      },
+      {
+        id:"sb-metier-recep", title:"Connaissance du métier de réceptionniste", badgeEmoji:"🗺️", badgeName:"Guide des voyageurs",
+        objectif:"Comprendre le rôle de réceptionniste, ses responsabilités et les standards attendus afin de contribuer efficacement au parcours client.",
+        items:[
+          "Comprend les missions principales du poste.",
+          "Connaît les standards de service attendus.",
+          "Comprend le parcours client de la réservation au départ.",
+          "Connaît les principales procédures de réception.",
+          "Connaît les procédures de sécurité et d'urgence.",
+          "Identifie les situations nécessitant une escalade managériale."
+        ]
+      },
+      {
+        id:"sb-autres-metiers", title:"Connaissance des autres métiers", badgeEmoji:"🇨🇭", badgeName:"Couteau-suisse de l'hôtel",
+        objectif:"Comprendre le fonctionnement des différents services et leurs interactions afin de faciliter la coordination et garantir une expérience client fluide.",
+        items:[
+          "Comprend le rôle du housekeeping.",
+          "Comprend le rôle de la maintenance.",
+          "Comprend le rôle des équipes PDJ.",
+          "Identifie les principaux interlocuteurs de chaque service.",
+          "Comprend les interactions entre la réception et les autres équipes.",
+          "Comprend l'impact de son travail sur les autres métiers.",
+          "Connaît les procédures de communication interservices.",
+          "Identifie les priorités opérationnelles des différents services."
+        ]
+      }
+    ]
+  },
+  {
+    id:"savoirfaire", title:"Savoir-faire", scaleType:"savoirfaire", theme:"theme-savoirfaire",
+    sousBlocs:[
+      {
+        id:"sb-accueil", title:"Accueil", badgeEmoji:"🏨", badgeName:"Hôte de la Maison",
+        objectif:"Accueillir chaque client selon les standards de l'établissement et créer une première impression positive.",
+        items:[
+          "Accueille un client selon les standards de l'établissement.",
+          "Adapte son accueil au profil du client.",
+          "Identifie rapidement le besoin du client.",
+          "Oriente efficacement un client dans l'établissement.",
+          "Présente les services pertinents de l'hôtel.",
+          "Procède à un échange de manière chaleureuse et professionnelle."
+        ]
+      },
+      {
+        id:"sb-checkinout", title:"Check-in & Check-out", badgeEmoji:"✈️", badgeName:"Agent d'embarquement",
+        objectif:"Réaliser les arrivées et départs de manière fluide, conforme et autonome.",
+        items:[
+          "Réalise un check-in complet.",
+          "Vérifie les informations de réservation.",
+          "Attribue une chambre adaptée.",
+          "Présente les informations essentielles au séjour.",
+          "Encaisse les paiements liés à l'arrivée.",
+          "Gère une arrivée anticipée ou tardive.",
+          "Réalise un check-out complet.",
+          "Vérifie et explique une facture.",
+          "Encaisse un règlement de départ."
+        ]
+      },
+      {
+        id:"sb-reservations", title:"Réservations & ventes", badgeEmoji:"🧳", badgeName:"Planificateur de séjours",
+        objectif:"Accompagner le client dans sa réservation et contribuer au développement du chiffre d'affaires.",
+        items:[
+          "Crée une réservation dans Mews.",
+          "Modifie une réservation existante.",
+          "Annule une réservation conformément aux procédures.",
+          "Vérifie les conditions tarifaires applicables.",
+          "Oriente vers l'offre la plus adaptée au besoin client.",
+          "Présente les services additionnels disponibles.",
+          "Réalise une proposition d'upsell.",
+          "Réalise une proposition de cross-sell.",
+          "Traite une demande de réservation par téléphone.",
+          "Traite une demande de réservation par email ou messagerie."
+        ]
+      },
+      {
+        id:"sb-delicat", title:"Situations délicates", badgeEmoji:"🆘", badgeName:"Pilote des imprévus",
+        objectif:"Gérer les imprévus et les insatisfactions tout en préservant l'expérience client.",
+        items:[
+          "Prend en charge une réclamation simple.",
+          "Mène un échange avec un client mécontent.",
+          "Propose une solution adaptée dans son périmètre.",
+          "Escalade un problème au bon interlocuteur.",
+          "Gère une erreur de réservation.",
+          "Gère une situation de surbooking selon les procédures.",
+          "Gère un conflit ou une tension avec calme.",
+          "Assure le suivi d'un incident jusqu'à sa résolution."
+        ]
+      }
+    ]
+  },
+  {
+    id:"savoiretre", title:"Savoir-être", scaleType:"savoiretre", theme:"theme-savoiretre",
+    sousBlocs:[
+      {
+        id:"sb-service", title:"Sens du service", badgeEmoji:"🎩", badgeName:"Artisan de l'hospitalité",
+        objectif:"Placer le client au centre de ses actions et contribuer à une expérience mémorable.",
+        items:[
+          "Fait preuve d'attention envers chaque client.",
+          "Anticipe les besoins simples des clients.",
+          "Personnalise ses interactions lorsque cela est pertinent.",
+          "Représente positivement l'établissement dans ses échanges.",
+          "Fait preuve de disponibilité et de réactivité."
+        ]
+      },
+      {
+        id:"sb-communication", title:"Communication", badgeEmoji:"📢", badgeName:"Messager de l'hôtel",
+        objectif:"Communiquer avec clarté, professionnalisme et respect.",
+        items:[
+          "Adapte son discours à son interlocuteur.",
+          "S'exprime de manière claire et concise.",
+          "Adopte une communication respectueuse en toutes circonstances.",
+          "Accueille les retours et feedbacks de manière constructive.",
+          "Utilise un ton professionnel à l'écrit comme à l'oral."
+        ]
+      },
+      {
+        id:"sb-equipe", title:"Esprit d'équipe", badgeEmoji:"🚖", badgeName:"Compagnon de route",
+        objectif:"Contribuer au bon fonctionnement collectif et à la coopération entre services.",
+        items:[
+          "Partage les informations utiles avec ses collègues.",
+          "Est actif sur Slack.",
+          "Est actif sur Elium.",
+          "Sollicite de l'aide lorsque la situation le nécessite.",
+          "Contribue à une ambiance de travail positive."
+        ]
+      },
+      {
+        id:"sb-adaptabilite", title:"Adaptabilité & gestion de la pression", badgeEmoji:"🌊", badgeName:"Capitaine des tempêtes",
+        objectif:"Maintenir son efficacité et son professionnalisme face aux imprévus.",
+        items:[
+          "Garde son calme en période d'affluence.",
+          "Priorise les tâches selon l'urgence.",
+          "Fait preuve de sang-froid face à un client mécontent.",
+          "Réagit de manière constructive face aux imprévus.",
+          "Maintient la qualité de service sous pression."
+        ]
+      },
+      {
+        id:"sb-professionnalisme", title:"Professionnalisme & autonomie", badgeEmoji:"🥾", badgeName:"Guide de confiance",
+        objectif:"Faire preuve de rigueur, de responsabilité et d'autonomie dans son travail.",
+        items:[
+          "Gère ses priorités de manière autonome.",
+          "Fait preuve de ponctualité et de fiabilité.",
+          "Prend des initiatives adaptées à son périmètre.",
+          "Recherche activement à développer ses compétences.",
+          "Fait preuve de rigueur dans l'exécution de ses missions."
+        ]
+      }
+    ]
+  }
+];
+
+const REGISTRY_KEY = "passeport-registry-v1";
+const LAST_ACTIVE_KEY = "passeport-last-active-v1";
+function dataKey(id){ return "passeport-data-v1-" + id; }
+
+function loadRegistry(){
+  try{ return JSON.parse(localStorage.getItem(REGISTRY_KEY) || "[]"); }catch(e){ return []; }
+}
+function saveRegistry(reg){ localStorage.setItem(REGISTRY_KEY, JSON.stringify(reg)); }
+
+function loadPassportData(id){
+  try{
+    const raw = localStorage.getItem(dataKey(id));
+    return raw ? JSON.parse(raw) : { items:{} };
+  }catch(e){ return { items:{} }; }
+}
+function savePassportData(id, data){ localStorage.setItem(dataKey(id), JSON.stringify(data)); }
+
+let activeId = null;
+let state = { items:{} };
+
+function fmtDate(ts){
+  const d = new Date(ts);
+  return d.toLocaleDateString('fr-FR') + " " + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+}
+
+function computeProgressForData(data){
+  let total = 0, validated = 0;
+  DATA.forEach(bloc=>{
+    bloc.sousBlocs.forEach(sb=>{
+      sb.items.forEach((_, idx)=>{
+        total++;
+        const d = (data.items || {})[sb.id + "::" + idx];
+        if(d && Math.max(d.coo||0, d.buddy||0) >= 2) validated++;
+      });
+    });
+  });
+  return total ? Math.round((validated/total)*100) : 0;
+}
+
+/* ---------------- LIBRARY ---------------- */
+function showLibrary(){
+  activeId = null;
+  document.getElementById("view-passport").style.display = "none";
+  document.getElementById("view-library").style.display = "block";
+  document.getElementById("homeFab").style.display = "none";
+  renderLibrary();
+}
+
+function renderLibrary(){
+  const reg = loadRegistry().sort((a,b)=> b.updatedAt - a.updatedAt);
+  const list = document.getElementById("lib-list");
+  list.innerHTML = "";
+  if(reg.length === 0){
+    list.innerHTML = '<p class="empty-lib">Aucun passeport enregistré pour le moment.</p>';
+    return;
+  }
+  reg.forEach(entry=>{
+    const data = loadPassportData(entry.id);
+    const pct = computeProgressForData(data);
+    const card = document.createElement("div");
+    card.className = "lib-card";
+    card.innerHTML = `
+      <div class="icon">🛂</div>
+      <div class="info">
+        <div class="name">${entry.collaborateur || "Sans nom"} <span style="font-family:'Courier Prime'; font-size:0.6em; color:#8a7c62;">(${entry.poste || "Réceptionniste"})</span></div>
+        <div class="meta">COO : ${entry.coo || "—"} · Buddy : ${entry.buddy || "—"}</div>
+        <div class="meta">Progression : ${pct}% · Dernière modification : ${fmtDate(entry.updatedAt)}</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="openPassport('${entry.id}')">Ouvrir</button>
+        <button class="btn btn-danger" onclick="deletePassport('${entry.id}')">Supprimer</button>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function startCreateFlow(){
+  const wrap = document.getElementById("create-form-wrap");
+  wrap.style.display = wrap.style.display === "none" ? "block" : "none";
+}
+
+function showComingSoon(dept){
+  document.getElementById("infoModalEmoji").textContent = "🚧";
+  document.getElementById("infoModalTitle").textContent = dept;
+  document.getElementById("infoModalName").textContent = "Passeport en cours de développement";
+  document.getElementById("infoModal").classList.add("show");
+}
+function closeInfoModal(){
+  document.getElementById("infoModal").classList.remove("show");
+}
+
+function createPassport(){
+  const collab = document.getElementById("new-collab").value.trim();
+  const coo = document.getElementById("new-coo").value.trim();
+  const buddy = document.getElementById("new-buddy").value.trim();
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  const now = Date.now();
+  const reg = loadRegistry();
+  reg.push({ id, collaborateur:collab, coo, buddy, poste:"Réceptionniste", createdAt:now, updatedAt:now });
+  saveRegistry(reg);
+  savePassportData(id, { meta:{ collaborateur:collab, coo, buddy, poste:"Réceptionniste", createdAt:now }, items:{}, unlockedBadges:[], goldenUnlocked:false });
+  document.getElementById("new-collab").value = "";
+  document.getElementById("new-coo").value = "";
+  document.getElementById("new-buddy").value = "";
+  document.getElementById("create-form-wrap").style.display = "none";
+  openPassport(id);
+}
+
+function deletePassport(id){
+  if(!confirm("Supprimer définitivement ce passeport ?")) return;
+  localStorage.removeItem(dataKey(id));
+  saveRegistry(loadRegistry().filter(r=>r.id!==id));
+  if(localStorage.getItem(LAST_ACTIVE_KEY) === id) localStorage.removeItem(LAST_ACTIVE_KEY);
+  renderLibrary();
+}
+
+function computeUnlockedBadgeIds(data){
+  const ids = [];
+  DATA.forEach(bloc=>{
+    bloc.sousBlocs.forEach(sb=>{
+      const allValidated = sb.items.every((_, idx)=>{
+        const d = (data.items || {})[sb.id + "::" + idx];
+        return d && Math.max(d.coo||0, d.buddy||0) >= 2;
+      });
+      if(allValidated) ids.push(sb.id);
+    });
+  });
+  return ids;
+}
+function computeAllUnlocked(data){
+  return DATA.every(bloc=> bloc.sousBlocs.every(sb=>{
+    return sb.items.every((_, idx)=>{
+      const d = (data.items || {})[sb.id + "::" + idx];
+      return d && Math.max(d.coo||0, d.buddy||0) >= 2;
+    });
+  }));
+}
+
+function openPassport(id){
+  activeId = id;
+  localStorage.setItem(LAST_ACTIVE_KEY, id);
+  state = loadPassportData(id);
+  if(!state.items) state.items = {};
+  if(!state.meta) state.meta = {};
+  if(!state.unlockedBadges){
+    // baseline: passeport existant avant l'ajout des animations, on n'annonce pas les badges déjà acquis
+    state.unlockedBadges = computeUnlockedBadgeIds(state);
+    state.goldenUnlocked = computeAllUnlocked(state);
+    savePassportData(id, state);
+  }
+  document.getElementById("view-library").style.display = "none";
+  document.getElementById("view-passport").style.display = "block";
+  document.getElementById("homeFab").style.display = "flex";
+
+  document.getElementById("f-collab").value = state.meta.collaborateur || "";
+  document.getElementById("f-coo").value = state.meta.coo || "";
+  document.getElementById("f-buddy").value = state.meta.buddy || "";
+  document.getElementById("f-date").value = fmtDate(state.meta.createdAt || Date.now());
+
+  ["f-collab","f-coo","f-buddy"].forEach(fid=>{
+    document.getElementById(fid).oninput = onMetaChange;
+  });
+
+  updateMrz();
+  render();
+}
+
+function onMetaChange(){
+  state.meta.collaborateur = document.getElementById("f-collab").value;
+  state.meta.coo = document.getElementById("f-coo").value;
+  state.meta.buddy = document.getElementById("f-buddy").value;
+  updateMrz();
+  persist();
+}
+
+function updateMrz(){
+  const c = (state.meta.collaborateur || "A DEFINIR").toUpperCase().replace(/[^A-Z ]/g,"").replace(/\s+/g,"<<");
+  document.getElementById("mrz-line").textContent =
+    `P<HOT${c}<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n${Date.now().toString().slice(-9)}${Math.random()<1?"":""}HOTELPASSPORT<<<<<<<<<<<<<<<<<<<`.split("\n")[0];
+}
+
+function persist(){
+  if(!activeId) return;
+  state.meta.updatedAt = Date.now();
+  savePassportData(activeId, state);
+  const reg = loadRegistry();
+  const entry = reg.find(r=>r.id===activeId);
+  if(entry){
+    entry.collaborateur = state.meta.collaborateur || "";
+    entry.coo = state.meta.coo || "";
+    entry.buddy = state.meta.buddy || "";
+    entry.updatedAt = state.meta.updatedAt;
+    saveRegistry(reg);
+  }
+  const ind = document.getElementById("saveIndicator");
+  ind.textContent = "💾 Sauvegardé à " + new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+
+function scrollToBloc(id){
+  const el = document.getElementById("bloc-" + id);
+  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function itemKey(sbId, idx){ return sbId + "::" + idx; }
+function getItemData(sbId, idx){
+  const k = itemKey(sbId, idx);
+  if(!state.items[k]) state.items[k] = { coo:0, buddy:0, cooComment:"", buddyComment:"" };
+  return state.items[k];
+}
+function itemValidated(sbId, idx){
+  const d = getItemData(sbId, idx);
+  return Math.max(d.coo, d.buddy) >= 2;
+}
+
+/* ---------------- BADGE POPUP QUEUE ---------------- */
+let popupQueue = [];
+let popupShowing = false;
+let popupTimer = null;
+
+function enqueueBadgePopup(item){
+  popupQueue.push(item);
+  if(!popupShowing) showNextPopup();
+}
+function showNextPopup(){
+  if(popupQueue.length === 0){ popupShowing = false; return; }
+  popupShowing = true;
+  const item = popupQueue.shift();
+  document.getElementById("badgePopupEmoji").textContent = item.emoji;
+  document.getElementById("badgePopupTitle").textContent = item.golden ? "🌟 Badge doré débloqué ! 🌟" : "Badge débloqué !";
+  document.getElementById("badgePopupName").textContent = item.name;
+  document.getElementById("badgePopup").classList.add("show");
+  clearTimeout(popupTimer);
+  popupTimer = setTimeout(closeBadgePopup, 4000);
+}
+function closeBadgePopup(){
+  document.getElementById("badgePopup").classList.remove("show");
+  clearTimeout(popupTimer);
+  setTimeout(showNextPopup, 350);
+}
+
+/* ---------------- RENDER PASSPORT ---------------- */
+function render(){
+  const container = document.getElementById("blocs");
+  container.innerHTML = "";
+
+  let totalItems = 0, totalValidated = 0;
+  let allBadgesUnlocked = true;
+  const newlyUnlocked = [];
+  if(!state.unlockedBadges) state.unlockedBadges = [];
+
+  DATA.forEach(bloc=>{
+    const blocEl = document.createElement("div");
+    blocEl.className = "bloc " + bloc.theme;
+    blocEl.id = "bloc-" + bloc.id;
+
+    const header = document.createElement("div");
+    header.className = "bloc-header";
+    header.innerHTML = `<div><span class="bloc-eyebrow">${BLOC_EYEBROW[bloc.id]}</span><h2>${bloc.title}</h2></div><span class="scale-hint">${SCALE_EMOJI[0]} ${SCALE_LABELS[bloc.scaleType][0]} &nbsp;·&nbsp; ${SCALE_EMOJI[1]} ${SCALE_LABELS[bloc.scaleType][1]} &nbsp;·&nbsp; ${SCALE_EMOJI[2]} ${SCALE_LABELS[bloc.scaleType][2]}</span>`;
+    blocEl.appendChild(header);
+
+    const body = document.createElement("div");
+    body.className = "bloc-body";
+
+    bloc.sousBlocs.forEach(sb=>{
+      const sbEl = document.createElement("div");
+      sbEl.className = "sousbloc";
+
+      let validatedCount = 0;
+      sb.items.forEach((_, idx)=>{ if(itemValidated(sb.id, idx)) validatedCount++; });
+      const total = sb.items.length;
+      totalItems += total;
+      totalValidated += validatedCount;
+      const unlocked = validatedCount === total;
+      if(!unlocked) allBadgesUnlocked = false;
+      if(unlocked && !state.unlockedBadges.includes(sb.id)){
+        state.unlockedBadges.push(sb.id);
+        newlyUnlocked.push({ emoji: sb.badgeEmoji, name: sb.badgeName, golden:false });
+      }
+      const pct = Math.round((validatedCount/total)*100);
+
+      const head = document.createElement("div");
+      head.className = "sousbloc-head";
+      head.innerHTML = `
+        <div class="badge-stamp ${unlocked ? 'unlocked' : ''}">${sb.badgeEmoji}</div>
+        <div class="sousbloc-titles">
+          <h3>${sb.title}</h3>
+          <span class="badge-name ${unlocked ? 'unlocked' : ''}">🎖️ ${sb.badgeName} — ${unlocked ? 'débloqué' : validatedCount + '/' + total + ' items validés'}</span>
+        </div>
+      `;
+      sbEl.appendChild(head);
+
+      const obj = document.createElement("p");
+      obj.className = "objectif";
+      obj.textContent = "Objectif : " + sb.objectif;
+      sbEl.appendChild(obj);
+
+      const miniProgress = document.createElement("div");
+      miniProgress.className = "mini-progress";
+      miniProgress.innerHTML = `<div class="mini-progress-fill" style="width:${pct}%"></div>`;
+      sbEl.appendChild(miniProgress);
+
+      const table = document.createElement("table");
+      table.className = "items";
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th class="who-col">COO</th>
+            <th class="who-col">Buddy</th>
+            <th>Commentaires</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+      `;
+      const tbody = document.createElement("tbody");
+
+      sb.items.forEach((label, idx)=>{
+        const d = getItemData(sb.id, idx);
+        const validated = itemValidated(sb.id, idx);
+        const row = document.createElement("tr");
+        row.className = "item-row" + (validated ? " validated" : "");
+
+        const tdLabel = document.createElement("td");
+        tdLabel.className = "item-label";
+        tdLabel.textContent = label;
+        row.appendChild(tdLabel);
+
+        ["coo","buddy"].forEach(role=>{
+          const td = document.createElement("td");
+          td.className = "who-col";
+          const group = document.createElement("div");
+          group.className = "status-group";
+          [0,1,2].forEach(lvl=>{
+            const btn = document.createElement("button");
+            btn.type="button";
+            btn.className = "status-btn" + (d[role]===lvl ? " active":"");
+            btn.dataset.lvl = lvl;
+            btn.textContent = SCALE_EMOJI[lvl];
+            btn.title = SCALE_LABELS[bloc.scaleType][lvl];
+            btn.addEventListener("click", ()=>{
+              d[role] = lvl;
+              persist();
+              render();
+            });
+            group.appendChild(btn);
+          });
+          td.appendChild(group);
+          row.appendChild(td);
+        });
+
+        const tdComment = document.createElement("td");
+        tdComment.className = "comment-col";
+        const wrap = document.createElement("div");
+        wrap.style.display="flex"; wrap.style.flexDirection="column"; wrap.style.gap="6px";
+
+        const cooLabel = document.createElement("span");
+        cooLabel.className="who-label"; cooLabel.textContent="COO";
+        const cooTa = document.createElement("textarea");
+        cooTa.className="comment"; cooTa.placeholder="Commentaire COO...";
+        cooTa.value = d.cooComment;
+        cooTa.addEventListener("change", ()=>{ d.cooComment = cooTa.value; persist(); });
+
+        const buddyLabel = document.createElement("span");
+        buddyLabel.className="who-label"; buddyLabel.textContent="Buddy";
+        const buddyTa = document.createElement("textarea");
+        buddyTa.className="comment"; buddyTa.placeholder="Commentaire Buddy...";
+        buddyTa.value = d.buddyComment;
+        buddyTa.addEventListener("change", ()=>{ d.buddyComment = buddyTa.value; persist(); });
+
+        wrap.appendChild(cooLabel); wrap.appendChild(cooTa);
+        wrap.appendChild(buddyLabel); wrap.appendChild(buddyTa);
+        tdComment.appendChild(wrap);
+        row.appendChild(tdComment);
+
+        const tdStatus = document.createElement("td");
+        tdStatus.className = "item-status-final";
+        tdStatus.textContent = validated ? "🟢" : (Math.max(d.coo,d.buddy)===1 ? "🟡" : "⚪");
+        row.appendChild(tdStatus);
+
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      sbEl.appendChild(table);
+      body.appendChild(sbEl);
+    });
+
+    blocEl.appendChild(body);
+    container.appendChild(blocEl);
+  });
+
+  const overallPct = totalItems ? Math.round((totalValidated/totalItems)*100) : 0;
+  document.getElementById("overallFill").style.width = overallPct + "%";
+  document.getElementById("overallPct").textContent = overallPct + "%";
+  document.getElementById("goldenCallout").classList.toggle("show", allBadgesUnlocked);
+
+  if(allBadgesUnlocked && !state.goldenUnlocked){
+    state.goldenUnlocked = true;
+    newlyUnlocked.push({ emoji:"🌟", name:"Ambassadeur de l'hôtel", golden:true });
+  }
+  if(newlyUnlocked.length > 0){
+    if(activeId) savePassportData(activeId, state);
+    newlyUnlocked.forEach(item => enqueueBadgePopup(item));
+  }
+}
+
+/* ---------------- BOOT ---------------- */
+function boot(){
+  const lastId = localStorage.getItem(LAST_ACTIVE_KEY);
+  const reg = loadRegistry();
+  if(lastId && reg.find(r=>r.id===lastId)){
+    openPassport(lastId);
+  } else {
+    showLibrary();
+  }
+}
+boot();
+</script>
+</body>
+</html>
