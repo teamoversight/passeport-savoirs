@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Passeport des Savoirs — Oversight</title>
+<meta name="description" content="Le Passeport des Savoirs : le fil conducteur de l’intégration de chaque nouveau collaborateur.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CHARTE GRAPHIQUE OVERSIGHT
+   Blue Flash #496BFF · Blue Dark #00011E · Kaki #7C9182
+   Blue Light #EDF3FF · Grey Light #F2F1EE · Kaki Light #E3EAE5
+   Dégradé de fond : #BFD7FF -> #F5EDDC à 135° + grain
+   Polices : Playfair Display (mise en avant) · Inter (reste)
+   ============================================================ */
+:root{
+  --blue-flash:#496BFF;
+  --blue-dark:#00011E;
+  --kaki:#7C9182;
+  --blue-light:#EDF3FF;
+  --grey-light:#F2F1EE;
+  --kaki-light:#E3EAE5;
+  --grad-start:#BFD7FF;
+  --grad-end:#F5EDDC;
+  --gold:#A78552;
+  --gold-light:#F5EDDC;
+  --ink:#00011E;
+  --ink-70:rgba(0,1,30,.70);
+  --ink-55:rgba(0,1,30,.55);
+  --ink-40:rgba(0,1,30,.40);
+  --ink-12:rgba(0,1,30,.12);
+  --ink-07:rgba(0,1,30,.07);
+  --white:#FBFBF9;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow-sm:0 1px 2px rgba(0,1,30,.05),0 4px 14px rgba(0,1,30,.05);
+  --shadow-md:0 2px 6px rgba(0,1,30,.06),0 14px 40px rgba(0,1,30,.09);
+  --shadow-lg:0 30px 90px rgba(0,1,30,.22);
+  --maxw:1180px;
+  --lvl0:#FFFFFF;
+  --lvl1:#E9C46A;
+  --lvl2:#7C9182;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  color:var(--ink);
+  background:linear-gradient(135deg,var(--grad-start) 0%,var(--grad-end) 100%);
+  background-attachment:fixed;
+  font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+/* grain */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.30;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+}
+#app{position:relative;z-index:1}
+h1,h2,h3,h4{margin:0;line-height:1.18;font-weight:600;letter-spacing:-.01em}
+p{margin:0}
+a{color:var(--blue-flash);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+.serif{font-family:'Playfair Display',Georgia,serif;font-weight:500}
+.italic{font-style:italic}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.center{text-align:center}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Boutons ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;font-weight:500;font-size:.95rem;transition:.18s ease;white-space:nowrap;line-height:1}
+.btn-primary{background:var(--blue-flash);color:#fff;box-shadow:0 6px 18px rgba(73,107,255,.28)}
+.btn-primary:hover{background:#3a5cf0;transform:translateY(-1px);box-shadow:0 10px 26px rgba(73,107,255,.36)}
+.btn-ghost{background:rgba(255,255,255,.65);color:var(--ink);border:1px solid var(--ink-12)}
+.btn-ghost:hover{background:#fff;border-color:var(--blue-flash);color:var(--blue-flash)}
+.btn-dark{background:var(--blue-dark);color:#fff}
+.btn-dark:hover{background:#101438}
+.btn-sm{padding:9px 16px;font-size:.85rem}
+.btn-icon{padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.7);border:1px solid var(--ink-12)}
+.btn-icon:hover{border-color:var(--blue-flash)}
+
+/* ---------- Header ---------- */
+.topbar{position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);background:rgba(251,251,249,.78);border-bottom:1px solid var(--ink-07)}
+.topbar-in{max-width:var(--maxw);margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:18px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:-.02em;font-size:1.02rem}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--blue-flash);color:#fff;display:grid;place-items:center;font-size:1rem;box-shadow:0 4px 12px rgba(73,107,255,.3)}
+.brand small{display:block;font-weight:400;font-size:.72rem;color:var(--ink-55);letter-spacing:.02em}
+.topnav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.topnav a{padding:8px 14px;border-radius:999px;font-size:.9rem;color:var(--ink-70);font-weight:450}
+.topnav a:hover{background:var(--blue-light);color:var(--blue-flash);text-decoration:none}
+.topnav a.on{background:var(--blue-dark);color:#fff}
+
+/* ---------- Hero ---------- */
+.hero{padding:78px 0 54px;text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid var(--ink-12);font-size:.78rem;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-70);font-weight:500;margin-bottom:26px}
+.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2.4rem,6.2vw,4.3rem);font-weight:500;letter-spacing:-.025em;margin-bottom:22px}
+.hero h1 em{font-style:italic;color:var(--blue-flash)}
+.hero-lead{max-width:680px;margin:0 auto;font-size:1.09rem;color:var(--ink-70);line-height:1.72}
+.hero-cta{margin-top:34px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.hero-stats{margin-top:52px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.stat{background:rgba(255,255,255,.62);border:1px solid var(--ink-07);border-radius:var(--radius-sm);padding:16px 24px;min-width:132px;backdrop-filter:blur(6px)}
+.stat b{display:block;font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:600;line-height:1.1}
+.stat span{font-size:.78rem;color:var(--ink-55);letter-spacing:.03em;text-transform:uppercase}
+
+/* ---------- Sections ---------- */
+.section{padding:58px 0}
+.section-head{margin-bottom:34px;max-width:660px}
+.section-head.c{margin-left:auto;margin-right:auto;text-align:center}
+.section-kicker{font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-flash);font-weight:600;margin-bottom:12px}
+.section-head h2{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:500;letter-spacing:-.02em;margin-bottom:12px}
+.section-head p{color:var(--ink-70);font-size:1.02rem}
+
+/* ---------- Cartes principes ---------- */
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:16px}
+.pcard{background:rgba(255,255,255,.66);border:1px solid var(--ink-07);border-radius:var(--radius);padding:26px;backdrop-filter:blur(6px)}
+.pcard .ic{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:1.24rem;margin-bottom:15px;background:var(--blue-light)}
+.pcard h3{font-size:1.06rem;margin-bottom:8px}
+.pcard p{font-size:.93rem;color:var(--ink-70)}
+
+/* ---------- Échelle ---------- */
+.scale-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.scale-card{background:rgba(255,255,255,.66);border:1px solid var(--ink-07);border-left:4px solid var(--ink-12);border-radius:var(--radius-sm);padding:18px 20px}
+.scale-card.l0{border-left-color:#D9D4CB}
+.scale-card.l1{border-left-color:var(--lvl1)}
+.scale-card.l2{border-left-color:var(--lvl2)}
+.scale-card .lv{display:flex;align-items:center;gap:9px;font-weight:600;font-size:.95rem;margin-bottom:6px}
+.scale-card p{font-size:.88rem;color:var(--ink-70)}
+
+/* ---------- Cartes services ---------- */
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(292px,1fr));gap:18px}
+.svc{position:relative;display:flex;flex-direction:column;background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);transition:.22s ease}
+.svc:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:rgba(73,107,255,.35)}
+.svc-top{padding:24px 24px 18px;background:linear-gradient(135deg,var(--blue-light),var(--kaki-light));border-bottom:1px solid var(--ink-07);position:relative}
+.svc-emoji{font-size:2.15rem;line-height:1;margin-bottom:12px;display:block}
+.svc-top h3{font-size:1.24rem;font-family:'Playfair Display',serif;font-weight:600}
+.svc-top .svc-sub{font-size:.85rem;color:var(--ink-55);margin-top:5px}
+.svc-badge{position:absolute;top:18px;right:18px;font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;font-weight:600;padding:5px 11px;border-radius:999px}
+.svc-badge.ok{background:var(--kaki);color:#fff}
+.svc-badge.todo{background:rgba(0,1,30,.08);color:var(--ink-55)}
+.svc-badge.custom{background:var(--blue-flash);color:#fff}
+.svc-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:14px;flex:1}
+.svc-meta{display:flex;gap:16px;font-size:.82rem;color:var(--ink-55)}
+.svc-meta b{color:var(--ink);font-weight:600}
+.svc-prog{height:6px;border-radius:999px;background:var(--ink-07);overflow:hidden}
+.svc-prog i{display:block;height:100%;background:var(--kaki);border-radius:999px;transition:width .5s ease}
+.svc-actions{margin-top:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.svc-stamps{display:flex;gap:5px;flex-wrap:wrap;font-size:1rem}
+.svc-stamps span{opacity:.22;filter:grayscale(1)}
+.svc-stamps span.on{opacity:1;filter:none}
+
+/* ---------- Passeport ---------- */
+.pp-cover{background:var(--blue-dark);color:#fff;border-radius:22px;padding:34px;position:relative;overflow:hidden;box-shadow:var(--shadow-md)}
+.pp-cover::after{content:'';position:absolute;right:-70px;top:-70px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(73,107,255,.5),transparent 68%)}
+.pp-cover-in{position:relative;z-index:2;display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between}
+.pp-id .kicker{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px}
+.pp-id h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4.4vw,2.7rem);font-weight:500;letter-spacing:-.02em}
+.pp-id h1 em{font-style:italic;color:#8FA6FF}
+.pp-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px;max-width:560px}
+.pp-field label{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:5px}
+.pp-field input{width:100%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:9px 12px;color:#fff;font-size:.92rem}
+.pp-field input:focus{outline:none;border-color:#8FA6FF;background:rgba(255,255,255,.15)}
+.pp-field input::placeholder{color:rgba(255,255,255,.35)}
+.ring-wrap{text-align:center;flex-shrink:0}
+.ring{position:relative;width:132px;height:132px}
+.ring svg{transform:rotate(-90deg)}
+.ring-txt{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring-txt b{display:block;font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:600;line-height:1}
+.ring-txt span{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.ring-cap{margin-top:10px;font-size:.78rem;color:rgba(255,255,255,.6)}
+
+/* barre de rôle */
+.rolebar{margin:20px 0 0;background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);padding:16px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;box-shadow:var(--shadow-sm)}
+.rolebar .lbl{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-55);font-weight:600}
+.roleseg{display:flex;gap:4px;background:var(--grey-light);padding:4px;border-radius:999px}
+.roleseg button{padding:8px 17px;border-radius:999px;font-size:.88rem;font-weight:500;color:var(--ink-70);transition:.16s}
+.roleseg button:hover{color:var(--ink)}
+.roleseg button.on{background:#fff;color:var(--blue-flash);box-shadow:var(--shadow-sm)}
+.rolebar .tools{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+
+/* onglets blocs */
+.blocktabs{display:flex;gap:8px;margin:24px 0 0;flex-wrap:wrap}
+.blocktab{padding:12px 20px;border-radius:12px 12px 0 0;background:rgba(255,255,255,.5);border:1px solid var(--ink-07);border-bottom:none;font-weight:500;font-size:.95rem;color:var(--ink-70);display:flex;align-items:center;gap:9px}
+.blocktab:hover{background:rgba(255,255,255,.8)}
+.blocktab.on{background:var(--white);color:var(--ink);box-shadow:0 -3px 0 var(--blue-flash) inset}
+.blocktab .cnt{font-size:.75rem;background:var(--ink-07);padding:2px 8px;border-radius:999px;color:var(--ink-55)}
+.blocktab.on .cnt{background:var(--blue-light);color:var(--blue-flash)}
+.blockpanel{background:var(--white);border:1px solid var(--ink-07);border-radius:0 var(--radius) var(--radius) var(--radius);padding:26px;box-shadow:var(--shadow-sm)}
+@media(max-width:640px){.blockpanel{border-radius:var(--radius);padding:18px}}
+
+.scale-legend{background:var(--grey-light);border-radius:var(--radius-sm);padding:16px 18px;margin-bottom:24px}
+.scale-legend h4{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-55);margin-bottom:11px}
+.scale-legend ul{margin:0;padding:0;list-style:none;display:grid;gap:7px}
+.scale-legend li{font-size:.86rem;color:var(--ink-70);display:flex;gap:9px;align-items:flex-start}
+.scale-legend b{color:var(--ink);font-weight:600}
+
+/* sous-blocs */
+.sub{border:1px solid var(--ink-07);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;background:#fff}
+.sub.done{border-color:rgba(124,145,130,.5);box-shadow:0 0 0 3px rgba(124,145,130,.1)}
+.sub-head{padding:20px 22px;display:flex;gap:16px;align-items:flex-start;background:linear-gradient(180deg,rgba(242,241,238,.6),rgba(242,241,238,0));cursor:pointer}
+.sub-head:hover{background:var(--grey-light)}
+.sub-num{width:30px;height:30px;flex-shrink:0;border-radius:9px;background:var(--blue-dark);color:#fff;display:grid;place-items:center;font-size:.82rem;font-weight:600}
+.sub.done .sub-num{background:var(--kaki)}
+.sub-tt{flex:1;min-width:0}
+.sub-tt h3{font-size:1.05rem;margin-bottom:5px}
+.sub-obj{font-size:.87rem;color:var(--ink-55);line-height:1.55}
+.sub-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.sub-count{font-size:.8rem;color:var(--ink-55);white-space:nowrap}
+.sub-count b{color:var(--kaki);font-weight:600}
+.stamp-mini{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.15rem;border:2px dashed var(--ink-12);opacity:.4;filter:grayscale(1);transition:.3s}
+.sub.done .stamp-mini{opacity:1;filter:none;border:2px solid var(--kaki);background:var(--kaki-light);border-style:solid}
+.chev{transition:.25s;color:var(--ink-40);font-size:.8rem}
+.sub.open .chev{transform:rotate(180deg)}
+.sub-body{display:none;padding:4px 22px 20px}
+.sub.open .sub-body{display:block}
+.badge-goal{font-size:.8rem;color:var(--ink-55);background:var(--blue-light);border-radius:9px;padding:9px 13px;margin-bottom:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.badge-goal b{color:var(--ink)}
+
+/* item */
+.item{border-top:1px solid var(--ink-07);padding:15px 0}
+.item:first-of-type{border-top:none}
+.item-top{display:flex;gap:12px;align-items:flex-start}
+.item-lbl{flex:1;font-size:.95rem;line-height:1.55;padding-top:2px}
+.item-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:9px;background:#DDD8CF;border:1px solid var(--ink-12)}
+.item-dot.l1{background:var(--lvl1);border-color:#C9A83F}
+.item-dot.l2{background:var(--lvl2);border-color:#63735F}
+.evals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px;align-items:start}
+@media(max-width:760px){.evals{grid-template-columns:1fr}}
+.ev{background:var(--grey-light);border-radius:11px;padding:10px 12px;border:1px solid transparent;transition:.16s}
+.ev.active-role{background:var(--blue-light);border-color:rgba(73,107,255,.3)}
+.ev-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.ev-who{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--ink-55)}
+.ev.active-role .ev-who{color:var(--blue-flash)}
+.tri{display:flex;gap:4px}
+.tri button{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:.9rem;background:#fff;border:1px solid var(--ink-12);transition:.14s}
+.tri button:hover{border-color:var(--blue-flash);transform:translateY(-1px)}
+.tri button.on{border-color:transparent;box-shadow:0 0 0 2px var(--blue-flash),var(--shadow-sm)}
+.cbtn{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:.78rem;background:#fff;border:1px solid var(--ink-12);color:var(--ink-40)}
+.cbtn:hover{border-color:var(--blue-flash);color:var(--blue-flash)}
+.cbtn.has{color:var(--blue-flash);border-color:rgba(73,107,255,.45);background:var(--blue-light)}
+.ev textarea{display:none;width:100%;margin-top:8px;border:1px solid var(--ink-12);border-radius:8px;padding:8px 10px;font-size:.85rem;line-height:1.5;resize:vertical;min-height:62px;background:#fff}
+.ev textarea:focus{outline:none;border-color:var(--blue-flash)}
+.ev.note-open textarea{display:block}
+.ev .cprev{display:none;margin-top:7px;font-size:.82rem;color:var(--ink-70);font-style:italic;line-height:1.5;border-left:2px solid var(--blue-flash);padding-left:9px}
+.ev.has-note:not(.note-open) .cprev{display:block}
+
+/* galerie tampons */
+.stampgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:14px}
+.stamp{background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);padding:20px 14px;text-align:center;transition:.2s}
+.stamp.locked{opacity:.5}
+.stamp.locked .stamp-ic{filter:grayscale(1);opacity:.4}
+.stamp.unlocked{border-color:var(--kaki);background:linear-gradient(180deg,var(--kaki-light),var(--white));cursor:pointer}
+.stamp.unlocked:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.stamp-ic{font-size:2rem;line-height:1;margin-bottom:9px}
+.stamp-nm{font-size:.85rem;font-weight:600;line-height:1.35;margin-bottom:4px}
+.stamp-src{font-size:.72rem;color:var(--ink-40)}
+.stamp.golden{grid-column:1/-1;border:2px solid var(--gold);background:linear-gradient(135deg,var(--gold-light),#fff 60%,var(--gold-light));padding:26px}
+.stamp.golden .stamp-ic{font-size:2.6rem}
+.stamp.golden .stamp-nm{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold)}
+
+/* ---------- Modale badge ---------- */
+.ov{position:fixed;inset:0;z-index:200;background:rgba(0,1,30,.62);backdrop-filter:blur(7px);display:none;place-items:center;padding:22px;overflow-y:auto}
+.ov.on{display:grid}
+.modal{background:var(--white);border-radius:24px;max-width:452px;width:100%;padding:40px 34px;text-align:center;box-shadow:var(--shadow-lg);position:relative;animation:pop .42s cubic-bezier(.2,1.3,.4,1)}
+@keyframes pop{from{opacity:0;transform:scale(.86) translateY(18px)}to{opacity:1;transform:none}}
+.modal.wide{max-width:760px;text-align:left}
+.modal-x{position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--ink-40);font-size:1.1rem}
+.modal-x:hover{background:var(--grey-light);color:var(--ink)}
+.modal .kick{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-flash);font-weight:600;margin-bottom:18px}
+.medal{width:126px;height:126px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;font-size:3.4rem;background:linear-gradient(135deg,var(--kaki-light),var(--blue-light));border:3px solid var(--kaki);box-shadow:0 0 0 9px rgba(124,145,130,.12);animation:spin .7s cubic-bezier(.2,1.2,.4,1)}
+@keyframes spin{from{transform:rotate(-190deg) scale(.3);opacity:0}to{transform:none;opacity:1}}
+.modal h2{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:600;margin-bottom:10px}
+.modal .who{font-size:.92rem;color:var(--ink-55);margin-bottom:20px}
+.modal .msg{font-size:.95rem;color:var(--ink-70);line-height:1.68;background:var(--grey-light);border-radius:12px;padding:15px 17px;margin-bottom:24px}
+.modal.golden-m .medal{background:linear-gradient(135deg,#F5EDDC,#EBD9A8 55%,#F5EDDC);border-color:var(--gold);box-shadow:0 0 0 9px rgba(167,133,82,.16),0 0 60px rgba(167,133,82,.4)}
+.modal.golden-m h2{color:var(--gold);font-size:2rem}
+.confetti{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none;border-radius:24px}
+.confetti i{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-30px) rotate(0);opacity:1}100%{transform:translateY(460px) rotate(560deg);opacity:0}}
+
+/* ---------- Builder ---------- */
+.form-card{background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow-sm);margin-bottom:18px}
+.form-card > h3{font-size:1.1rem;margin-bottom:5px}
+.form-card .hint{font-size:.87rem;color:var(--ink-55);margin-bottom:20px}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:14px;margin-bottom:14px}
+.f label{display:block;font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-55);font-weight:600;margin-bottom:6px}
+.f input,.f textarea,.f select{width:100%;border:1px solid var(--ink-12);border-radius:10px;padding:11px 13px;font-size:.94rem;background:#fff}
+.f textarea{min-height:96px;resize:vertical;line-height:1.6}
+.f input:focus,.f textarea:focus,.f select:focus{outline:none;border-color:var(--blue-flash);box-shadow:0 0 0 3px rgba(73,107,255,.12)}
+.f .fhint{font-size:.78rem;color:var(--ink-40);margin-top:5px}
+.bblock{border:1px solid var(--ink-12);border-radius:var(--radius);padding:20px;margin-bottom:16px;background:var(--grey-light)}
+.bblock > header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.bblock > header .tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;background:var(--blue-dark);color:#fff;padding:4px 10px;border-radius:999px;font-weight:600}
+.bsub{background:#fff;border:1px solid var(--ink-12);border-radius:var(--radius-sm);padding:18px;margin-bottom:12px;position:relative}
+.bsub .del{position:absolute;top:12px;right:12px;font-size:.78rem;color:#B4452F}
+.bsub .del:hover{text-decoration:underline}
+details.scaleedit{margin-bottom:14px}
+details.scaleedit summary{font-size:.84rem;color:var(--blue-flash);cursor:pointer;font-weight:500}
+.empty{text-align:center;padding:52px 24px;color:var(--ink-55)}
+.empty .big{font-size:2.6rem;margin-bottom:14px}
+
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--blue-dark);color:#fff;padding:14px 24px;border-radius:999px;font-size:.9rem;z-index:300;box-shadow:var(--shadow-md);opacity:0;transition:.3s}
+.toast.on{transform:translateX(-50%);opacity:1}
+
+.foot{padding:44px 0 34px;text-align:center;font-size:.84rem;color:var(--ink-55);border-top:1px solid var(--ink-07);margin-top:40px}
+
+/* ---------- Mobile ---------- */
+@media(max-width:640px){
+  .wrap{padding:0 16px}
+  .hero{padding:48px 0 34px}
+  .section{padding:40px 0}
+  .topbar-in{padding:12px 16px;gap:10px}
+  .brand small{display:none}
+  .topnav a{padding:7px 11px;font-size:.84rem}
+  .hero-stats{gap:10px}
+  .stat{padding:13px 18px;min-width:0;flex:1 1 40%}
+
+  /* onglets de blocs : bande horizontale scrollable plutôt qu’empilement */
+  .blocktabs{flex-wrap:nowrap;overflow-x:auto;gap:6px;margin-bottom:10px;padding-bottom:2px;scrollbar-width:none}
+  .blocktabs::-webkit-scrollbar{display:none}
+  .blocktab{flex:0 0 auto;border-radius:11px;border-bottom:1px solid var(--ink-07);padding:10px 14px;font-size:.88rem}
+  .blocktab.on{box-shadow:0 0 0 2px var(--blue-flash) inset;background:var(--white)}
+
+  /* entête de sous-bloc : compteur en haut, titre et objectif pleine largeur */
+  .sub-head{flex-wrap:wrap;padding:16px}
+  .sub-num{order:1}
+  .sub-right{order:2;margin-left:auto}
+  .sub-tt{order:3;flex:1 1 100%;min-width:100%;margin-top:10px}
+  .sub-body{padding:0 16px 16px}
+  .stamp-mini{width:38px;height:38px;font-size:1rem}
+  .badge-goal{flex-wrap:nowrap;align-items:flex-start;font-size:.78rem}
+
+  .pp-cover{padding:24px 20px;border-radius:18px}
+  .pp-cover-in{gap:22px}
+  .ring-wrap{margin:0 auto}
+  .rolebar{padding:14px 16px;gap:12px}
+  .rolebar .tools{margin-left:0;width:100%}
+  .rolebar .tools .btn{flex:1 1 auto;justify-content:center}
+  .roleseg button{padding:8px 13px;font-size:.84rem}
+  .modal{padding:32px 22px}
+  .medal{width:104px;height:104px;font-size:2.8rem}
+  .modal h2{font-size:1.4rem}
+}
+
+/* ---------- Impression ---------- */
+@media print{
+  body{background:#fff}
+  body::before,.topbar,.rolebar,.hero-cta,.blocktabs,.ov,.toast,.foot,.tri button:not(.on),.cbtn{display:none!important}
+  .sub-body{display:block!important}
+  .sub{break-inside:avoid;page-break-inside:avoid}
+  .blockpanel{box-shadow:none;border:none;padding:0}
+  .pp-cover{background:#fff;color:#000;border:2px solid #00011E}
+  .pp-id h1 em{color:#496BFF}
+  .pp-field label{color:#555}
+  .pp-field input{color:#000;border-color:#999;background:#fff}
+  .ring-txt span,.ring-cap{color:#555}
+  .ev textarea{display:block!important}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="ov" id="ov"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ==========================================================================
+   1. DONNÉES
+   ========================================================================== */
+
+const SCALES = {
+  savoir: [
+    {e:"⚪", n:"Niveau 0 — Non découvert", d:"Le collaborateur n’a pas encore été exposé au sujet."},
+    {e:"🟡", n:"Niveau 1 — Découverte",    d:"Le collaborateur a vu / entendu / observé."},
+    {e:"🟢", n:"Niveau 2 — Acquisition",   d:"Le collaborateur comprend, sait expliquer."}
+  ],
+  faire: [
+    {e:"⚪", n:"Niveau 0 — Non découvert", d:"Le collaborateur n’a pas encore été exposé au sujet."},
+    {e:"🟡", n:"Niveau 1 — Découverte",    d:"Le collaborateur a vu / entendu / observé."},
+    {e:"🟢", n:"Niveau 2 — Acquisition",   d:"Le collaborateur comprend, sait expliquer et mettre en pratique en autonomie."}
+  ],
+  etre: [
+    {e:"⚪", n:"Niveau 0 — Non observé",     d:"Le collaborateur n’a pas encore démontré ce savoir-être."},
+    {e:"🟡", n:"Niveau 1 — En développement", d:"Le savoir-être est présent mais irrégulier ou nécessite de l’accompagnement."},
+    {e:"🟢", n:"Niveau 2 — Acquisition",     d:"Le savoir-être est observé régulièrement et répond aux attentes."}
+  ]
+};
+
+const ROLES = [
+  {id:"auto",  short:"Collaborateur", long:"Auto-évaluation du collaborateur"},
+  {id:"buddy", short:"Buddy",         long:"Évaluation du buddy"},
+  {id:"coo",   short:"COO",           long:"Validation du COO"}
+];
+
+/* Passeport Réceptionniste — contenu fourni par Oversight */
+const RECEPTIONNISTE = {
+  id:"receptionniste",
+  name:"Réceptionniste",
+  emoji:"🛎️",
+  tagline:"Premier visage de la Maison, chef d’orchestre du parcours client.",
+  blocks:[
+    {
+      id:"savoir", name:"Savoir", emoji:"📖", scale:SCALES.savoir,
+      subs:[
+        {
+          id:"s1", name:"Connaissance de l’établissement",
+          obj:"Comprendre l’identité, l’organisation et l’offre de l’établissement afin d’être capable de guider un client et de représenter l’expérience de l’hôtel.",
+          badge:{name:"Explorateur de l’hôtel", emoji:"🧭"},
+          items:[
+            "Connaît l’histoire et le positionnement de l’établissement.",
+            "Connaît les valeurs et la promesse client.",
+            "Identifie les différents espaces de l’établissement.",
+            "Connaît les catégories de chambres et leurs spécificités.",
+            "Connaît les principaux services proposés aux clients, les horaires et leurs modalités.",
+            "Connaît les principales offres commerciales en cours."
+          ]
+        },
+        {
+          id:"s2", name:"Connaissance du métier de réceptionniste",
+          obj:"Comprendre le rôle de réceptionniste, ses responsabilités et les standards attendus afin de contribuer efficacement au parcours client.",
+          badge:{name:"Guide des voyageurs", emoji:"🗺️"},
+          items:[
+            "Comprend les missions principales du poste.",
+            "Connaît les standards de service attendus.",
+            "Comprend le parcours client de la réservation au départ.",
+            "Connaît les principales procédures de réception.",
+            "Connaît les procédures de sécurité et d’urgence.",
+            "Identifie les situations nécessitant une escalade managériale."
+          ]
+        },
+        {
+          id:"s3", name:"Connaissance des autres métiers",
+          obj:"Comprendre le fonctionnement des différents services et leurs interactions afin de faciliter la coordination et garantir une expérience client fluide.",
+          badge:{name:"Couteau-suisse de l’hôtel", emoji:"🇨🇭"},
+          items:[
+            "Comprend le rôle du housekeeping.",
+            "Comprend le rôle de la maintenance.",
+            "Comprend le rôle des équipes PDJ.",
+            "Identifie les principaux interlocuteurs de chaque service.",
+            "Comprend les interactions entre la réception et les autres équipes.",
+            "Comprend l’impact de son travail sur les autres métiers.",
+            "Connaît les procédures de communication interservices.",
+            "Identifie les priorités opérationnelles des différents services."
+          ]
+        }
+      ]
+    },
+    {
+      id:"faire", name:"Savoir-faire", emoji:"🛠️", scale:SCALES.faire,
+      subs:[
+        {
+          id:"f1", name:"Accueil",
+          obj:"Accueillir chaque client selon les standards de l’établissement et créer une première impression positive.",
+          badge:{name:"Hôte de la Maison", emoji:"🏨"},
+          items:[
+            "Accueille un client selon les standards de l’établissement.",
+            "Adapte son accueil au profil du client.",
+            "Identifie rapidement le besoin du client.",
+            "Oriente efficacement un client dans l’établissement.",
+            "Présente les services pertinents de l’hôtel.",
+            "Procède à un échange de manière chaleureuse et professionnelle."
+          ]
+        },
+        {
+          id:"f2", name:"Check-in & Check-out",
+          obj:"Réaliser les arrivées et départs de manière fluide, conforme et autonome.",
+          badge:{name:"Agent d’embarquement", emoji:"✈️"},
+          items:[
+            "Réalise un check-in complet.",
+            "Vérifie les informations de réservation.",
+            "Attribue une chambre adaptée.",
+            "Présente les informations essentielles au séjour.",
+            "Encaisse les paiements liés à l’arrivée.",
+            "Gère une arrivée anticipée ou tardive.",
+            "Réalise un check-out complet.",
+            "Vérifie et explique une facture.",
+            "Encaisse un règlement de départ."
+          ]
+        },
+        {
+          id:"f3", name:"Réservations & ventes",
+          obj:"Accompagner le client dans sa réservation et contribuer au développement du chiffre d’affaires.",
+          badge:{name:"Planificateur de séjours", emoji:"🧳"},
+          items:[
+            "Crée une réservation dans Mews.",
+            "Modifie une réservation existante.",
+            "Annule une réservation conformément aux procédures.",
+            "Vérifie les conditions tarifaires applicables.",
+            "Oriente vers l’offre la plus adaptée au besoin client.",
+            "Présente les services additionnels disponibles.",
+            "Réalise une proposition d’upsell.",
+            "Réalise une proposition de cross-sell.",
+            "Traite une demande de réservation par téléphone.",
+            "Traite une demande de réservation par email ou messagerie."
+          ]
+        },
+        {
+          id:"f4", name:"Situations délicates",
+          obj:"Gérer les imprévus et les insatisfactions tout en préservant l’expérience client.",
+          badge:{name:"Pilote des imprévus", emoji:"🆘"},
+          items:[
+            "Prend en charge une réclamation simple.",
+            "Mène un échange avec un client mécontent.",
+            "Propose une solution adaptée dans son périmètre.",
+            "Escalade un problème au bon interlocuteur.",
+            "Gère une erreur de réservation.",
+            "Gère une situation de surbooking selon les procédures.",
+            "Gère un conflit ou une tension avec calme.",
+            "Assure le suivi d’un incident jusqu’à sa résolution."
+          ]
+        }
+      ]
+    },
+    {
+      id:"etre", name:"Savoir-être", emoji:"💫", scale:SCALES.etre,
+      subs:[
+        {
+          id:"e1", name:"Sens du service",
+          obj:"Placer le client au centre de ses actions et contribuer à une expérience mémorable.",
+          badge:{name:"Artisan de l’hospitalité", emoji:"🤝"},
+          items:[
+            "Fait preuve d’attention envers chaque client.",
+            "Anticipe les besoins simples des clients.",
+            "Personnalise ses interactions lorsque cela est pertinent.",
+            "Représente positivement l’établissement dans ses échanges.",
+            "Fait preuve de disponibilité et de réactivité."
+          ]
+        },
+        {
+          id:"e2", name:"Communication",
+          obj:"Communiquer avec clarté, professionnalisme et respect.",
+          badge:{name:"Messager de l’hôtel", emoji:"📢"},
+          items:[
+            "Adapte son discours à son interlocuteur.",
+            "S’exprime de manière claire et concise.",
+            "Adopte une communication respectueuse en toutes circonstances.",
+            "Accueille les retours et feedbacks de manière constructive.",
+            "Utilise un ton professionnel à l’écrit comme à l’oral."
+          ]
+        },
+        {
+          id:"e3", name:"Esprit d’équipe",
+          obj:"Contribuer au bon fonctionnement collectif et à la coopération entre services.",
+          badge:{name:"Compagnon de route", emoji:"🚖"},
+          items:[
+            "Partage les informations utiles avec ses collègues.",
+            "Est actif sur Slack.",
+            "Est actif sur Elium.",
+            "Sollicite de l’aide lorsque la situation le nécessite.",
+            "Contribue à une ambiance de travail positive."
+          ]
+        },
+        {
+          id:"e4", name:"Adaptabilité & gestion de la pression",
+          obj:"Maintenir son efficacité et son professionnalisme face aux imprévus.",
+          badge:{name:"Capitaine des tempêtes", emoji:"🌊"},
+          items:[
+            "Garde son calme en période d’affluence.",
+            "Priorise les tâches selon l’urgence.",
+            "Fait preuve de sang-froid face à un client mécontent.",
+            "Réagit de manière constructive face aux imprévus.",
+            "Maintient la qualité de service sous pression."
+          ]
+        },
+        {
+          id:"e5", name:"Professionnalisme & autonomie",
+          obj:"Faire preuve de rigueur, de responsabilité et d’autonomie dans son travail.",
+          badge:{name:"Guide de confiance", emoji:"🥾"},
+          items:[
+            "Gère ses priorités de manière autonome.",
+            "Fait preuve de ponctualité et de fiabilité.",
+            "Prend des initiatives adaptées à son périmètre.",
+            "Recherche activement à développer ses compétences.",
+            "Fait preuve de rigueur dans l’exécution de ses missions."
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+/* Services à construire — structure prête, items à définir par l’hôtel */
+function skeleton(id, name, emoji, tagline){
+  return {
+    id, name, emoji, tagline, skeleton:true,
+    blocks:[
+      {id:"savoir", name:"Savoir",       emoji:"📖", scale:SCALES.savoir, subs:[]},
+      {id:"faire",  name:"Savoir-faire", emoji:"🛠️", scale:SCALES.faire,  subs:[]},
+      {id:"etre",   name:"Savoir-être",  emoji:"💫", scale:SCALES.etre,   subs:[]}
+    ]
+  };
+}
+
+const BUILTIN = [
+  RECEPTIONNISTE,
+  skeleton("housekeeping",  "Housekeeping",   "🛏️", "Gardien du confort et de la propreté impeccable."),
+  skeleton("maintenance",   "Maintenance",    "🔧", "Garant du bon fonctionnement de la Maison."),
+  skeleton("petitdejeuner", "Petit Déjeuner", "🥐", "Premier sourire de la journée, première dégustation."),
+  skeleton("fb",            "F&B",            "🍽️", "Art de recevoir à table, du service au conseil.")
+];
+
+/* ==========================================================================
+   2. STOCKAGE
+   ========================================================================== */
+
+const LS_STATE  = "pds.state.v1";
+const LS_CUSTOM = "pds.custom.v1";
+const LS_ROLE   = "pds.role.v1";
+
+function readJSON(key, fallback){
+  try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch(e){ return fallback; }
+}
+function writeJSON(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }
+  catch(e){ toast("Sauvegarde impossible (stockage du navigateur indisponible)."); }
+}
+
+let STATE  = readJSON(LS_STATE, {});
+let CUSTOM = readJSON(LS_CUSTOM, []);
+let ROLE   = localStorage.getItem(LS_ROLE) || "auto";
+
+function saveState(){ writeJSON(LS_STATE, STATE); }
+function saveCustom(){ writeJSON(LS_CUSTOM, CUSTOM); }
+
+/* Un passeport sur mesure portant l’id d’un service prédéfini le remplace
+   (cas : on construit « Housekeeping » depuis sa carte « À construire »).
+   L’ordre des services prédéfinis est conservé, les nouveaux sont ajoutés à la suite. */
+function allPassports(){
+  return BUILTIN.map(b => CUSTOM.find(c => c.id === b.id) || b)
+    .concat(CUSTOM.filter(c => !BUILTIN.some(b => b.id === c.id)));
+}
+function getPassport(id){ return allPassports().find(p => p.id === id) || null; }
+function isSkeletonId(id){ const b = BUILTIN.find(x => x.id === id); return !!(b && b.skeleton); }
+
+function ppState(id){
+  if(!STATE[id]) STATE[id] = {meta:{nom:"",arrivee:"",buddy:""}, items:{}, unlocked:[]};
+  const s = STATE[id];
+  if(!s.meta)     s.meta = {nom:"",arrivee:"",buddy:""};
+  if(!s.items)    s.items = {};
+  if(!s.unlocked) s.unlocked = [];
+  return s;
+}
+function itemKey(blockId, subId, i){ return blockId+"."+subId+"."+i; }
+function getEval(st, key, role){
+  const it = st.items[key];
+  if(!it || !it[role]) return {lvl:null, note:""};
+  return {lvl: (typeof it[role].lvl === "number" ? it[role].lvl : null), note: it[role].note || ""};
+}
+function setEval(st, key, role, patch){
+  if(!st.items[key]) st.items[key] = {};
+  if(!st.items[key][role]) st.items[key][role] = {lvl:null, note:""};
+  Object.assign(st.items[key][role], patch);
+  saveState();
+}
+
+/* Niveau retenu : la validation la plus engageante disponible (COO > Buddy > Auto). */
+function retained(st, key){
+  const c = getEval(st, key, "coo").lvl;
+  if(c !== null) return c;
+  const b = getEval(st, key, "buddy").lvl;
+  if(b !== null) return b;
+  return getEval(st, key, "auto").lvl;
+}
+
+/* ==========================================================================
+   3. CALCULS DE PROGRESSION & BADGES
+   ========================================================================== */
+
+function subStats(pp, block, sub){
+  const st = ppState(pp.id);
+  let total = sub.items.length, at2 = 0, rated = 0;
+  sub.items.forEach((_, i) => {
+    const r = retained(st, itemKey(block.id, sub.id, i));
+    if(r !== null) rated++;
+    if(r === 2) at2++;
+  });
+  return {total, at2, rated, done: total > 0 && at2 === total};
+}
+function ppStats(pp){
+  const st = ppState(pp.id);
+  let total = 0, at2 = 0, rated = 0, badges = 0, badgesTotal = 0;
+  pp.blocks.forEach(b => b.subs.forEach(s => {
+    const x = subStats(pp, b, s);
+    total += x.total; at2 += x.at2; rated += x.rated;
+    badgesTotal++; if(x.done) badges++;
+  }));
+  const pct = total ? Math.round(at2 / total * 100) : 0;
+  return {total, at2, rated, badges, badgesTotal, pct,
+          ambassador: badgesTotal > 0 && badges === badgesTotal, unlocked: st.unlocked};
+}
+function roleProgress(pp, role){
+  const st = ppState(pp.id);
+  let total = 0, filled = 0;
+  pp.blocks.forEach(b => b.subs.forEach(s => s.items.forEach((_, i) => {
+    total++;
+    if(getEval(st, itemKey(b.id, s.id, i), role).lvl !== null) filled++;
+  })));
+  return {total, filled};
+}
+
+/* Détecte les nouveaux badges et déclenche les pop-up.
+   silent = true : on enregistre l’acquis sans pop-up (au chargement d’un passeport
+   déjà rempli ou importé, afin de ne pas déclencher une rafale au premier clic). */
+function checkBadges(pp, silent){
+  const st = ppState(pp.id);
+  const queue = [];
+  pp.blocks.forEach(b => b.subs.forEach(s => {
+    const id = b.id + "." + s.id;
+    const done = subStats(pp, b, s).done;
+    const had = st.unlocked.includes(id);
+    if(done && !had){ st.unlocked.push(id); queue.push({type:"badge", block:b, sub:s}); }
+    else if(!done && had){ st.unlocked = st.unlocked.filter(x => x !== id); }
+  }));
+  const stats = ppStats(pp);
+  const hadAmb = st.unlocked.includes("__ambassadeur__");
+  if(stats.ambassador && !hadAmb){ st.unlocked.push("__ambassadeur__"); queue.push({type:"golden"}); }
+  else if(!stats.ambassador && hadAmb){ st.unlocked = st.unlocked.filter(x => x !== "__ambassadeur__"); }
+  saveState();
+  if(queue.length && !silent) showBadgeQueue(pp, queue);
+  return stats;
+}
+
+/* ==========================================================================
+   4. UTILITAIRES UI
+   ========================================================================== */
+
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $  = (sel, root) => (root||document).querySelector(sel);
+const $$ = (sel, root) => Array.prototype.slice.call((root||document).querySelectorAll(sel));
+
+let toastTimer = null;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("on"), 2600);
+}
+function closeModal(){ const ov = $("#ov"); ov.classList.remove("on"); ov.innerHTML = ""; }
+$("#ov").addEventListener("click", e => { if(e.target.id === "ov") closeModal(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
+
+function confettiHTML(golden){
+  const cols = golden ? ["#A78552","#F5EDDC","#EBD9A8","#496BFF"] : ["#496BFF","#7C9182","#E9C46A","#8FA6FF","#D9C9D6"];
+  let h = '<div class="confetti">';
+  for(let i = 0; i < 44; i++){
+    const l = Math.random()*100, d = (Math.random()*1.5+.9).toFixed(2), dl = (Math.random()*.5).toFixed(2);
+    h += '<i style="left:'+l.toFixed(1)+'%;background:'+cols[i%cols.length]+';animation-duration:'+d+'s;animation-delay:'+dl+'s"></i>';
+  }
+  return h + "</div>";
+}
+
+/* Pop-up de badge, en file d’attente si plusieurs débloqués d’un coup. */
+function showBadgeQueue(pp, queue){
+  if(!queue.length){ closeModal(); return; }
+  const cur = queue.shift();
+  const ov = $("#ov");
+  const more = queue.length;
+  if(cur.type === "golden"){
+    ov.innerHTML =
+      '<div class="modal golden-m">'+confettiHTML(true)+
+      '<button class="modal-x" data-x>✕</button>'+
+      '<div class="kick">Distinction suprême</div>'+
+      '<div class="medal">🌟</div>'+
+      '<h2>Ambassadeur de l’hôtel</h2>'+
+      '<div class="who">Tous les badges du Passeport '+esc(pp.name)+' ont été validés.</div>'+
+      '<div class="msg">Le parcours d’intégration est complet : les '+ppStats(pp).badgesTotal+
+      ' badges sont acquis. Le collaborateur maîtrise l’ensemble des savoirs, savoir-faire et savoir-être attendus, et peut à son tour accompagner de nouveaux arrivants.</div>'+
+      '<button class="btn btn-primary" data-next>'+(more ? "Suivant ("+more+")" : "Terminer le voyage")+'</button>'+
+      '</div>';
+  } else {
+    ov.innerHTML =
+      '<div class="modal">'+confettiHTML(false)+
+      '<button class="modal-x" data-x>✕</button>'+
+      '<div class="kick">Nouveau tampon sur le passeport</div>'+
+      '<div class="medal">'+cur.sub.badge.emoji+'</div>'+
+      '<h2>'+esc(cur.sub.badge.name)+'</h2>'+
+      '<div class="who">'+esc(cur.block.name)+' · '+esc(cur.sub.name)+'</div>'+
+      '<div class="msg">'+esc(cur.sub.obj)+'<br><br><b>'+cur.sub.items.length+
+      ' items sur '+cur.sub.items.length+'</b> validés au niveau 🟢 Acquisition.</div>'+
+      '<button class="btn btn-primary" data-next>'+(more ? "Badge suivant ("+more+")" : "Continuer")+'</button>'+
+      '</div>';
+  }
+  ov.classList.add("on");
+  $("[data-x]", ov).onclick = closeModal;
+  $("[data-next]", ov).onclick = () => showBadgeQueue(pp, queue);
+}
+
+/* Réouverture manuelle d’un badge déjà obtenu (galerie de tampons). */
+function reopenBadge(pp, blockId, subId){
+  const b = pp.blocks.find(x => x.id === blockId);
+  const s = b && b.subs.find(x => x.id === subId);
+  if(s) showBadgeQueue(pp, [{type:"badge", block:b, sub:s}]);
+}
+function reopenGolden(pp){ showBadgeQueue(pp, [{type:"golden"}]); }
+
+/* ==========================================================================
+   5. ROUTEUR
+   ========================================================================== */
+
+function route(){
+  const h = location.hash.replace(/^#\/?/, "");
+  const parts = h.split("/").filter(Boolean);
+  window.scrollTo(0, 0);
+  closeModal();
+  if(parts[0] === "p" && parts[1])        renderPassport(parts[1]);
+  else if(parts[0] === "builder")         renderBuilder(parts[1] || null);
+  else if(parts[0] === "services"){       // ancre : on rend l’accueil puis on défile
+    renderLanding();
+    const el = $("#services");
+    if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  else                                    renderLanding();
+}
+window.addEventListener("hashchange", route);
+
+function header(active){
+  return '<div class="topbar"><div class="topbar-in">'+
+    '<a class="brand" href="#/"><span class="brand-mark">🛂</span><span>Passeport des Savoirs<small>par Oversight</small></span></a>'+
+    '<nav class="topnav">'+
+      '<a href="#/" class="'+(active==="home"?"on":"")+'">Accueil</a>'+
+      '<a href="#services">Les passeports</a>'+
+      '<a href="#/builder" class="'+(active==="builder"?"on":"")+'">Créer un passeport</a>'+
+    '</nav></div></div>';
+}
+function footer(){
+  return '<div class="foot wrap">Passeport des Savoirs — Oversight · Charte graphique Oversight ·'+
+    ' Les données saisies restent stockées dans ce navigateur. Pensez à exporter le passeport pour le partager ou l’archiver.</div>';
+}
+
+/* ==========================================================================
+   6. LANDING
+   ========================================================================== */
+
+function renderLanding(){
+  const cards = allPassports().map(pp => {
+    const st = ppStats(pp);
+    const isSkel = !!pp.skeleton && st.total === 0;
+    const isCustom = CUSTOM.some(c => c.id === pp.id);
+    const stamps = [];
+    pp.blocks.forEach(b => b.subs.forEach(s => {
+      stamps.push('<span class="'+(subStats(pp,b,s).done?"on":"")+'" title="'+esc(s.badge.name)+'">'+s.badge.emoji+'</span>');
+    }));
+    const tag = isCustom ? '<span class="svc-badge custom">Sur mesure</span>'
+              : isSkel   ? '<span class="svc-badge todo">À construire</span>'
+                         : '<span class="svc-badge ok">Disponible</span>';
+    return '<article class="svc">'+
+      '<div class="svc-top">'+tag+
+        '<span class="svc-emoji">'+pp.emoji+'</span>'+
+        '<h3>'+esc(pp.name)+'</h3>'+
+        '<div class="svc-sub">'+esc(pp.tagline||"")+'</div>'+
+      '</div>'+
+      '<div class="svc-body">'+
+        (isSkel
+          ? '<p style="font-size:.9rem;color:var(--ink-55)">Structure prête (Savoir · Savoir-faire · Savoir-être) et échelles à 3 niveaux configurées. Les items restent à définir avec le service.</p>'
+          : '<div class="svc-meta"><span><b>'+st.total+'</b> items</span><span><b>'+st.badgesTotal+'</b> badges</span><span><b>'+st.pct+'%</b> acquis</span></div>'+
+            '<div class="svc-prog"><i style="width:'+st.pct+'%"></i></div>'+
+            '<div class="svc-stamps">'+stamps.join("")+(st.ambassador?'<span class="on" title="Ambassadeur de l’hôtel">🌟</span>':"")+'</div>'
+        )+
+        '<div class="svc-actions">'+
+          (isSkel
+            ? '<a class="btn btn-primary btn-sm" href="#/builder/'+pp.id+'">Construire ce passeport →</a>'
+            : '<a class="btn btn-primary btn-sm" href="#/p/'+pp.id+'">Ouvrir le passeport →</a>'+
+              (isCustom ? '<button class="btn btn-ghost btn-sm" data-del="'+pp.id+'">Supprimer</button>' : "")
+          )+
+        '</div>'+
+      '</div></article>';
+  }).join("");
+
+  const scaleCards = SCALES.savoir.map((s, i) =>
+    '<div class="scale-card l'+i+'"><div class="lv">'+s.e+' '+esc(s.n)+'</div><p>'+esc(s.d)+'</p></div>'
+  ).join("");
+
+  const totalItems  = allPassports().reduce((a,p) => a + ppStats(p).total, 0);
+  const totalBadges = allPassports().reduce((a,p) => a + ppStats(p).badgesTotal, 0);
+
+  $("#app").innerHTML = header("home")+
+  '<section class="hero"><div class="wrap">'+
+    '<div class="eyebrow">🛂 Parcours d’intégration</div>'+
+    '<h1>Le Passeport <em>des Savoirs</em></h1>'+
+    '<p class="hero-lead">Le fil conducteur de l’intégration de chaque nouveau collaborateur. Faisant référence au voyage, il retrace son parcours, les compétences acquises, les étapes franchies et les expériences validées tout au long de son évolution au sein de l’établissement.</p>'+
+    '<div class="hero-cta">'+
+      '<a class="btn btn-primary" href="#services">Découvrir les passeports</a>'+
+      '<a class="btn btn-ghost" href="#/builder">Créer son propre passeport</a>'+
+    '</div>'+
+    '<div class="hero-stats">'+
+      '<div class="stat"><b>'+allPassports().length+'</b><span>Services</span></div>'+
+      '<div class="stat"><b>3</b><span>Blocs</span></div>'+
+      '<div class="stat"><b>'+totalItems+'</b><span>Items</span></div>'+
+      '<div class="stat"><b>'+totalBadges+'</b><span>Badges</span></div>'+
+    '</div>'+
+  '</div></section>'+
+
+  '<section class="section"><div class="wrap">'+
+    '<div class="section-head c"><div class="section-kicker">Comment ça marche</div>'+
+    '<h2>Trois blocs, un <span class="serif italic">voyage</span></h2>'+
+    '<p>Chaque passeport est configuré par blocs et sous-blocs. Chaque sous-bloc franchi donne droit à un tampon.</p></div>'+
+    '<div class="grid-3">'+
+      '<div class="pcard"><div class="ic">📖</div><h3>Savoir</h3><p>Ce que le collaborateur comprend et sait expliquer : l’établissement, son métier, et celui des autres services.</p></div>'+
+      '<div class="pcard"><div class="ic">🛠️</div><h3>Savoir-faire</h3><p>Ce qu’il sait exécuter en autonomie : accueil, check-in/check-out, réservations, situations délicates.</p></div>'+
+      '<div class="pcard"><div class="ic">💫</div><h3>Savoir-être</h3><p>Ce qui s’observe au quotidien : sens du service, communication, esprit d’équipe, adaptabilité, professionnalisme.</p></div>'+
+    '</div>'+
+    '<div class="section-head c" style="margin-top:52px"><div class="section-kicker">L’échelle</div>'+
+    '<h2>Trois niveaux par item</h2>'+
+    '<p>Les intitulés du niveau 2 s’adaptent au bloc : expliquer pour le Savoir, mettre en pratique en autonomie pour le Savoir-faire, être observé régulièrement pour le Savoir-être.</p></div>'+
+    '<div class="scale-row">'+scaleCards+'</div>'+
+    '<div class="grid-3" style="margin-top:24px">'+
+      '<div class="pcard"><div class="ic" style="background:var(--kaki-light)">🎖️</div><h3>Un badge par sous-bloc</h3><p>Le badge s’obtient lorsque <b>100% des items</b> du sous-bloc atteignent le niveau 2 🟢. Il apparaît alors sous forme de pop-up.</p></div>'+
+      '<div class="pcard"><div class="ic" style="background:var(--gold-light)">🌟</div><h3>Golden badge</h3><p>Tous les badges acquis débloquent la distinction <b>Ambassadeur de l’hôtel</b>.</p></div>'+
+      '<div class="pcard"><div class="ic">👥</div><h3>Trois regards</h3><p>Chaque item est évalué par le <b>collaborateur</b> (auto-évaluation), le <b>buddy</b> et le <b>COO</b>, avec un commentaire possible pour chacun.</p></div>'+
+    '</div>'+
+  '</div></section>'+
+
+  '<section class="section" id="services"><div class="wrap">'+
+    '<div class="section-head c"><div class="section-kicker">Par service</div>'+
+    '<h2>Les <span class="serif italic">passeports</span></h2>'+
+    '<p>Un Passeport des Savoirs par service. Ouvrez un passeport existant, ou composez le vôtre de toutes pièces.</p></div>'+
+    '<div class="svc-grid">'+cards+
+      '<article class="svc" style="border-style:dashed;background:rgba(255,255,255,.4);box-shadow:none">'+
+        '<div class="svc-body" style="justify-content:center;text-align:center;padding:34px 24px">'+
+          '<div style="font-size:2rem">➕</div>'+
+          '<h3 style="font-size:1.1rem">Créer son propre passeport</h3>'+
+          '<p style="font-size:.9rem;color:var(--ink-55)">Définissez vos blocs, sous-blocs, items et badges pour n’importe quel service ou établissement.</p>'+
+          '<div class="svc-actions" style="justify-content:center"><a class="btn btn-dark btn-sm" href="#/builder">Commencer →</a></div>'+
+        '</div></article>'+
+    '</div>'+
+  '</div></section>'+
+  footer();
+
+  $$("[data-del]").forEach(b => b.onclick = () => {
+    const id = b.getAttribute("data-del");
+    const p = getPassport(id);
+    if(!confirm("Supprimer définitivement le passeport « "+(p?p.name:id)+" » et les évaluations associées ?")) return;
+    CUSTOM = CUSTOM.filter(c => c.id !== id); saveCustom();
+    delete STATE[id]; saveState();
+    toast("Passeport supprimé."); renderLanding();
+  });
+}
+
+/* ==========================================================================
+   7. PASSEPORT
+   ========================================================================== */
+
+let openSubs = {};   // mémorise les sous-blocs dépliés
+let curBlock = null;
+
+function renderPassport(id){
+  const pp = getPassport(id);
+  if(!pp){ location.hash = "#/"; return; }
+  if(!pp.blocks.some(b => b.subs.length)){
+    $("#app").innerHTML = header()+'<div class="wrap section"><div class="empty">'+
+      '<div class="big">'+pp.emoji+'</div><h2 class="serif" style="font-size:1.5rem;margin-bottom:10px">Passeport '+esc(pp.name)+' à construire</h2>'+
+      '<p>La structure est prête, mais aucun item n’a encore été défini pour ce service.</p>'+
+      '<div style="margin-top:22px"><a class="btn btn-primary" href="#/builder/'+pp.id+'">Définir les items →</a></div>'+
+      '</div></div>'+footer();
+    return;
+  }
+  if(!curBlock || !pp.blocks.some(b => b.id === curBlock)) curBlock = pp.blocks[0].id;
+
+  const st = ppState(pp.id);
+  const stats = checkBadges(pp, true);   // aligne les badges acquis, sans pop-up
+  const R = 58, C = 2*Math.PI*R, off = C*(1 - stats.pct/100);
+
+  const roleBtns = ROLES.map(r =>
+    '<button data-role="'+r.id+'" class="'+(ROLE===r.id?"on":"")+'" title="'+esc(r.long)+'">'+r.short+'</button>'
+  ).join("");
+  const rp = roleProgress(pp, ROLE);
+
+  const tabs = pp.blocks.map(b => {
+    let d = 0;
+    b.subs.forEach(s => { if(subStats(pp,b,s).done) d++; });
+    return '<button class="blocktab '+(curBlock===b.id?"on":"")+'" data-block="'+b.id+'">'+
+      b.emoji+' '+esc(b.name)+' <span class="cnt">'+d+'/'+b.subs.length+' 🎖️</span></button>';
+  }).join("");
+
+  $("#app").innerHTML = header()+
+  '<div class="wrap" style="padding-top:30px;padding-bottom:50px">'+
+    '<a href="#/" style="font-size:.88rem;color:var(--ink-55)">← Tous les passeports</a>'+
+    '<div class="pp-cover" style="margin-top:14px"><div class="pp-cover-in">'+
+      '<div class="pp-id">'+
+        '<div class="kicker">'+pp.emoji+' Passeport des Savoirs</div>'+
+        '<h1>'+esc(pp.name.split(" ")[0])+' <em>'+esc(pp.name.split(" ").slice(1).join(" ") || "")+'</em></h1>'+
+        '<div class="pp-fields">'+
+          '<div class="pp-field"><label>Collaborateur</label><input data-meta="nom" placeholder="Prénom Nom" value="'+esc(st.meta.nom)+'"></div>'+
+          '<div class="pp-field"><label>Date d’arrivée</label><input data-meta="arrivee" type="date" value="'+esc(st.meta.arrivee)+'"></div>'+
+          '<div class="pp-field"><label>Buddy</label><input data-meta="buddy" placeholder="Prénom Nom" value="'+esc(st.meta.buddy)+'"></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ring-wrap"><div class="ring">'+
+        '<svg width="132" height="132" viewBox="0 0 132 132">'+
+          '<circle cx="66" cy="66" r="'+R+'" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="9"/>'+
+          '<circle cx="66" cy="66" r="'+R+'" fill="none" stroke="'+(stats.ambassador?"#EBD9A8":"#8FA6FF")+'" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/>'+
+        '</svg>'+
+        '<div class="ring-txt"><div><b>'+stats.pct+'%</b><span>Acquis</span></div></div>'+
+      '</div><div class="ring-cap">'+stats.badges+' / '+stats.badgesTotal+' badges'+(stats.ambassador?' · 🌟':'')+'</div></div>'+
+    '</div></div>'+
+
+    '<div class="rolebar">'+
+      '<span class="lbl">Je remplis en tant que</span>'+
+      '<div class="roleseg">'+roleBtns+'</div>'+
+      '<span style="font-size:.84rem;color:var(--ink-55)">'+rp.filled+' / '+rp.total+' items renseignés</span>'+
+      '<div class="tools">'+
+        '<button class="btn btn-ghost btn-sm" data-export>⬇︎ Exporter</button>'+
+        '<button class="btn btn-ghost btn-sm" data-import>⬆︎ Importer</button>'+
+        '<button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Imprimer / PDF</button>'+
+        '<button class="btn btn-ghost btn-sm" data-reset>↺ Réinitialiser</button>'+
+        '<input type="file" accept="application/json" id="fileIn" style="display:none">'+
+      '</div>'+
+    '</div>'+
+
+    '<div class="blocktabs">'+tabs+'</div>'+
+    '<div class="blockpanel" id="panel"></div>'+
+
+    '<div class="section" style="padding-bottom:0">'+
+      '<div class="section-head"><div class="section-kicker">Collection</div><h2>Mes <span class="serif italic">tampons</span></h2>'+
+      '<p>Chaque sous-bloc validé à 100% au niveau 🟢 donne un badge. Cliquez sur un tampon obtenu pour revoir sa pop-up.</p></div>'+
+      '<div class="stampgrid" id="stamps"></div>'+
+    '</div>'+
+  '</div>'+footer();
+
+  renderPanel(pp);
+  renderStamps(pp);
+
+  $$("[data-block]").forEach(b => b.onclick = () => { curBlock = b.getAttribute("data-block"); renderPassport(pp.id); });
+  $$("[data-role]").forEach(b => b.onclick = () => {
+    ROLE = b.getAttribute("data-role"); localStorage.setItem(LS_ROLE, ROLE); renderPassport(pp.id);
+  });
+  $$("[data-meta]").forEach(inp => inp.oninput = () => {
+    st.meta[inp.getAttribute("data-meta")] = inp.value; saveState();
+  });
+  $("[data-export]").onclick  = () => exportPassport(pp);
+  $("[data-import]").onclick  = () => $("#fileIn").click();
+  $("#fileIn").onchange       = e => importPassport(pp, e.target.files[0]);
+  $("[data-reset]").onclick   = () => {
+    if(!confirm("Effacer toutes les évaluations, commentaires et badges de ce passeport ?")) return;
+    STATE[pp.id] = {meta:{nom:"",arrivee:"",buddy:""}, items:{}, unlocked:[]}; saveState();
+    toast("Passeport réinitialisé."); renderPassport(pp.id);
+  };
+}
+
+function renderPanel(pp){
+  const block = pp.blocks.find(b => b.id === curBlock);
+  const st = ppState(pp.id);
+
+  const legend = '<div class="scale-legend"><h4>Échelle — '+esc(block.name)+'</h4><ul>'+
+    block.scale.map(s => '<li><span>'+s.e+'</span><span><b>'+esc(s.n)+'</b> — '+esc(s.d)+'</span></li>').join("")+
+    '</ul></div>';
+
+  const subs = block.subs.map((sub, si) => {
+    const x = subStats(pp, block, sub);
+    const okey = block.id+"."+sub.id;
+    const isOpen = openSubs[okey] !== undefined ? openSubs[okey] : (si === 0);
+
+    const items = sub.items.map((label, i) => {
+      const key = itemKey(block.id, sub.id, i);
+      const r = retained(st, key);
+      const evs = ROLES.map(role => {
+        const e = getEval(st, key, role.id);
+        const tri = block.scale.map((sc, lv) =>
+          '<button class="'+(e.lvl===lv?"on":"")+'" data-set="'+key+'|'+role.id+'|'+lv+'" title="'+esc(sc.n+" — "+sc.d)+'" aria-label="'+esc(role.short+" : "+sc.n)+'">'+sc.e+'</button>'
+        ).join("");
+        return '<div class="ev '+(ROLE===role.id?"active-role":"")+' '+(e.note?"has-note":"")+'" data-ev="'+key+'|'+role.id+'">'+
+          '<div class="ev-top"><span class="ev-who">'+role.short+'</span>'+
+            '<div style="display:flex;gap:6px;align-items:center">'+
+              '<div class="tri">'+tri+'</div>'+
+              '<button class="cbtn '+(e.note?"has":"")+'" data-note="'+key+'|'+role.id+'" title="Commentaire de '+esc(role.short)+'">💬</button>'+
+            '</div>'+
+          '</div>'+
+          '<div class="cprev">'+esc(e.note)+'</div>'+
+          '<textarea data-txt="'+key+'|'+role.id+'" placeholder="Commentaire de '+esc(role.short)+'…">'+esc(e.note)+'</textarea>'+
+        '</div>';
+      }).join("");
+      return '<div class="item"><div class="item-top">'+
+        '<span class="item-dot '+(r===1?"l1":r===2?"l2":"")+'" title="Niveau retenu"></span>'+
+        '<div class="item-lbl">'+esc(label)+'</div></div>'+
+        '<div class="evals">'+evs+'</div></div>';
+    }).join("");
+
+    return '<section class="sub '+(x.done?"done":"")+' '+(isOpen?"open":"")+'" data-sub="'+okey+'">'+
+      '<header class="sub-head" data-toggle="'+okey+'">'+
+        '<span class="sub-num">'+(si+1)+'</span>'+
+        '<div class="sub-tt"><h3>'+esc(sub.name)+'</h3><div class="sub-obj">'+esc(sub.obj)+'</div></div>'+
+        '<div class="sub-right">'+
+          '<span class="sub-count"><b>'+x.at2+'</b>/'+x.total+' 🟢</span>'+
+          '<span class="stamp-mini" title="'+esc(sub.badge.name)+'">'+sub.badge.emoji+'</span>'+
+          '<span class="chev">▾</span>'+
+        '</div>'+
+      '</header>'+
+      '<div class="sub-body">'+
+        '<div class="badge-goal">🎖️ <span>Badge <b>'+esc(sub.badge.name)+' '+sub.badge.emoji+'</b>&nbsp;— débloqué lorsque les '+x.total+' items atteignent le niveau 🟢.</span></div>'+
+        items+
+      '</div></section>';
+  }).join("");
+
+  $("#panel").innerHTML = legend + subs;
+
+  $$("[data-toggle]").forEach(h => h.onclick = e => {
+    if(e.target.closest("button") && e.target.closest("button") !== h) return;
+    const k = h.getAttribute("data-toggle");
+    const sec = h.parentElement;
+    const now = !sec.classList.contains("open");
+    sec.classList.toggle("open", now); openSubs[k] = now;
+  });
+
+  $$("[data-set]").forEach(b => b.onclick = () => {
+    const p = b.getAttribute("data-set").split("|");
+    const key = p[0], role = p[1], lv = parseInt(p[2], 10);
+    const cur = getEval(st, key, role).lvl;
+    setEval(st, key, role, {lvl: cur === lv ? null : lv});   // re-clic = annule
+    refreshAfterChange(pp);
+  });
+
+  $$("[data-note]").forEach(b => b.onclick = () => {
+    const ev = $('[data-ev="'+b.getAttribute("data-note")+'"]');
+    const open = ev.classList.toggle("note-open");
+    if(open) $("textarea", ev).focus();
+  });
+
+  $$("[data-txt]").forEach(t => {
+    t.oninput = () => {
+      const p = t.getAttribute("data-txt").split("|");
+      setEval(st, p[0], p[1], {note: t.value});
+      const ev = t.closest(".ev");
+      ev.classList.toggle("has-note", !!t.value.trim());
+      $(".cbtn", ev).classList.toggle("has", !!t.value.trim());
+      $(".cprev", ev).textContent = t.value;
+    };
+  });
+}
+
+/* Recalcule badges + entêtes sans perdre le scroll ni les sous-blocs ouverts. */
+function refreshAfterChange(pp){
+  const stats = checkBadges(pp);
+  const R = 58, C = 2*Math.PI*R;
+  const ring = $$(".ring svg circle")[1];
+  if(ring){
+    ring.setAttribute("stroke-dashoffset", (C*(1-stats.pct/100)).toFixed(1));
+    ring.setAttribute("stroke", stats.ambassador ? "#EBD9A8" : "#8FA6FF");
+  }
+  const rt = $(".ring-txt b"); if(rt) rt.textContent = stats.pct+"%";
+  const rc = $(".ring-cap");   if(rc) rc.textContent = stats.badges+" / "+stats.badgesTotal+" badges"+(stats.ambassador?" · 🌟":"");
+  const rp = roleProgress(pp, ROLE);
+  const rl = $(".rolebar span:not(.lbl)"); if(rl) rl.textContent = rp.filled+" / "+rp.total+" items renseignés";
+
+  const block = pp.blocks.find(b => b.id === curBlock);
+  block.subs.forEach(sub => {
+    const x = subStats(pp, block, sub);
+    const sec = $('[data-sub="'+block.id+"."+sub.id+'"]');
+    if(!sec) return;
+    sec.classList.toggle("done", x.done);
+    $(".sub-count", sec).innerHTML = "<b>"+x.at2+"</b>/"+x.total+" 🟢";
+  });
+  pp.blocks.forEach(b => {
+    let d = 0; b.subs.forEach(s => { if(subStats(pp,b,s).done) d++; });
+    const t = $('[data-block="'+b.id+'"] .cnt'); if(t) t.textContent = d+"/"+b.subs.length+" 🎖️";
+  });
+  // pastilles "niveau retenu"
+  $$(".item").forEach(el => {
+    const first = $("[data-set]", el);
+    if(!first) return;
+    const key = first.getAttribute("data-set").split("|")[0];
+    const r = retained(ppState(pp.id), key);
+    const dot = $(".item-dot", el);
+    dot.className = "item-dot "+(r===1?"l1":r===2?"l2":"");
+  });
+  renderStamps(pp);
+}
+
+function renderStamps(pp){
+  const host = $("#stamps"); if(!host) return;
+  const stats = ppStats(pp);
+  let h = "";
+  pp.blocks.forEach(b => b.subs.forEach(s => {
+    const done = subStats(pp, b, s).done;
+    h += '<div class="stamp '+(done?"unlocked":"locked")+'" '+(done?'data-open="'+b.id+'|'+s.id+'"':"")+'>'+
+      '<div class="stamp-ic">'+s.badge.emoji+'</div>'+
+      '<div class="stamp-nm">'+esc(s.badge.name)+'</div>'+
+      '<div class="stamp-src">'+esc(b.name)+'</div></div>';
+  }));
+  h += '<div class="stamp golden '+(stats.ambassador?"unlocked":"locked")+'" '+(stats.ambassador?'data-golden="1"':"")+'>'+
+    '<div class="stamp-ic">🌟</div><div class="stamp-nm">Ambassadeur de l’hôtel</div>'+
+    '<div class="stamp-src">'+stats.badges+' / '+stats.badgesTotal+' badges acquis</div></div>';
+  host.innerHTML = h;
+  $$("[data-open]", host).forEach(el => el.onclick = () => {
+    const p = el.getAttribute("data-open").split("|"); reopenBadge(pp, p[0], p[1]);
+  });
+  const g = $("[data-golden]", host); if(g) g.onclick = () => reopenGolden(pp);
+}
+
+/* ==========================================================================
+   8. EXPORT / IMPORT
+   ========================================================================== */
+
+function exportPassport(pp){
+  const st = ppState(pp.id);
+  const payload = {
+    format:"passeport-des-savoirs", version:1,
+    passportId:pp.id, passportName:pp.name,
+    definition: CUSTOM.some(c => c.id === pp.id) ? pp : undefined,
+    meta:st.meta, items:st.items, unlocked:st.unlocked
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  const who = (st.meta.nom || "collaborateur").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  a.href = URL.createObjectURL(blob);
+  a.download = "passeport-"+pp.id+"-"+who+".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(a.href);
+  toast("Passeport exporté.");
+}
+
+function importPassport(pp, file){
+  if(!file) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    let d;
+    try{ d = JSON.parse(rd.result); }
+    catch(e){ toast("Fichier illisible : ce n’est pas un JSON valide."); return; }
+    if(!d || d.format !== "passeport-des-savoirs"){ toast("Ce fichier n’est pas un export de Passeport des Savoirs."); return; }
+    if(d.passportId !== pp.id && !confirm("Ce fichier provient du passeport « "+(d.passportName||d.passportId)+" ». L’importer quand même dans "+pp.name+" ?")) return;
+    if(!confirm("L’import remplace les évaluations actuelles de ce passeport. Continuer ?")) return;
+    STATE[pp.id] = {meta:d.meta||{nom:"",arrivee:"",buddy:""}, items:d.items||{}, unlocked:d.unlocked||[]};
+    saveState(); toast("Passeport importé."); renderPassport(pp.id);
+  };
+  rd.readAsText(file);
+}
+
+/* ==========================================================================
+   9. BUILDER — créer son propre passeport
+   ========================================================================== */
+
+let draft = null;
+
+function newDraft(seedId){
+  const seed = seedId ? getPassport(seedId) : null;
+  return {
+    id:"", name: seed ? seed.name : "", emoji: seed ? seed.emoji : "🧭",
+    tagline: seed ? (seed.tagline||"") : "",
+    blocks: (seed ? seed.blocks : skeleton("","","","").blocks).map(b => ({
+      id:b.id, name:b.name, emoji:b.emoji,
+      scale: b.scale.map(s => ({e:s.e, n:s.n, d:s.d})),
+      subs: b.subs.map(s => ({
+        id:s.id, name:s.name, obj:s.obj,
+        badge:{name:s.badge.name, emoji:s.badge.emoji},
+        items:s.items.slice()
+      }))
+    }))
+  };
+}
+
+function slug(s){
+  return String(s).toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "passeport";
+}
+
+function renderBuilder(seedId){
+  if(!draft || (seedId && draft._seed !== seedId)){ draft = newDraft(seedId); draft._seed = seedId || null; }
+
+  const blocksHTML = draft.blocks.map((b, bi) =>
+    '<div class="bblock"><header><span class="tag">Bloc '+(bi+1)+'</span>'+
+      '<div class="f" style="flex:1"><input data-b="'+bi+'|name" value="'+esc(b.name)+'" placeholder="Nom du bloc"></div>'+
+      '<div class="f" style="width:78px"><input data-b="'+bi+'|emoji" value="'+esc(b.emoji)+'" placeholder="Emoji" maxlength="4" style="text-align:center"></div>'+
+    '</header>'+
+    '<details class="scaleedit"><summary>Personnaliser l’échelle à 3 niveaux de ce bloc</summary>'+
+      '<div class="frow" style="margin-top:12px">'+b.scale.map((s, li) =>
+        '<div class="f"><label>'+s.e+' Niveau '+li+'</label>'+
+        '<input data-sc="'+bi+'|'+li+'|n" value="'+esc(s.n)+'" placeholder="Intitulé">'+
+        '<textarea data-sc="'+bi+'|'+li+'|d" style="min-height:62px;margin-top:8px" placeholder="Définition">'+esc(s.d)+'</textarea></div>'
+      ).join("")+'</div>'+
+    '</details>'+
+    b.subs.map((s, si) =>
+      '<div class="bsub"><button class="del" data-delsub="'+bi+'|'+si+'">Supprimer</button>'+
+        '<div class="frow"><div class="f"><label>Sous-bloc '+(si+1)+' — nom</label>'+
+          '<input data-s="'+bi+'|'+si+'|name" value="'+esc(s.name)+'" placeholder="Ex. Connaissance de l’établissement"></div></div>'+
+        '<div class="f" style="margin-bottom:14px"><label>Objectif</label>'+
+          '<textarea data-s="'+bi+'|'+si+'|obj" style="min-height:66px" placeholder="Ce que le collaborateur doit être capable de faire…">'+esc(s.obj)+'</textarea></div>'+
+        '<div class="frow"><div class="f"><label>🎖️ Nom du badge</label>'+
+            '<input data-s="'+bi+'|'+si+'|bname" value="'+esc(s.badge.name)+'" placeholder="Ex. Explorateur de l’hôtel"></div>'+
+          '<div class="f" style="max-width:110px"><label>Emoji</label>'+
+            '<input data-s="'+bi+'|'+si+'|bemoji" value="'+esc(s.badge.emoji)+'" maxlength="4" style="text-align:center;font-size:1.2rem"></div></div>'+
+        '<div class="f"><label>Items — un par ligne</label>'+
+          '<textarea data-s="'+bi+'|'+si+'|items" style="min-height:130px" placeholder="Connaît l’histoire et le positionnement de l’établissement.&#10;Connaît les valeurs et la promesse client.">'+esc(s.items.join("\n"))+'</textarea>'+
+          '<div class="fhint">'+s.items.length+' item(s). Le badge s’obtiendra quand tous seront au niveau 🟢.</div></div>'+
+      '</div>'
+    ).join("")+
+    '<button class="btn btn-ghost btn-sm" data-addsub="'+bi+'">➕ Ajouter un sous-bloc</button>'+
+    '</div>'
+  ).join("");
+
+  const nItems  = draft.blocks.reduce((a,b) => a + b.subs.reduce((x,s) => x + s.items.length, 0), 0);
+  const nBadges = draft.blocks.reduce((a,b) => a + b.subs.length, 0);
+
+  $("#app").innerHTML = header("builder")+
+  '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
+    '<div class="section-head"><div class="section-kicker">Sur mesure</div>'+
+    '<h2>Créer son propre <span class="serif italic">passeport</span></h2>'+
+    '<p>Définissez le service, puis ses sous-blocs, objectifs, badges et items. Les trois blocs Savoir / Savoir-faire / Savoir-être et les échelles à 3 niveaux sont préconfigurés.</p></div>'+
+
+    '<div class="form-card"><h3>Le service</h3><p class="hint">Ce qui apparaîtra sur la carte du passeport, sur la page d’accueil.</p>'+
+      '<div class="frow">'+
+        '<div class="f"><label>Nom du service</label><input id="d-name" value="'+esc(draft.name)+'" placeholder="Ex. Housekeeping"></div>'+
+        '<div class="f" style="max-width:120px"><label>Emoji</label><input id="d-emoji" value="'+esc(draft.emoji)+'" maxlength="4" style="text-align:center;font-size:1.3rem"></div>'+
+      '</div>'+
+      '<div class="f"><label>Accroche</label><input id="d-tag" value="'+esc(draft.tagline)+'" placeholder="Ex. Gardien du confort et de la propreté impeccable."></div>'+
+      (draft._seed ? '' : '<div class="f" style="margin-top:14px"><label>Partir d’un modèle existant</label>'+
+        '<select id="d-seed"><option value="">Passeport vierge</option>'+
+        allPassports().filter(p => p.blocks.some(b => b.subs.length)).map(p => '<option value="'+p.id+'">Copier : '+esc(p.name)+'</option>').join("")+
+        '</select><div class="fhint">Recopie tous les sous-blocs, badges et items du passeport choisi, que vous pourrez ensuite adapter.</div></div>')+
+    '</div>'+
+
+    blocksHTML+
+
+    '<div class="form-card" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;position:sticky;bottom:16px">'+
+      '<div style="flex:1;min-width:190px"><b id="c-items">'+nItems+'</b> items · <b id="c-badges">'+nBadges+'</b> badges'+
+        '<div class="hint" style="margin:4px 0 0">Le golden badge 🌟 Ambassadeur de l’hôtel se débloquera avec les <span id="c-badges2">'+nBadges+'</span> badges.</div></div>'+
+      '<button class="btn btn-ghost" data-loadjson>⬆︎ Importer un JSON</button>'+
+      '<button class="btn btn-primary" data-save>Créer le passeport →</button>'+
+      '<input type="file" accept="application/json" id="defIn" style="display:none">'+
+    '</div>'+
+  '</div>'+footer();
+
+  /* liaisons */
+  $("#d-name").oninput  = e => { draft.name = e.target.value; };
+  $("#d-emoji").oninput = e => { draft.emoji = e.target.value; };
+  $("#d-tag").oninput   = e => { draft.tagline = e.target.value; };
+  const seedSel = $("#d-seed");
+  if(seedSel) seedSel.onchange = e => {
+    if(!e.target.value){ draft = newDraft(null); draft._seed = null; }
+    else { draft = newDraft(e.target.value); draft._seed = null; draft.name = ""; }
+    renderBuilder(null);
+  };
+
+  $$("[data-b]").forEach(inp => inp.oninput = () => {
+    const p = inp.getAttribute("data-b").split("|"); draft.blocks[+p[0]][p[1]] = inp.value;
+  });
+  $$("[data-sc]").forEach(inp => inp.oninput = () => {
+    const p = inp.getAttribute("data-sc").split("|"); draft.blocks[+p[0]].scale[+p[1]][p[2]] = inp.value;
+  });
+  $$("[data-s]").forEach(inp => inp.oninput = () => {
+    const p = inp.getAttribute("data-s").split("|");
+    const s = draft.blocks[+p[0]].subs[+p[1]];
+    if(p[2] === "name") s.name = inp.value;
+    else if(p[2] === "obj") s.obj = inp.value;
+    else if(p[2] === "bname") s.badge.name = inp.value;
+    else if(p[2] === "bemoji") s.badge.emoji = inp.value;
+    else if(p[2] === "items"){
+      s.items = inp.value.split("\n").map(x => x.replace(/^\s*[-•*]\s*/,"").trim()).filter(Boolean);
+      const hint = inp.parentElement.querySelector(".fhint");
+      if(hint) hint.textContent = s.items.length+" item(s). Le badge s’obtiendra quand tous seront au niveau 🟢.";
+      builderTotals();
+    }
+  });
+  $$("[data-addsub]").forEach(b => b.onclick = () => {
+    const bi = +b.getAttribute("data-addsub");
+    const n = draft.blocks[bi].subs.length + 1;
+    draft.blocks[bi].subs.push({id:draft.blocks[bi].id+n+"-"+Math.random().toString(36).slice(2,6),
+      name:"", obj:"", badge:{name:"", emoji:"🎖️"}, items:[]});
+    renderBuilder(draft._seed);
+  });
+  $$("[data-delsub]").forEach(b => b.onclick = () => {
+    const p = b.getAttribute("data-delsub").split("|");
+    if(!confirm("Supprimer ce sous-bloc et ses items ?")) return;
+    draft.blocks[+p[0]].subs.splice(+p[1], 1); renderBuilder(draft._seed);
+  });
+  $("[data-loadjson]").onclick = () => $("#defIn").click();
+  $("#defIn").onchange = e => {
+    const f = e.target.files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      let d; try{ d = JSON.parse(rd.result); }catch(err){ toast("JSON invalide."); return; }
+      const def = d && (d.definition || (d.blocks ? d : null));
+      if(!def || !def.blocks){ toast("Ce fichier ne contient pas de définition de passeport."); return; }
+      draft = newDraft(null);
+      draft.name = def.name || ""; draft.emoji = def.emoji || "🧭"; draft.tagline = def.tagline || "";
+      draft.blocks = def.blocks.map(b => ({
+        id:b.id, name:b.name, emoji:b.emoji || "•",
+        scale:(b.scale||SCALES.savoir).map(s => ({e:s.e, n:s.n, d:s.d})),
+        subs:(b.subs||[]).map(s => ({id:s.id, name:s.name, obj:s.obj,
+          badge:{name:(s.badge||{}).name||"", emoji:(s.badge||{}).emoji||"🎖️"}, items:(s.items||[]).slice()}))
+      }));
+      toast("Définition importée."); renderBuilder(null);
+    };
+    rd.readAsText(f);
+  };
+  $("[data-save]").onclick = saveDraft;
+}
+
+/* Met à jour les totaux du pied de page du builder pendant la saisie. */
+function builderTotals(){
+  const nItems  = draft.blocks.reduce((a,b) => a + b.subs.reduce((x,s) => x + s.items.length, 0), 0);
+  const nBadges = draft.blocks.reduce((a,b) => a + b.subs.length, 0);
+  const a = $("#c-items"), b = $("#c-badges"), c = $("#c-badges2");
+  if(a) a.textContent = nItems;
+  if(b) b.textContent = nBadges;
+  if(c) c.textContent = nBadges;
+}
+
+function saveDraft(){
+  if(!draft.name.trim()){ toast("Donnez un nom au service."); $("#d-name").focus(); return; }
+  const subs = [];
+  draft.blocks.forEach(b => b.subs.forEach(s => subs.push({b, s})));
+  if(!subs.length){ toast("Ajoutez au moins un sous-bloc."); return; }
+  const bad = subs.find(x => !x.s.name.trim() || !x.s.items.length);
+  if(bad){ toast("Chaque sous-bloc a besoin d’un nom et d’au moins un item."); return; }
+  subs.forEach(x => { if(!x.s.badge.name.trim()) x.s.badge.name = "Badge « "+x.s.name.trim()+" »"; });
+
+  /* Construit depuis la carte d’un service prédéfini encore vide : on reprend son id,
+     le passeport sur mesure remplace alors le squelette. Sinon, id dérivé du nom,
+     suffixé si un passeport porte déjà cet id. */
+  const taken = id => allPassports().some(p => p.id === id);
+  let id;
+  if(draft._seed && isSkeletonId(draft._seed) && !CUSTOM.some(c => c.id === draft._seed)){
+    id = draft._seed;
+  } else {
+    id = slug(draft.name);
+    while(taken(id)) id = slug(draft.name)+"-"+Math.random().toString(36).slice(2,5);
+  }
+
+  const pp = {
+    id, name:draft.name.trim(), emoji:draft.emoji.trim() || "🧭", tagline:draft.tagline.trim(), custom:true,
+    blocks: draft.blocks.filter(b => b.subs.length).map(b => ({
+      id:b.id, name:b.name.trim() || "Bloc", emoji:b.emoji.trim() || "•",
+      scale:b.scale.map(s => ({e:s.e, n:s.n.trim(), d:s.d.trim()})),
+      subs:b.subs.map((s, i) => ({
+        id:s.id || (b.id+(i+1)), name:s.name.trim(), obj:s.obj.trim(),
+        badge:{name:s.badge.name.trim(), emoji:s.badge.emoji.trim() || "🎖️"},
+        items:s.items.slice()
+      }))
+    }))
+  };
+  CUSTOM.push(pp); saveCustom();
+  draft = null;
+  toast("Passeport « "+pp.name+" » créé.");
+  location.hash = "#/p/"+id;
+}
+
+/* ==========================================================================
+   10. DÉMARRAGE
+   ========================================================================== */
+route();
+</script>
+</body>
+</html>
