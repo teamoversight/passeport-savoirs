@@ -40,7 +40,6 @@
   --shadow-md:0 2px 6px rgba(0,1,30,.06),0 14px 40px rgba(0,1,30,.09);
   --shadow-lg:0 30px 90px rgba(0,1,30,.22);
   --maxw:1180px;
-  --lvl0:#FFFFFF;
   --lvl1:#E9C46A;
   --lvl2:#7C9182;
 }
@@ -56,7 +55,6 @@ body{
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
 }
-/* grain */
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.30;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
@@ -71,31 +69,35 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .serif{font-family:'Playfair Display',Georgia,serif;font-weight:500}
 .italic{font-style:italic}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
-.center{text-align:center}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* ---------- Boutons ---------- */
 .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;font-weight:500;font-size:.95rem;transition:.18s ease;white-space:nowrap;line-height:1}
 .btn-primary{background:var(--blue-flash);color:#fff;box-shadow:0 6px 18px rgba(73,107,255,.28)}
-.btn-primary:hover{background:#3a5cf0;transform:translateY(-1px);box-shadow:0 10px 26px rgba(73,107,255,.36)}
+.btn-primary:hover{background:#3a5cf0;transform:translateY(-1px);box-shadow:0 10px 26px rgba(73,107,255,.36);text-decoration:none}
 .btn-ghost{background:rgba(255,255,255,.65);color:var(--ink);border:1px solid var(--ink-12)}
-.btn-ghost:hover{background:#fff;border-color:var(--blue-flash);color:var(--blue-flash)}
+.btn-ghost:hover{background:#fff;border-color:var(--blue-flash);color:var(--blue-flash);text-decoration:none}
 .btn-dark{background:var(--blue-dark);color:#fff}
-.btn-dark:hover{background:#101438}
+.btn-dark:hover{background:#101438;text-decoration:none}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:#8f7045;text-decoration:none}
 .btn-sm{padding:9px 16px;font-size:.85rem}
-.btn-icon{padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.7);border:1px solid var(--ink-12)}
-.btn-icon:hover{border-color:var(--blue-flash)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
+.btn-danger{color:#B4452F}
+.btn-danger:hover{border-color:#B4452F;color:#B4452F}
 
 /* ---------- Header ---------- */
 .topbar{position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);background:rgba(251,251,249,.78);border-bottom:1px solid var(--ink-07)}
 .topbar-in{max-width:var(--maxw);margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:18px;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:-.02em;font-size:1.02rem}
+.brand:hover{text-decoration:none}
 .brand-mark{width:30px;height:30px;border-radius:8px;background:var(--blue-flash);color:#fff;display:grid;place-items:center;font-size:1rem;box-shadow:0 4px 12px rgba(73,107,255,.3)}
 .brand small{display:block;font-weight:400;font-size:.72rem;color:var(--ink-55);letter-spacing:.02em}
 .topnav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .topnav a{padding:8px 14px;border-radius:999px;font-size:.9rem;color:var(--ink-70);font-weight:450}
 .topnav a:hover{background:var(--blue-light);color:var(--blue-flash);text-decoration:none}
 .topnav a.on{background:var(--blue-dark);color:#fff}
+.topnav .pill{background:var(--blue-light);color:var(--blue-flash);border-radius:999px;padding:1px 7px;font-size:.74rem;margin-left:5px;font-weight:600}
+.topnav a.on .pill{background:rgba(255,255,255,.2);color:#fff}
 
 /* ---------- Hero ---------- */
 .hero{padding:78px 0 54px;text-align:center}
@@ -104,27 +106,21 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .hero h1 em{font-style:italic;color:var(--blue-flash)}
 .hero-lead{max-width:680px;margin:0 auto;font-size:1.09rem;color:var(--ink-70);line-height:1.72}
 .hero-cta{margin-top:34px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.hero-stats{margin-top:52px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.stat{background:rgba(255,255,255,.62);border:1px solid var(--ink-07);border-radius:var(--radius-sm);padding:16px 24px;min-width:132px;backdrop-filter:blur(6px)}
-.stat b{display:block;font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:600;line-height:1.1}
-.stat span{font-size:.78rem;color:var(--ink-55);letter-spacing:.03em;text-transform:uppercase}
 
 /* ---------- Sections ---------- */
 .section{padding:58px 0}
-.section-head{margin-bottom:34px;max-width:660px}
+.section-head{margin-bottom:34px;max-width:680px}
 .section-head.c{margin-left:auto;margin-right:auto;text-align:center}
 .section-kicker{font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-flash);font-weight:600;margin-bottom:12px}
 .section-head h2{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:500;letter-spacing:-.02em;margin-bottom:12px}
 .section-head p{color:var(--ink-70);font-size:1.02rem}
 
-/* ---------- Cartes principes ---------- */
 .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:16px}
 .pcard{background:rgba(255,255,255,.66);border:1px solid var(--ink-07);border-radius:var(--radius);padding:26px;backdrop-filter:blur(6px)}
 .pcard .ic{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:1.24rem;margin-bottom:15px;background:var(--blue-light)}
 .pcard h3{font-size:1.06rem;margin-bottom:8px}
 .pcard p{font-size:.93rem;color:var(--ink-70)}
 
-/* ---------- Échelle ---------- */
 .scale-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
 .scale-card{background:rgba(255,255,255,.66);border:1px solid var(--ink-07);border-left:4px solid var(--ink-12);border-radius:var(--radius-sm);padding:18px 20px}
 .scale-card.l0{border-left-color:#D9D4CB}
@@ -137,23 +133,60 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(292px,1fr));gap:18px}
 .svc{position:relative;display:flex;flex-direction:column;background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);transition:.22s ease}
 .svc:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:rgba(73,107,255,.35)}
+.svc.soon{box-shadow:none;background:rgba(255,255,255,.5)}
+.svc.soon:hover{transform:none;box-shadow:none;border-color:var(--ink-07)}
 .svc-top{padding:24px 24px 18px;background:linear-gradient(135deg,var(--blue-light),var(--kaki-light));border-bottom:1px solid var(--ink-07);position:relative}
+.svc.soon .svc-top{background:var(--grey-light)}
 .svc-emoji{font-size:2.15rem;line-height:1;margin-bottom:12px;display:block}
 .svc-top h3{font-size:1.24rem;font-family:'Playfair Display',serif;font-weight:600}
 .svc-top .svc-sub{font-size:.85rem;color:var(--ink-55);margin-top:5px}
 .svc-badge{position:absolute;top:18px;right:18px;font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;font-weight:600;padding:5px 11px;border-radius:999px}
 .svc-badge.ok{background:var(--kaki);color:#fff}
 .svc-badge.todo{background:rgba(0,1,30,.08);color:var(--ink-55)}
-.svc-badge.custom{background:var(--blue-flash);color:#fff}
 .svc-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:14px;flex:1}
-.svc-meta{display:flex;gap:16px;font-size:.82rem;color:var(--ink-55)}
+.svc-meta{display:flex;gap:16px;font-size:.82rem;color:var(--ink-55);flex-wrap:wrap}
 .svc-meta b{color:var(--ink);font-weight:600}
-.svc-prog{height:6px;border-radius:999px;background:var(--ink-07);overflow:hidden}
-.svc-prog i{display:block;height:100%;background:var(--kaki);border-radius:999px;transition:width .5s ease}
 .svc-actions{margin-top:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.svc-stamps{display:flex;gap:5px;flex-wrap:wrap;font-size:1rem}
-.svc-stamps span{opacity:.22;filter:grayscale(1)}
-.svc-stamps span.on{opacity:1;filter:none}
+.svc-stamps{display:flex;gap:5px;flex-wrap:wrap;font-size:1rem;opacity:.3;filter:grayscale(1)}
+
+/* ---------- Dossiers ---------- */
+.doss-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:22px}
+.search{position:relative;flex:1;min-width:230px}
+.search input{width:100%;border:1px solid var(--ink-12);border-radius:999px;padding:12px 18px 12px 42px;background:var(--white);font-size:.94rem}
+.search input:focus{outline:none;border-color:var(--blue-flash);box-shadow:0 0 0 3px rgba(73,107,255,.12)}
+.search .mag{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--ink-40);font-size:.9rem}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button{padding:9px 15px;border-radius:999px;font-size:.85rem;background:rgba(255,255,255,.7);border:1px solid var(--ink-12);color:var(--ink-70)}
+.filters button:hover{border-color:var(--blue-flash);color:var(--blue-flash)}
+.filters button.on{background:var(--blue-dark);color:#fff;border-color:var(--blue-dark)}
+
+.doss-list{display:grid;gap:12px}
+.doss{background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);padding:18px 22px;display:grid;grid-template-columns:44px 1fr auto;gap:18px;align-items:center;box-shadow:var(--shadow-sm);transition:.18s}
+.doss:hover{border-color:rgba(73,107,255,.35);box-shadow:var(--shadow-md)}
+.doss-ic{width:44px;height:44px;border-radius:12px;background:var(--blue-light);display:grid;place-items:center;font-size:1.3rem}
+.doss-main{min-width:0}
+.doss-nm{font-size:1.05rem;font-weight:600;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.doss-nm .svctag{font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;background:var(--grey-light);color:var(--ink-55);padding:3px 9px;border-radius:999px;font-weight:600}
+.doss-nm .aitag{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;background:var(--gold-light);color:var(--gold);padding:3px 9px;border-radius:999px;font-weight:600}
+.doss-nm .demotag{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;background:var(--blue-flash);color:#fff;padding:3px 9px;border-radius:999px;font-weight:600}
+.demobar{background:var(--blue-light);border:1px solid rgba(73,107,255,.3);border-radius:var(--radius-sm);padding:13px 18px;margin-top:14px;font-size:.88rem;color:var(--ink-70);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.demobar b{color:var(--ink)}
+.doss-sub{font-size:.83rem;color:var(--ink-55);margin-top:4px;display:flex;gap:14px;flex-wrap:wrap}
+.doss-bar{height:6px;border-radius:999px;background:var(--ink-07);overflow:hidden;margin-top:10px;max-width:420px}
+.doss-bar i{display:block;height:100%;background:var(--kaki);border-radius:999px}
+.doss-bar.full i{background:var(--gold)}
+.doss-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end}
+.doss-pct{text-align:right}
+.doss-pct b{display:block;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:600;line-height:1}
+.doss-pct span{font-size:.72rem;color:var(--ink-55);letter-spacing:.05em;text-transform:uppercase}
+.doss-acts{display:flex;gap:6px}
+.iconbtn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--grey-light);border:1px solid transparent;font-size:.9rem;color:var(--ink-55)}
+.iconbtn:hover{border-color:var(--blue-flash);color:var(--blue-flash);background:var(--blue-light)}
+.iconbtn.danger:hover{border-color:#B4452F;color:#B4452F;background:#FBEEEB}
+
+.empty{text-align:center;padding:56px 24px;color:var(--ink-55);background:rgba(255,255,255,.55);border:1px dashed var(--ink-12);border-radius:var(--radius)}
+.empty .big{font-size:2.6rem;margin-bottom:14px}
+.empty h3{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:500;margin-bottom:10px;color:var(--ink)}
 
 /* ---------- Passeport ---------- */
 .pp-cover{background:var(--blue-dark);color:#fff;border-radius:22px;padding:34px;position:relative;overflow:hidden;box-shadow:var(--shadow-md)}
@@ -175,7 +208,6 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .ring-txt span{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)}
 .ring-cap{margin-top:10px;font-size:.78rem;color:rgba(255,255,255,.6)}
 
-/* barre de rôle */
 .rolebar{margin:20px 0 0;background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);padding:16px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;box-shadow:var(--shadow-sm)}
 .rolebar .lbl{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-55);font-weight:600}
 .roleseg{display:flex;gap:4px;background:var(--grey-light);padding:4px;border-radius:999px}
@@ -184,7 +216,6 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .roleseg button.on{background:#fff;color:var(--blue-flash);box-shadow:var(--shadow-sm)}
 .rolebar .tools{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
 
-/* onglets blocs */
 .blocktabs{display:flex;gap:8px;margin:24px 0 0;flex-wrap:wrap}
 .blocktab{padding:12px 20px;border-radius:12px 12px 0 0;background:rgba(255,255,255,.5);border:1px solid var(--ink-07);border-bottom:none;font-weight:500;font-size:.95rem;color:var(--ink-70);display:flex;align-items:center;gap:9px}
 .blocktab:hover{background:rgba(255,255,255,.8)}
@@ -192,7 +223,6 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .blocktab .cnt{font-size:.75rem;background:var(--ink-07);padding:2px 8px;border-radius:999px;color:var(--ink-55)}
 .blocktab.on .cnt{background:var(--blue-light);color:var(--blue-flash)}
 .blockpanel{background:var(--white);border:1px solid var(--ink-07);border-radius:0 var(--radius) var(--radius) var(--radius);padding:26px;box-shadow:var(--shadow-sm)}
-@media(max-width:640px){.blockpanel{border-radius:var(--radius);padding:18px}}
 
 .scale-legend{background:var(--grey-light);border-radius:var(--radius-sm);padding:16px 18px;margin-bottom:24px}
 .scale-legend h4{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-55);margin-bottom:11px}
@@ -200,7 +230,6 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .scale-legend li{font-size:.86rem;color:var(--ink-70);display:flex;gap:9px;align-items:flex-start}
 .scale-legend b{color:var(--ink);font-weight:600}
 
-/* sous-blocs */
 .sub{border:1px solid var(--ink-07);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;background:#fff}
 .sub.done{border-color:rgba(124,145,130,.5);box-shadow:0 0 0 3px rgba(124,145,130,.1)}
 .sub-head{padding:20px 22px;display:flex;gap:16px;align-items:flex-start;background:linear-gradient(180deg,rgba(242,241,238,.6),rgba(242,241,238,0));cursor:pointer}
@@ -214,7 +243,7 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .sub-count{font-size:.8rem;color:var(--ink-55);white-space:nowrap}
 .sub-count b{color:var(--kaki);font-weight:600}
 .stamp-mini{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.15rem;border:2px dashed var(--ink-12);opacity:.4;filter:grayscale(1);transition:.3s}
-.sub.done .stamp-mini{opacity:1;filter:none;border:2px solid var(--kaki);background:var(--kaki-light);border-style:solid}
+.sub.done .stamp-mini{opacity:1;filter:none;border:2px solid var(--kaki);background:var(--kaki-light)}
 .chev{transition:.25s;color:var(--ink-40);font-size:.8rem}
 .sub.open .chev{transform:rotate(180deg)}
 .sub-body{display:none;padding:4px 22px 20px}
@@ -222,7 +251,6 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .badge-goal{font-size:.8rem;color:var(--ink-55);background:var(--blue-light);border-radius:9px;padding:9px 13px;margin-bottom:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .badge-goal b{color:var(--ink)}
 
-/* item */
 .item{border-top:1px solid var(--ink-07);padding:15px 0}
 .item:first-of-type{border-top:none}
 .item-top{display:flex;gap:12px;align-items:flex-start}
@@ -231,10 +259,16 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .item-dot.l1{background:var(--lvl1);border-color:#C9A83F}
 .item-dot.l2{background:var(--lvl2);border-color:#63735F}
 .evals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px;align-items:start}
-@media(max-width:760px){.evals{grid-template-columns:1fr}}
 .ev{background:var(--grey-light);border-radius:11px;padding:10px 12px;border:1px solid transparent;transition:.16s}
 .ev.active-role{background:var(--blue-light);border-color:rgba(73,107,255,.3)}
-.ev-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+/* Colonne d’un autre évaluateur : consultable, non modifiable. */
+.ev.locked{background:rgba(0,1,30,.035)}
+.ev.locked .ev-who::after{content:" 🔒";font-size:.85em;opacity:.45}
+.ev.locked .tri button{cursor:default}
+.ev.locked .tri button:hover{transform:none;border-color:var(--ink-12)}
+.ev.locked .tri button:not(.on){opacity:.3}
+.ev.locked .tri button.on{box-shadow:0 0 0 2px var(--ink-12)}
+.ev-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .ev-who{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--ink-55)}
 .ev.active-role .ev-who{color:var(--blue-flash)}
 .tri{display:flex;gap:4px}
@@ -250,7 +284,6 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .ev .cprev{display:none;margin-top:7px;font-size:.82rem;color:var(--ink-70);font-style:italic;line-height:1.5;border-left:2px solid var(--blue-flash);padding-left:9px}
 .ev.has-note:not(.note-open) .cprev{display:block}
 
-/* galerie tampons */
 .stampgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:14px}
 .stamp{background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);padding:20px 14px;text-align:center;transition:.2s}
 .stamp.locked{opacity:.5}
@@ -264,12 +297,46 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .stamp.golden .stamp-ic{font-size:2.6rem}
 .stamp.golden .stamp-nm{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold)}
 
-/* ---------- Modale badge ---------- */
+/* ---------- Espace Synthèse ---------- */
+.ai{margin-top:44px;border-radius:22px;overflow:hidden;border:2px solid var(--gold);background:linear-gradient(150deg,var(--gold-light) 0%,var(--white) 42%,#fff 100%);box-shadow:var(--shadow-md)}
+.ai-head{padding:28px 30px 22px;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;border-bottom:1px solid rgba(167,133,82,.22)}
+.ai-seal{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:1.6rem;background:#fff;border:2px solid var(--gold);flex-shrink:0;box-shadow:0 0 0 6px rgba(167,133,82,.1)}
+.ai-head .t{flex:1;min-width:220px}
+.ai-head .kick{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:7px}
+.ai-head h2{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;margin-bottom:7px}
+.ai-head p{font-size:.92rem;color:var(--ink-70);line-height:1.65}
+.ai-body{padding:26px 30px 30px}
+.ai-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:22px}
+.ai-step{background:rgba(255,255,255,.8);border:1px solid rgba(167,133,82,.25);border-radius:var(--radius-sm);padding:16px 18px}
+.ai-step b{display:flex;align-items:center;gap:9px;font-size:.9rem;margin-bottom:6px}
+.ai-step b i{width:22px;height:22px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;font-size:.72rem;font-style:normal;font-weight:700;flex-shrink:0}
+.ai-step p{font-size:.85rem;color:var(--ink-70);line-height:1.6}
+.ai-acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ai-note{font-size:.82rem;color:var(--ink-55);margin-top:16px;line-height:1.6}
+.ai-paste{display:none;margin-top:18px}
+.ai-paste.on{display:block}
+.ai-paste textarea{width:100%;min-height:220px;border:1px solid var(--ink-12);border-radius:var(--radius-sm);padding:15px 17px;font-size:.92rem;line-height:1.65;resize:vertical;background:#fff}
+.ai-paste textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(167,133,82,.14)}
+.ai-out{background:#fff;border:1px solid rgba(167,133,82,.3);border-radius:var(--radius-sm);padding:26px 28px;line-height:1.75;font-size:.95rem}
+.ai-out h1,.ai-out h2,.ai-out h3{font-family:'Playfair Display',serif;font-weight:600;margin:22px 0 10px}
+.ai-out h1{font-size:1.35rem}.ai-out h2{font-size:1.18rem}.ai-out h3{font-size:1.03rem}
+.ai-out h1:first-child,.ai-out h2:first-child,.ai-out h3:first-child{margin-top:0}
+.ai-out p{margin:0 0 12px}
+.ai-out ul,.ai-out ol{margin:0 0 14px;padding-left:22px}
+.ai-out li{margin-bottom:6px}
+.ai-out strong{font-weight:600}
+.ai-out hr{border:0;border-top:1px solid var(--ink-07);margin:20px 0}
+.ai-meta{font-size:.8rem;color:var(--ink-55);margin-bottom:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.ai-spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ---------- Modales ---------- */
 .ov{position:fixed;inset:0;z-index:200;background:rgba(0,1,30,.62);backdrop-filter:blur(7px);display:none;place-items:center;padding:22px;overflow-y:auto}
 .ov.on{display:grid}
 .modal{background:var(--white);border-radius:24px;max-width:452px;width:100%;padding:40px 34px;text-align:center;box-shadow:var(--shadow-lg);position:relative;animation:pop .42s cubic-bezier(.2,1.3,.4,1)}
 @keyframes pop{from{opacity:0;transform:scale(.86) translateY(18px)}to{opacity:1;transform:none}}
-.modal.wide{max-width:760px;text-align:left}
+.modal.form{max-width:520px;text-align:left}
+.modal.wide{max-width:820px;text-align:left}
 .modal-x{position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--ink-40);font-size:1.1rem}
 .modal-x:hover{background:var(--grey-light);color:var(--ink)}
 .modal .kick{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-flash);font-weight:600;margin-bottom:18px}
@@ -283,27 +350,13 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .confetti{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none;border-radius:24px}
 .confetti i{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(-30px) rotate(0);opacity:1}100%{transform:translateY(460px) rotate(560deg);opacity:0}}
-
-/* ---------- Builder ---------- */
-.form-card{background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow-sm);margin-bottom:18px}
-.form-card > h3{font-size:1.1rem;margin-bottom:5px}
-.form-card .hint{font-size:.87rem;color:var(--ink-55);margin-bottom:20px}
-.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:14px;margin-bottom:14px}
+.f{margin-bottom:14px}
 .f label{display:block;font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-55);font-weight:600;margin-bottom:6px}
 .f input,.f textarea,.f select{width:100%;border:1px solid var(--ink-12);border-radius:10px;padding:11px 13px;font-size:.94rem;background:#fff}
-.f textarea{min-height:96px;resize:vertical;line-height:1.6}
 .f input:focus,.f textarea:focus,.f select:focus{outline:none;border-color:var(--blue-flash);box-shadow:0 0 0 3px rgba(73,107,255,.12)}
-.f .fhint{font-size:.78rem;color:var(--ink-40);margin-top:5px}
-.bblock{border:1px solid var(--ink-12);border-radius:var(--radius);padding:20px;margin-bottom:16px;background:var(--grey-light)}
-.bblock > header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.bblock > header .tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;background:var(--blue-dark);color:#fff;padding:4px 10px;border-radius:999px;font-weight:600}
-.bsub{background:#fff;border:1px solid var(--ink-12);border-radius:var(--radius-sm);padding:18px;margin-bottom:12px;position:relative}
-.bsub .del{position:absolute;top:12px;right:12px;font-size:.78rem;color:#B4452F}
-.bsub .del:hover{text-decoration:underline}
-details.scaleedit{margin-bottom:14px}
-details.scaleedit summary{font-size:.84rem;color:var(--blue-flash);cursor:pointer;font-weight:500}
-.empty{text-align:center;padding:52px 24px;color:var(--ink-55)}
-.empty .big{font-size:2.6rem;margin-bottom:14px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-acts{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap}
+.promptbox{width:100%;min-height:300px;border:1px solid var(--ink-12);border-radius:var(--radius-sm);padding:14px 16px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;line-height:1.6;background:var(--grey-light);resize:vertical}
 
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--blue-dark);color:#fff;padding:14px 24px;border-radius:999px;font-size:.9rem;z-index:300;box-shadow:var(--shadow-md);opacity:0;transition:.3s}
 .toast.on{transform:translateX(-50%);opacity:1}
@@ -311,6 +364,7 @@ details.scaleedit summary{font-size:.84rem;color:var(--blue-flash);cursor:pointe
 .foot{padding:44px 0 34px;text-align:center;font-size:.84rem;color:var(--ink-55);border-top:1px solid var(--ink-07);margin-top:40px}
 
 /* ---------- Mobile ---------- */
+@media(max-width:760px){.evals{grid-template-columns:1fr}}
 @media(max-width:640px){
   .wrap{padding:0 16px}
   .hero{padding:48px 0 34px}
@@ -318,16 +372,11 @@ details.scaleedit summary{font-size:.84rem;color:var(--blue-flash);cursor:pointe
   .topbar-in{padding:12px 16px;gap:10px}
   .brand small{display:none}
   .topnav a{padding:7px 11px;font-size:.84rem}
-  .hero-stats{gap:10px}
-  .stat{padding:13px 18px;min-width:0;flex:1 1 40%}
-
-  /* onglets de blocs : bande horizontale scrollable plutôt qu’empilement */
+  .blockpanel{border-radius:var(--radius);padding:18px}
   .blocktabs{flex-wrap:nowrap;overflow-x:auto;gap:6px;margin-bottom:10px;padding-bottom:2px;scrollbar-width:none}
   .blocktabs::-webkit-scrollbar{display:none}
   .blocktab{flex:0 0 auto;border-radius:11px;border-bottom:1px solid var(--ink-07);padding:10px 14px;font-size:.88rem}
   .blocktab.on{box-shadow:0 0 0 2px var(--blue-flash) inset;background:var(--white)}
-
-  /* entête de sous-bloc : compteur en haut, titre et objectif pleine largeur */
   .sub-head{flex-wrap:wrap;padding:16px}
   .sub-num{order:1}
   .sub-right{order:2;margin-left:auto}
@@ -335,9 +384,7 @@ details.scaleedit summary{font-size:.84rem;color:var(--blue-flash);cursor:pointe
   .sub-body{padding:0 16px 16px}
   .stamp-mini{width:38px;height:38px;font-size:1rem}
   .badge-goal{flex-wrap:nowrap;align-items:flex-start;font-size:.78rem}
-
   .pp-cover{padding:24px 20px;border-radius:18px}
-  .pp-cover-in{gap:22px}
   .ring-wrap{margin:0 auto}
   .rolebar{padding:14px 16px;gap:12px}
   .rolebar .tools{margin-left:0;width:100%}
@@ -346,12 +393,21 @@ details.scaleedit summary{font-size:.84rem;color:var(--blue-flash);cursor:pointe
   .modal{padding:32px 22px}
   .medal{width:104px;height:104px;font-size:2.8rem}
   .modal h2{font-size:1.4rem}
+  .frow{grid-template-columns:1fr}
+  .doss{grid-template-columns:40px 1fr;gap:14px;padding:16px;align-items:start}
+  .doss-ic{width:40px;height:40px;font-size:1.15rem}
+  .doss-right{grid-column:1/-1;justify-content:space-between;width:100%}
+  .ai-head,.ai-body{padding:22px 18px}
+  .ai-out{padding:20px 18px}
 }
 
 /* ---------- Impression ---------- */
 @media print{
   body{background:#fff}
-  body::before,.topbar,.rolebar,.hero-cta,.blocktabs,.ov,.toast,.foot,.tri button:not(.on),.cbtn{display:none!important}
+  body::before,.topbar,.rolebar,.hero-cta,.blocktabs,.ov,.toast,.foot,.ai-steps,.ai-acts,.ai-note,.ai-paste,.tri button:not(.on),.cbtn,.backlink,.demobar{display:none!important}
+  .ev.locked{background:#fff}
+  .ev.locked .ev-who::after{content:""}
+  .ev.locked .tri button.on{box-shadow:none;border:1px solid #999}
   .sub-body{display:block!important}
   .sub{break-inside:avoid;page-break-inside:avoid}
   .blockpanel{box-shadow:none;border:none;padding:0}
@@ -361,6 +417,7 @@ details.scaleedit summary{font-size:.84rem;color:var(--blue-flash);cursor:pointe
   .pp-field input{color:#000;border-color:#999;background:#fff}
   .ring-txt span,.ring-cap{color:#555}
   .ev textarea{display:block!important}
+  .ai{break-before:page;page-break-before:always;box-shadow:none}
 }
 </style>
 </head>
@@ -373,7 +430,20 @@ details.scaleedit summary{font-size:.84rem;color:var(--blue-flash);cursor:pointe
 "use strict";
 
 /* ==========================================================================
-   1. DONNÉES
+   0. CONFIGURATION
+   ========================================================================== */
+
+/* Génération automatique de la synthèse.
+   Laisser vide sur GitHub Pages : le site est public, une clé d’API placée ici
+   serait lisible par tous. Le passeport bascule alors sur le mode « copier le
+   brief », qui fonctionne sans serveur.
+   Pour activer la génération en un clic, déployer un petit proxy (Cloudflare
+   Worker, fonction Vercel…) qui garde la clé côté serveur, accepte
+   POST {prompt:"…"} et renvoie {text:"…"}, puis coller son URL ci-dessous. */
+const AI_ENDPOINT = "";
+
+/* ==========================================================================
+   1. DONNÉES DE RÉFÉRENCE
    ========================================================================== */
 
 const SCALES = {
@@ -388,9 +458,9 @@ const SCALES = {
     {e:"🟢", n:"Niveau 2 — Acquisition",   d:"Le collaborateur comprend, sait expliquer et mettre en pratique en autonomie."}
   ],
   etre: [
-    {e:"⚪", n:"Niveau 0 — Non observé",     d:"Le collaborateur n’a pas encore démontré ce savoir-être."},
+    {e:"⚪", n:"Niveau 0 — Non observé",      d:"Le collaborateur n’a pas encore démontré ce savoir-être."},
     {e:"🟡", n:"Niveau 1 — En développement", d:"Le savoir-être est présent mais irrégulier ou nécessite de l’accompagnement."},
-    {e:"🟢", n:"Niveau 2 — Acquisition",     d:"Le savoir-être est observé régulièrement et répond aux attentes."}
+    {e:"🟢", n:"Niveau 2 — Acquisition",      d:"Le savoir-être est observé régulièrement et répond aux attentes."}
   ]
 };
 
@@ -400,7 +470,6 @@ const ROLES = [
   {id:"coo",   short:"COO",           long:"Validation du COO"}
 ];
 
-/* Passeport Réceptionniste — contenu fourni par Oversight */
 const RECEPTIONNISTE = {
   id:"receptionniste",
   name:"Réceptionniste",
@@ -587,19 +656,17 @@ const RECEPTIONNISTE = {
   ]
 };
 
-/* Services à construire — structure prête, items à définir par l’hôtel */
+/* Services dont les items restent à définir : la structure et les échelles sont
+   prêtes, le contenu métier se saisit directement dans ce fichier. */
 function skeleton(id, name, emoji, tagline){
-  return {
-    id, name, emoji, tagline, skeleton:true,
-    blocks:[
-      {id:"savoir", name:"Savoir",       emoji:"📖", scale:SCALES.savoir, subs:[]},
-      {id:"faire",  name:"Savoir-faire", emoji:"🛠️", scale:SCALES.faire,  subs:[]},
-      {id:"etre",   name:"Savoir-être",  emoji:"💫", scale:SCALES.etre,   subs:[]}
-    ]
-  };
+  return {id, name, emoji, tagline, skeleton:true, blocks:[
+    {id:"savoir", name:"Savoir",       emoji:"📖", scale:SCALES.savoir, subs:[]},
+    {id:"faire",  name:"Savoir-faire", emoji:"🛠️", scale:SCALES.faire,  subs:[]},
+    {id:"etre",   name:"Savoir-être",  emoji:"💫", scale:SCALES.etre,   subs:[]}
+  ]};
 }
 
-const BUILTIN = [
+const SERVICES = [
   RECEPTIONNISTE,
   skeleton("housekeeping",  "Housekeeping",   "🛏️", "Gardien du confort et de la propreté impeccable."),
   skeleton("maintenance",   "Maintenance",    "🔧", "Garant du bon fonctionnement de la Maison."),
@@ -607,146 +674,202 @@ const BUILTIN = [
   skeleton("fb",            "F&B",            "🍽️", "Art de recevoir à table, du service au conseil.")
 ];
 
+const getService = id => SERVICES.find(s => s.id === id) || null;
+const isReady    = svc => !!svc && svc.blocks.some(b => b.subs.length);
+
 /* ==========================================================================
-   2. STOCKAGE
+   2. DOSSIERS — un passeport enregistré par collaborateur
    ========================================================================== */
 
-const LS_STATE  = "pds.state.v1";
-const LS_CUSTOM = "pds.custom.v1";
-const LS_ROLE   = "pds.role.v1";
+const LS_RECORDS = "pds.records.v2";
+const LS_ROLE    = "pds.role.v1";
 
 function readJSON(key, fallback){
   try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
   catch(e){ return fallback; }
 }
 function writeJSON(key, val){
-  try{ localStorage.setItem(key, JSON.stringify(val)); }
-  catch(e){ toast("Sauvegarde impossible (stockage du navigateur indisponible)."); }
+  try{ localStorage.setItem(key, JSON.stringify(val)); return true; }
+  catch(e){ toast("Sauvegarde impossible : stockage du navigateur indisponible."); return false; }
 }
 
-let STATE  = readJSON(LS_STATE, {});
-let CUSTOM = readJSON(LS_CUSTOM, []);
-let ROLE   = localStorage.getItem(LS_ROLE) || "auto";
+let RECORDS = readJSON(LS_RECORDS, []);
+let ROLE    = localStorage.getItem(LS_ROLE) || "auto";
 
-function saveState(){ writeJSON(LS_STATE, STATE); }
-function saveCustom(){ writeJSON(LS_CUSTOM, CUSTOM); }
+function saveRecords(){ writeJSON(LS_RECORDS, RECORDS); }
+function touch(rec){ rec.updatedAt = new Date().toISOString(); saveRecords(); }
 
-/* Un passeport sur mesure portant l’id d’un service prédéfini le remplace
-   (cas : on construit « Housekeeping » depuis sa carte « À construire »).
-   L’ordre des services prédéfinis est conservé, les nouveaux sont ajoutés à la suite. */
-function allPassports(){
-  return BUILTIN.map(b => CUSTOM.find(c => c.id === b.id) || b)
-    .concat(CUSTOM.filter(c => !BUILTIN.some(b => b.id === c.id)));
+function getRecord(id){ return RECORDS.find(r => r.id === id) || null; }
+function recordsOf(serviceId){ return RECORDS.filter(r => r.service === serviceId); }
+
+function makeId(){
+  return "d" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
-function getPassport(id){ return allPassports().find(p => p.id === id) || null; }
-function isSkeletonId(id){ const b = BUILTIN.find(x => x.id === id); return !!(b && b.skeleton); }
-
-function ppState(id){
-  if(!STATE[id]) STATE[id] = {meta:{nom:"",arrivee:"",buddy:""}, items:{}, unlocked:[]};
-  const s = STATE[id];
-  if(!s.meta)     s.meta = {nom:"",arrivee:"",buddy:""};
-  if(!s.items)    s.items = {};
-  if(!s.unlocked) s.unlocked = [];
-  return s;
+function createRecord(serviceId, meta){
+  const now = new Date().toISOString();
+  const rec = {
+    id: makeId(), service: serviceId,
+    nom: (meta.nom || "").trim(), arrivee: meta.arrivee || "", buddy: (meta.buddy || "").trim(),
+    items:{}, unlocked:[], synthese:null, createdAt: now, updatedAt: now
+  };
+  RECORDS.push(rec); saveRecords();
+  return rec;
 }
+
 function itemKey(blockId, subId, i){ return blockId+"."+subId+"."+i; }
-function getEval(st, key, role){
-  const it = st.items[key];
+function getEval(rec, key, role){
+  const it = rec.items[key];
   if(!it || !it[role]) return {lvl:null, note:""};
-  return {lvl: (typeof it[role].lvl === "number" ? it[role].lvl : null), note: it[role].note || ""};
+  return {lvl:(typeof it[role].lvl === "number" ? it[role].lvl : null), note: it[role].note || ""};
 }
-function setEval(st, key, role, patch){
-  if(!st.items[key]) st.items[key] = {};
-  if(!st.items[key][role]) st.items[key][role] = {lvl:null, note:""};
-  Object.assign(st.items[key][role], patch);
-  saveState();
+function setEval(rec, key, role, patch){
+  if(!rec.items[key]) rec.items[key] = {};
+  if(!rec.items[key][role]) rec.items[key][role] = {lvl:null, note:""};
+  Object.assign(rec.items[key][role], patch);
+  touch(rec);
 }
 
 /* Niveau retenu : la validation la plus engageante disponible (COO > Buddy > Auto). */
-function retained(st, key){
-  const c = getEval(st, key, "coo").lvl;
-  if(c !== null) return c;
-  const b = getEval(st, key, "buddy").lvl;
-  if(b !== null) return b;
-  return getEval(st, key, "auto").lvl;
+function retained(rec, key){
+  const c = getEval(rec, key, "coo").lvl;    if(c !== null) return c;
+  const b = getEval(rec, key, "buddy").lvl;  if(b !== null) return b;
+  return getEval(rec, key, "auto").lvl;
 }
 
 /* ==========================================================================
-   3. CALCULS DE PROGRESSION & BADGES
+   3. PROGRESSION & BADGES
    ========================================================================== */
 
-function subStats(pp, block, sub){
-  const st = ppState(pp.id);
+function subStats(rec, block, sub){
   let total = sub.items.length, at2 = 0, rated = 0;
   sub.items.forEach((_, i) => {
-    const r = retained(st, itemKey(block.id, sub.id, i));
+    const r = retained(rec, itemKey(block.id, sub.id, i));
     if(r !== null) rated++;
     if(r === 2) at2++;
   });
   return {total, at2, rated, done: total > 0 && at2 === total};
 }
-function ppStats(pp){
-  const st = ppState(pp.id);
+function recStats(svc, rec){
   let total = 0, at2 = 0, rated = 0, badges = 0, badgesTotal = 0;
-  pp.blocks.forEach(b => b.subs.forEach(s => {
-    const x = subStats(pp, b, s);
+  svc.blocks.forEach(b => b.subs.forEach(s => {
+    const x = subStats(rec, b, s);
     total += x.total; at2 += x.at2; rated += x.rated;
     badgesTotal++; if(x.done) badges++;
   }));
-  const pct = total ? Math.round(at2 / total * 100) : 0;
-  return {total, at2, rated, badges, badgesTotal, pct,
-          ambassador: badgesTotal > 0 && badges === badgesTotal, unlocked: st.unlocked};
+  return {total, at2, rated, badges, badgesTotal,
+          pct: total ? Math.round(at2/total*100) : 0,
+          ambassador: badgesTotal > 0 && badges === badgesTotal};
 }
-function roleProgress(pp, role){
-  const st = ppState(pp.id);
+function roleProgress(svc, rec, role){
   let total = 0, filled = 0;
-  pp.blocks.forEach(b => b.subs.forEach(s => s.items.forEach((_, i) => {
+  svc.blocks.forEach(b => b.subs.forEach(s => s.items.forEach((_, i) => {
     total++;
-    if(getEval(st, itemKey(b.id, s.id, i), role).lvl !== null) filled++;
+    if(getEval(rec, itemKey(b.id, s.id, i), role).lvl !== null) filled++;
   })));
   return {total, filled};
 }
 
-/* Détecte les nouveaux badges et déclenche les pop-up.
-   silent = true : on enregistre l’acquis sans pop-up (au chargement d’un passeport
-   déjà rempli ou importé, afin de ne pas déclencher une rafale au premier clic). */
-function checkBadges(pp, silent){
-  const st = ppState(pp.id);
+/* silent = true : enregistre les badges déjà acquis sans ouvrir de pop-up
+   (au chargement d’un dossier déjà rempli ou importé). */
+function checkBadges(svc, rec, silent){
   const queue = [];
-  pp.blocks.forEach(b => b.subs.forEach(s => {
-    const id = b.id + "." + s.id;
-    const done = subStats(pp, b, s).done;
-    const had = st.unlocked.includes(id);
-    if(done && !had){ st.unlocked.push(id); queue.push({type:"badge", block:b, sub:s}); }
-    else if(!done && had){ st.unlocked = st.unlocked.filter(x => x !== id); }
+  svc.blocks.forEach(b => b.subs.forEach(s => {
+    const id = b.id+"."+s.id;
+    const done = subStats(rec, b, s).done;
+    const had = rec.unlocked.includes(id);
+    if(done && !had){ rec.unlocked.push(id); queue.push({type:"badge", block:b, sub:s}); }
+    else if(!done && had){ rec.unlocked = rec.unlocked.filter(x => x !== id); }
   }));
-  const stats = ppStats(pp);
-  const hadAmb = st.unlocked.includes("__ambassadeur__");
-  if(stats.ambassador && !hadAmb){ st.unlocked.push("__ambassadeur__"); queue.push({type:"golden"}); }
-  else if(!stats.ambassador && hadAmb){ st.unlocked = st.unlocked.filter(x => x !== "__ambassadeur__"); }
-  saveState();
-  if(queue.length && !silent) showBadgeQueue(pp, queue);
+  const stats = recStats(svc, rec);
+  const hadAmb = rec.unlocked.includes("__ambassadeur__");
+  if(stats.ambassador && !hadAmb){ rec.unlocked.push("__ambassadeur__"); queue.push({type:"golden"}); }
+  else if(!stats.ambassador && hadAmb){ rec.unlocked = rec.unlocked.filter(x => x !== "__ambassadeur__"); }
+  saveRecords();
+  if(queue.length && !silent) showBadgeQueue(svc, rec, queue);
   return stats;
 }
 
 /* ==========================================================================
-   4. UTILITAIRES UI
+   4. UTILITAIRES
    ========================================================================== */
 
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const $  = (sel, root) => (root||document).querySelector(sel);
 const $$ = (sel, root) => Array.prototype.slice.call((root||document).querySelectorAll(sel));
 
+function fmtDate(iso){
+  if(!iso) return "—";
+  const d = new Date(iso);
+  if(isNaN(d)) return "—";
+  return d.toLocaleDateString("fr-FR", {day:"2-digit", month:"short", year:"numeric"});
+}
+function fmtDateTime(iso){
+  if(!iso) return "—";
+  const d = new Date(iso);
+  if(isNaN(d)) return "—";
+  return d.toLocaleDateString("fr-FR", {day:"2-digit", month:"long", year:"numeric"}) +
+         " à " + d.toLocaleTimeString("fr-FR", {hour:"2-digit", minute:"2-digit"});
+}
+
 let toastTimer = null;
 function toast(msg){
   const t = $("#toast");
   t.textContent = msg; t.classList.add("on");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("on"), 2600);
+  toastTimer = setTimeout(() => t.classList.remove("on"), 2800);
 }
 function closeModal(){ const ov = $("#ov"); ov.classList.remove("on"); ov.innerHTML = ""; }
 $("#ov").addEventListener("click", e => { if(e.target.id === "ov") closeModal(); });
 document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
+
+function copyText(txt){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(txt).then(() => true).catch(() => fallbackCopy(txt));
+  }
+  return Promise.resolve(fallbackCopy(txt));
+}
+function fallbackCopy(txt){
+  const ta = document.createElement("textarea");
+  ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  let ok = false;
+  try{ ok = document.execCommand("copy"); }catch(e){ ok = false; }
+  ta.remove(); return ok;
+}
+
+/* Rendu markdown minimal pour la synthèse renvoyée par l’IA. */
+function mdLite(src){
+  const lines = String(src).replace(/\r/g,"").split("\n");
+  let out = "", list = null;
+  const inline = t => esc(t)
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
+  const closeList = () => { if(list){ out += "</"+list+">"; list = null; } };
+  lines.forEach(raw => {
+    const l = raw.trim();
+    if(!l){ closeList(); return; }
+    if(/^(-{3,}|_{3,}|\*{3,})$/.test(l)){ closeList(); out += "<hr>"; return; }
+    let m;
+    if((m = l.match(/^(#{1,6})\s+(.*)$/))){
+      closeList();
+      const lvl = Math.min(m[1].length, 3);
+      out += "<h"+lvl+">"+inline(m[2])+"</h"+lvl+">"; return;
+    }
+    if((m = l.match(/^[-*•]\s+(.*)$/))){
+      if(list !== "ul"){ closeList(); out += "<ul>"; list = "ul"; }
+      out += "<li>"+inline(m[1])+"</li>"; return;
+    }
+    if((m = l.match(/^\d+[.)]\s+(.*)$/))){
+      if(list !== "ol"){ closeList(); out += "<ol>"; list = "ol"; }
+      out += "<li>"+inline(m[1])+"</li>"; return;
+    }
+    closeList();
+    out += "<p>"+inline(l)+"</p>";
+  });
+  closeList();
+  return out;
+}
 
 function confettiHTML(golden){
   const cols = golden ? ["#A78552","#F5EDDC","#EBD9A8","#496BFF"] : ["#496BFF","#7C9182","#E9C46A","#8FA6FF","#D9C9D6"];
@@ -755,15 +878,14 @@ function confettiHTML(golden){
     const l = Math.random()*100, d = (Math.random()*1.5+.9).toFixed(2), dl = (Math.random()*.5).toFixed(2);
     h += '<i style="left:'+l.toFixed(1)+'%;background:'+cols[i%cols.length]+';animation-duration:'+d+'s;animation-delay:'+dl+'s"></i>';
   }
-  return h + "</div>";
+  return h+"</div>";
 }
 
-/* Pop-up de badge, en file d’attente si plusieurs débloqués d’un coup. */
-function showBadgeQueue(pp, queue){
+function showBadgeQueue(svc, rec, queue){
   if(!queue.length){ closeModal(); return; }
   const cur = queue.shift();
-  const ov = $("#ov");
-  const more = queue.length;
+  const ov = $("#ov"), more = queue.length;
+  const who = rec.nom ? esc(rec.nom) : "Le collaborateur";
   if(cur.type === "golden"){
     ov.innerHTML =
       '<div class="modal golden-m">'+confettiHTML(true)+
@@ -771,11 +893,10 @@ function showBadgeQueue(pp, queue){
       '<div class="kick">Distinction suprême</div>'+
       '<div class="medal">🌟</div>'+
       '<h2>Ambassadeur de l’hôtel</h2>'+
-      '<div class="who">Tous les badges du Passeport '+esc(pp.name)+' ont été validés.</div>'+
-      '<div class="msg">Le parcours d’intégration est complet : les '+ppStats(pp).badgesTotal+
-      ' badges sont acquis. Le collaborateur maîtrise l’ensemble des savoirs, savoir-faire et savoir-être attendus, et peut à son tour accompagner de nouveaux arrivants.</div>'+
-      '<button class="btn btn-primary" data-next>'+(more ? "Suivant ("+more+")" : "Terminer le voyage")+'</button>'+
-      '</div>';
+      '<div class="who">'+who+' — Passeport '+esc(svc.name)+'</div>'+
+      '<div class="msg">Le parcours d’intégration est complet : les '+recStats(svc,rec).badgesTotal+
+      ' badges sont acquis. L’ensemble des savoirs, savoir-faire et savoir-être attendus est maîtrisé.</div>'+
+      '<button class="btn btn-primary" data-next>'+(more?"Suivant ("+more+")":"Terminer le voyage")+'</button></div>';
   } else {
     ov.innerHTML =
       '<div class="modal">'+confettiHTML(false)+
@@ -784,119 +905,95 @@ function showBadgeQueue(pp, queue){
       '<div class="medal">'+cur.sub.badge.emoji+'</div>'+
       '<h2>'+esc(cur.sub.badge.name)+'</h2>'+
       '<div class="who">'+esc(cur.block.name)+' · '+esc(cur.sub.name)+'</div>'+
-      '<div class="msg">'+esc(cur.sub.obj)+'<br><br><b>'+cur.sub.items.length+
-      ' items sur '+cur.sub.items.length+'</b> validés au niveau 🟢 Acquisition.</div>'+
-      '<button class="btn btn-primary" data-next>'+(more ? "Badge suivant ("+more+")" : "Continuer")+'</button>'+
-      '</div>';
+      '<div class="msg">'+esc(cur.sub.obj)+'<br><br><b>'+cur.sub.items.length+' items sur '+
+      cur.sub.items.length+'</b> validés au niveau 🟢 Acquisition.</div>'+
+      '<button class="btn btn-primary" data-next>'+(more?"Badge suivant ("+more+")":"Continuer")+'</button></div>';
   }
   ov.classList.add("on");
   $("[data-x]", ov).onclick = closeModal;
-  $("[data-next]", ov).onclick = () => showBadgeQueue(pp, queue);
+  $("[data-next]", ov).onclick = () => showBadgeQueue(svc, rec, queue);
 }
-
-/* Réouverture manuelle d’un badge déjà obtenu (galerie de tampons). */
-function reopenBadge(pp, blockId, subId){
-  const b = pp.blocks.find(x => x.id === blockId);
-  const s = b && b.subs.find(x => x.id === subId);
-  if(s) showBadgeQueue(pp, [{type:"badge", block:b, sub:s}]);
-}
-function reopenGolden(pp){ showBadgeQueue(pp, [{type:"golden"}]); }
 
 /* ==========================================================================
    5. ROUTEUR
    ========================================================================== */
 
 function route(){
-  const h = location.hash.replace(/^#\/?/, "");
-  const parts = h.split("/").filter(Boolean);
+  const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
   window.scrollTo(0, 0);
   closeModal();
-  if(parts[0] === "p" && parts[1])        renderPassport(parts[1]);
-  else if(parts[0] === "builder")         renderBuilder(parts[1] || null);
-  else if(parts[0] === "services"){       // ancre : on rend l’accueil puis on défile
+  if(parts[0] === "d" && parts[1])      renderPassport(parts[1]);
+  else if(parts[0] === "dossiers")      renderDossiers();
+  else if(parts[0] === "services"){
     renderLanding();
     const el = $("#services");
     if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
   }
-  else                                    renderLanding();
+  else renderLanding();
 }
 window.addEventListener("hashchange", route);
 
 function header(active){
+  const n = RECORDS.length;
   return '<div class="topbar"><div class="topbar-in">'+
     '<a class="brand" href="#/"><span class="brand-mark">🛂</span><span>Passeport des Savoirs<small>par Oversight</small></span></a>'+
     '<nav class="topnav">'+
       '<a href="#/" class="'+(active==="home"?"on":"")+'">Accueil</a>'+
       '<a href="#services">Les passeports</a>'+
-      '<a href="#/builder" class="'+(active==="builder"?"on":"")+'">Créer un passeport</a>'+
+      '<a href="#/dossiers" class="'+(active==="dossiers"?"on":"")+'">Collaborateurs'+
+        (n?'<span class="pill">'+n+'</span>':"")+'</a>'+
     '</nav></div></div>';
 }
 function footer(){
-  return '<div class="foot wrap">Passeport des Savoirs — Oversight · Charte graphique Oversight ·'+
-    ' Les données saisies restent stockées dans ce navigateur. Pensez à exporter le passeport pour le partager ou l’archiver.</div>';
+  return '<div class="foot wrap">Passeport des Savoirs — Oversight · '+
+    'Les passeports enregistrés restent dans ce navigateur. Exportez-les pour les partager ou les archiver.</div>';
 }
 
 /* ==========================================================================
-   6. LANDING
+   6. ACCUEIL
    ========================================================================== */
 
 function renderLanding(){
-  const cards = allPassports().map(pp => {
-    const st = ppStats(pp);
-    const isSkel = !!pp.skeleton && st.total === 0;
-    const isCustom = CUSTOM.some(c => c.id === pp.id);
+  const cards = SERVICES.map(svc => {
+    const ready = isReady(svc);
+    const n = recordsOf(svc.id).length;
+    let items = 0, badges = 0;
+    svc.blocks.forEach(b => b.subs.forEach(s => { items += s.items.length; badges++; }));
     const stamps = [];
-    pp.blocks.forEach(b => b.subs.forEach(s => {
-      stamps.push('<span class="'+(subStats(pp,b,s).done?"on":"")+'" title="'+esc(s.badge.name)+'">'+s.badge.emoji+'</span>');
-    }));
-    const tag = isCustom ? '<span class="svc-badge custom">Sur mesure</span>'
-              : isSkel   ? '<span class="svc-badge todo">À construire</span>'
-                         : '<span class="svc-badge ok">Disponible</span>';
-    return '<article class="svc">'+
-      '<div class="svc-top">'+tag+
-        '<span class="svc-emoji">'+pp.emoji+'</span>'+
-        '<h3>'+esc(pp.name)+'</h3>'+
-        '<div class="svc-sub">'+esc(pp.tagline||"")+'</div>'+
+    svc.blocks.forEach(b => b.subs.forEach(s => stamps.push('<span title="'+esc(s.badge.name)+'">'+s.badge.emoji+'</span>')));
+
+    return '<article class="svc'+(ready?"":" soon")+'">'+
+      '<div class="svc-top">'+
+        (ready?'<span class="svc-badge ok">Disponible</span>':'<span class="svc-badge todo">Items à définir</span>')+
+        '<span class="svc-emoji">'+svc.emoji+'</span>'+
+        '<h3>'+esc(svc.name)+'</h3>'+
+        '<div class="svc-sub">'+esc(svc.tagline)+'</div>'+
       '</div>'+
       '<div class="svc-body">'+
-        (isSkel
-          ? '<p style="font-size:.9rem;color:var(--ink-55)">Structure prête (Savoir · Savoir-faire · Savoir-être) et échelles à 3 niveaux configurées. Les items restent à définir avec le service.</p>'
-          : '<div class="svc-meta"><span><b>'+st.total+'</b> items</span><span><b>'+st.badgesTotal+'</b> badges</span><span><b>'+st.pct+'%</b> acquis</span></div>'+
-            '<div class="svc-prog"><i style="width:'+st.pct+'%"></i></div>'+
-            '<div class="svc-stamps">'+stamps.join("")+(st.ambassador?'<span class="on" title="Ambassadeur de l’hôtel">🌟</span>':"")+'</div>'
+        (ready
+          ? '<div class="svc-meta"><span><b>'+items+'</b> items</span><span><b>'+badges+'</b> badges</span>'+
+            '<span><b>'+n+'</b> '+(n>1?"passeports enregistrés":"passeport enregistré")+'</span></div>'+
+            '<div class="svc-stamps">'+stamps.join("")+'</div>'+
+            '<div class="svc-actions">'+
+              '<button class="btn btn-primary btn-sm" data-new="'+svc.id+'">Nouveau passeport →</button>'+
+              (n?'<a class="btn btn-ghost btn-sm" href="#/dossiers?s='+svc.id+'">Voir les '+n+'</a>':"")+
+            '</div>'
+          : '<p style="font-size:.9rem;color:var(--ink-55)">Structure prête — les 3 blocs et les échelles à 3 niveaux sont configurés. Les items du service restent à définir.</p>'
         )+
-        '<div class="svc-actions">'+
-          (isSkel
-            ? '<a class="btn btn-primary btn-sm" href="#/builder/'+pp.id+'">Construire ce passeport →</a>'
-            : '<a class="btn btn-primary btn-sm" href="#/p/'+pp.id+'">Ouvrir le passeport →</a>'+
-              (isCustom ? '<button class="btn btn-ghost btn-sm" data-del="'+pp.id+'">Supprimer</button>' : "")
-          )+
-        '</div>'+
       '</div></article>';
   }).join("");
 
   const scaleCards = SCALES.savoir.map((s, i) =>
-    '<div class="scale-card l'+i+'"><div class="lv">'+s.e+' '+esc(s.n)+'</div><p>'+esc(s.d)+'</p></div>'
-  ).join("");
-
-  const totalItems  = allPassports().reduce((a,p) => a + ppStats(p).total, 0);
-  const totalBadges = allPassports().reduce((a,p) => a + ppStats(p).badgesTotal, 0);
+    '<div class="scale-card l'+i+'"><div class="lv">'+s.e+' '+esc(s.n)+'</div><p>'+esc(s.d)+'</p></div>').join("");
 
   $("#app").innerHTML = header("home")+
   '<section class="hero"><div class="wrap">'+
     '<div class="eyebrow">🛂 Parcours d’intégration</div>'+
     '<h1>Le Passeport <em>des Savoirs</em></h1>'+
     '<p class="hero-lead">Le fil conducteur de l’intégration de chaque nouveau collaborateur. Faisant référence au voyage, il retrace son parcours, les compétences acquises, les étapes franchies et les expériences validées tout au long de son évolution au sein de l’établissement.</p>'+
-    '<div class="hero-cta">'+
-      '<a class="btn btn-primary" href="#services">Découvrir les passeports</a>'+
-      '<a class="btn btn-ghost" href="#/builder">Créer son propre passeport</a>'+
-    '</div>'+
-    '<div class="hero-stats">'+
-      '<div class="stat"><b>'+allPassports().length+'</b><span>Services</span></div>'+
-      '<div class="stat"><b>3</b><span>Blocs</span></div>'+
-      '<div class="stat"><b>'+totalItems+'</b><span>Items</span></div>'+
-      '<div class="stat"><b>'+totalBadges+'</b><span>Badges</span></div>'+
-    '</div>'+
+    '<div class="hero-cta"><a class="btn btn-primary" href="#services">Découvrir les passeports</a>'+
+      (getRecord(DEMO_ID)?'<a class="btn btn-ghost" href="#/d/'+DEMO_ID+'">🎬 Voir un passeport rempli</a>':"")+
+      (RECORDS.some(r => !r.demo)?'<a class="btn btn-ghost" href="#/dossiers">Les passeports en cours</a>':"")+'</div>'+
   '</div></section>'+
 
   '<section class="section"><div class="wrap">'+
@@ -905,15 +1002,14 @@ function renderLanding(){
     '<p>Chaque passeport est configuré par blocs et sous-blocs. Chaque sous-bloc franchi donne droit à un tampon.</p></div>'+
     '<div class="grid-3">'+
       '<div class="pcard"><div class="ic">📖</div><h3>Savoir</h3><p>Ce que le collaborateur comprend et sait expliquer : l’établissement, son métier, et celui des autres services.</p></div>'+
-      '<div class="pcard"><div class="ic">🛠️</div><h3>Savoir-faire</h3><p>Ce qu’il sait exécuter en autonomie : accueil, check-in/check-out, réservations, situations délicates.</p></div>'+
+      '<div class="pcard"><div class="ic">🛠️</div><h3>Savoir-faire</h3><p>Ce qu’il sait exécuter en autonomie</p></div>'+
       '<div class="pcard"><div class="ic">💫</div><h3>Savoir-être</h3><p>Ce qui s’observe au quotidien : sens du service, communication, esprit d’équipe, adaptabilité, professionnalisme.</p></div>'+
     '</div>'+
     '<div class="section-head c" style="margin-top:52px"><div class="section-kicker">L’échelle</div>'+
-    '<h2>Trois niveaux par item</h2>'+
-    '<p>Les intitulés du niveau 2 s’adaptent au bloc : expliquer pour le Savoir, mettre en pratique en autonomie pour le Savoir-faire, être observé régulièrement pour le Savoir-être.</p></div>'+
+    '<h2>Trois niveaux par item</h2></div>'+
     '<div class="scale-row">'+scaleCards+'</div>'+
     '<div class="grid-3" style="margin-top:24px">'+
-      '<div class="pcard"><div class="ic" style="background:var(--kaki-light)">🎖️</div><h3>Un badge par sous-bloc</h3><p>Le badge s’obtient lorsque <b>100% des items</b> du sous-bloc atteignent le niveau 2 🟢. Il apparaît alors sous forme de pop-up.</p></div>'+
+      '<div class="pcard"><div class="ic" style="background:var(--kaki-light)">🎖️</div><h3>Un badge par sous-bloc</h3><p>Le badge s’obtient lorsque <b>100% des items</b> du sous-bloc atteignent le niveau 2 🟢.</p></div>'+
       '<div class="pcard"><div class="ic" style="background:var(--gold-light)">🌟</div><h3>Golden badge</h3><p>Tous les badges acquis débloquent la distinction <b>Ambassadeur de l’hôtel</b>.</p></div>'+
       '<div class="pcard"><div class="ic">👥</div><h3>Trois regards</h3><p>Chaque item est évalué par le <b>collaborateur</b> (auto-évaluation), le <b>buddy</b> et le <b>COO</b>, avec un commentaire possible pour chacun.</p></div>'+
     '</div>'+
@@ -922,97 +1018,200 @@ function renderLanding(){
   '<section class="section" id="services"><div class="wrap">'+
     '<div class="section-head c"><div class="section-kicker">Par service</div>'+
     '<h2>Les <span class="serif italic">passeports</span></h2>'+
-    '<p>Un Passeport des Savoirs par service. Ouvrez un passeport existant, ou composez le vôtre de toutes pièces.</p></div>'+
-    '<div class="svc-grid">'+cards+
-      '<article class="svc" style="border-style:dashed;background:rgba(255,255,255,.4);box-shadow:none">'+
-        '<div class="svc-body" style="justify-content:center;text-align:center;padding:34px 24px">'+
-          '<div style="font-size:2rem">➕</div>'+
-          '<h3 style="font-size:1.1rem">Créer son propre passeport</h3>'+
-          '<p style="font-size:.9rem;color:var(--ink-55)">Définissez vos blocs, sous-blocs, items et badges pour n’importe quel service ou établissement.</p>'+
-          '<div class="svc-actions" style="justify-content:center"><a class="btn btn-dark btn-sm" href="#/builder">Commencer →</a></div>'+
-        '</div></article>'+
-    '</div>'+
+    '<p>Un Passeport des Savoirs par service. Ouvrez-en un pour un nouveau collaborateur : son passeport est enregistré et se retrouve à tout moment dans l’onglet Collaborateurs.</p></div>'+
+    '<div class="svc-grid">'+cards+'</div>'+
   '</div></section>'+
   footer();
 
+  $$("[data-new]").forEach(b => b.onclick = () => newRecordModal(b.getAttribute("data-new")));
+}
+
+/* Modale de création d’un passeport pour un collaborateur. */
+function newRecordModal(serviceId){
+  const svc = getService(serviceId);
+  if(!svc) return;
+  const ov = $("#ov");
+  ov.innerHTML = '<div class="modal form">'+
+    '<button class="modal-x" data-x>✕</button>'+
+    '<div class="kick">'+svc.emoji+' Passeport '+esc(svc.name)+'</div>'+
+    '<h2 style="margin-bottom:8px">Nouveau collaborateur</h2>'+
+    '<p style="font-size:.92rem;color:var(--ink-55);margin-bottom:22px">Ces informations figurent sur la couverture du passeport et permettent de le retrouver.</p>'+
+    '<div class="f"><label>Nom du collaborateur</label><input id="n-nom" placeholder="Prénom Nom" autocomplete="off"></div>'+
+    '<div class="frow">'+
+      '<div class="f"><label>Date d’arrivée</label><input id="n-arr" type="date"></div>'+
+      '<div class="f"><label>Buddy</label><input id="n-bud" placeholder="Prénom Nom" autocomplete="off"></div>'+
+    '</div>'+
+    '<div class="modal-acts"><button class="btn btn-ghost" data-x>Annuler</button>'+
+    '<button class="btn btn-primary" data-ok>Créer le passeport →</button></div></div>';
+  ov.classList.add("on");
+  $("#n-nom").focus();
+  $$("[data-x]", ov).forEach(b => b.onclick = closeModal);
+  const submit = () => {
+    const nom = $("#n-nom").value.trim();
+    if(!nom){ toast("Indiquez le nom du collaborateur."); $("#n-nom").focus(); return; }
+    const rec = createRecord(serviceId, {nom, arrivee:$("#n-arr").value, buddy:$("#n-bud").value});
+    closeModal();
+    location.hash = "#/d/"+rec.id;
+  };
+  $("[data-ok]", ov).onclick = submit;
+  ov.addEventListener("keydown", e => { if(e.key === "Enter") submit(); });
+}
+
+/* ==========================================================================
+   7. COLLABORATEURS — la liste des passeports enregistrés
+   ========================================================================== */
+
+let dossQuery = "", dossFilter = "";
+
+function renderDossiers(){
+  const m = location.hash.match(/[?&]s=([a-z0-9_-]+)/i);
+  if(m) dossFilter = m[1];
+
+  const chips = '<button class="'+(dossFilter?"":"on")+'" data-f="">Tous</button>'+
+    SERVICES.filter(s => recordsOf(s.id).length).map(s =>
+      '<button class="'+(dossFilter===s.id?"on":"")+'" data-f="'+s.id+'">'+s.emoji+' '+esc(s.name)+
+      ' <span style="opacity:.6">'+recordsOf(s.id).length+'</span></button>').join("");
+
+  const q = dossQuery.trim().toLowerCase();
+  const list = RECORDS
+    .filter(r => !dossFilter || r.service === dossFilter)
+    .filter(r => {
+      if(!q) return true;
+      const svc = getService(r.service);
+      return [r.nom, r.buddy, svc && svc.name].filter(Boolean).join(" ").toLowerCase().includes(q);
+    })
+    .slice()
+    .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+
+  let body;
+  if(!RECORDS.length){
+    body = '<div class="empty"><div class="big">🛂</div><h3>Aucun passeport enregistré</h3>'+
+      '<p>Ouvrez un passeport depuis un service pour démarrer l’intégration d’un collaborateur.</p>'+
+      '<div style="margin-top:22px"><a class="btn btn-primary" href="#services">Choisir un service →</a></div></div>';
+  } else if(!list.length){
+    body = '<div class="empty"><div class="big">🔍</div><h3>Aucun résultat</h3>'+
+      '<p>Aucun passeport ne correspond à cette recherche.</p></div>';
+  } else {
+    body = '<div class="doss-list">'+list.map(r => {
+      const svc = getService(r.service);
+      const st = recStats(svc, r);
+      return '<article class="doss">'+
+        '<div class="doss-ic">'+svc.emoji+'</div>'+
+        '<div class="doss-main">'+
+          '<div class="doss-nm">'+esc(r.nom || "Sans nom")+
+            (r.demo ? '<span class="demotag">Démo</span>' : "")+
+            '<span class="svctag">'+esc(svc.name)+'</span>'+
+            (r.synthese && r.synthese.text ? '<span class="aitag">✨ Synthèse</span>' : "")+
+            (st.ambassador ? '<span class="aitag">🌟 Ambassadeur</span>' : "")+
+          '</div>'+
+          '<div class="doss-sub">'+
+            '<span>Arrivée : '+fmtDate(r.arrivee)+'</span>'+
+            '<span>Buddy : '+esc(r.buddy || "—")+'</span>'+
+            '<span>'+st.badges+' / '+st.badgesTotal+' badges</span>'+
+            '<span>Modifié le '+fmtDate(r.updatedAt)+'</span>'+
+          '</div>'+
+          '<div class="doss-bar'+(st.ambassador?" full":"")+'"><i style="width:'+st.pct+'%"></i></div>'+
+        '</div>'+
+        '<div class="doss-right">'+
+          '<div class="doss-pct"><b>'+st.pct+'%</b><span>Acquis</span></div>'+
+          '<div class="doss-acts">'+
+            '<a class="btn btn-primary btn-sm" href="#/d/'+r.id+'">Ouvrir</a>'+
+            '<button class="iconbtn" data-exp="'+r.id+'" title="Exporter en JSON">⬇︎</button>'+
+            '<button class="iconbtn danger" data-del="'+r.id+'" title="Supprimer">🗑</button>'+
+          '</div>'+
+        '</div></article>';
+    }).join("")+'</div>';
+  }
+
+  $("#app").innerHTML = header("dossiers")+
+  '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
+    '<div class="section-head"><div class="section-kicker">Collaborateurs</div>'+
+    '<h2>Les passeports <span class="serif italic">enregistrés</span></h2>'+
+    '<p>Chaque nouveau collaborateur a son passeport. Retrouvez-le ici à tout moment pour poursuivre l’évaluation, l’imprimer ou générer sa synthèse.</p></div>'+
+    '<div class="doss-tools">'+
+      '<div class="search"><span class="mag">🔍</span>'+
+        '<input id="q" placeholder="Rechercher un collaborateur, un buddy, un service…" value="'+esc(dossQuery)+'"></div>'+
+    '</div>'+
+    (RECORDS.length ? '<div class="filters" style="margin-bottom:22px">'+chips+'</div>' : "")+
+    body+
+  '</div>'+footer();
+
+  const qi = $("#q");
+  if(qi){
+    qi.oninput = () => { dossQuery = qi.value; const p = qi.selectionStart; renderDossiers();
+      const n = $("#q"); if(n){ n.focus(); n.setSelectionRange(p, p); } };
+  }
+  $$("[data-f]").forEach(b => b.onclick = () => {
+    dossFilter = b.getAttribute("data-f");
+    if(location.hash.indexOf("?") > -1) location.hash = "#/dossiers"; else renderDossiers();
+  });
+  $$("[data-exp]").forEach(b => b.onclick = () => exportRecord(getRecord(b.getAttribute("data-exp"))));
   $$("[data-del]").forEach(b => b.onclick = () => {
-    const id = b.getAttribute("data-del");
-    const p = getPassport(id);
-    if(!confirm("Supprimer définitivement le passeport « "+(p?p.name:id)+" » et les évaluations associées ?")) return;
-    CUSTOM = CUSTOM.filter(c => c.id !== id); saveCustom();
-    delete STATE[id]; saveState();
-    toast("Passeport supprimé."); renderLanding();
+    const r = getRecord(b.getAttribute("data-del"));
+    if(!r) return;
+    if(!confirm("Supprimer définitivement le passeport de « "+(r.nom||"Sans nom")+" » ? Les évaluations, commentaires et la synthèse seront perdus.")) return;
+    RECORDS = RECORDS.filter(x => x.id !== r.id); saveRecords();
+    toast("Passeport supprimé."); renderDossiers();
   });
 }
 
 /* ==========================================================================
-   7. PASSEPORT
+   8. PASSEPORT
    ========================================================================== */
 
-let openSubs = {};   // mémorise les sous-blocs dépliés
-let curBlock = null;
+let openSubs = {}, curBlock = null;
 
-function renderPassport(id){
-  const pp = getPassport(id);
-  if(!pp){ location.hash = "#/"; return; }
-  if(!pp.blocks.some(b => b.subs.length)){
-    $("#app").innerHTML = header()+'<div class="wrap section"><div class="empty">'+
-      '<div class="big">'+pp.emoji+'</div><h2 class="serif" style="font-size:1.5rem;margin-bottom:10px">Passeport '+esc(pp.name)+' à construire</h2>'+
-      '<p>La structure est prête, mais aucun item n’a encore été défini pour ce service.</p>'+
-      '<div style="margin-top:22px"><a class="btn btn-primary" href="#/builder/'+pp.id+'">Définir les items →</a></div>'+
-      '</div></div>'+footer();
-    return;
-  }
-  if(!curBlock || !pp.blocks.some(b => b.id === curBlock)) curBlock = pp.blocks[0].id;
+function renderPassport(recId){
+  const rec = getRecord(recId);
+  if(!rec){ location.hash = "#/dossiers"; return; }
+  const svc = getService(rec.service);
+  if(!svc || !isReady(svc)){ location.hash = "#/dossiers"; return; }
+  if(!curBlock || !svc.blocks.some(b => b.id === curBlock)) curBlock = svc.blocks[0].id;
 
-  const st = ppState(pp.id);
-  const stats = checkBadges(pp, true);   // aligne les badges acquis, sans pop-up
+  const stats = checkBadges(svc, rec, true);
   const R = 58, C = 2*Math.PI*R, off = C*(1 - stats.pct/100);
+  const rp = roleProgress(svc, rec, ROLE);
 
   const roleBtns = ROLES.map(r =>
-    '<button data-role="'+r.id+'" class="'+(ROLE===r.id?"on":"")+'" title="'+esc(r.long)+'">'+r.short+'</button>'
-  ).join("");
-  const rp = roleProgress(pp, ROLE);
+    '<button data-role="'+r.id+'" class="'+(ROLE===r.id?"on":"")+'" title="'+esc(r.long)+'">'+r.short+'</button>').join("");
 
-  const tabs = pp.blocks.map(b => {
-    let d = 0;
-    b.subs.forEach(s => { if(subStats(pp,b,s).done) d++; });
+  const tabs = svc.blocks.map(b => {
+    let d = 0; b.subs.forEach(s => { if(subStats(rec,b,s).done) d++; });
     return '<button class="blocktab '+(curBlock===b.id?"on":"")+'" data-block="'+b.id+'">'+
       b.emoji+' '+esc(b.name)+' <span class="cnt">'+d+'/'+b.subs.length+' 🎖️</span></button>';
   }).join("");
 
   $("#app").innerHTML = header()+
   '<div class="wrap" style="padding-top:30px;padding-bottom:50px">'+
-    '<a href="#/" style="font-size:.88rem;color:var(--ink-55)">← Tous les passeports</a>'+
+    '<a class="backlink" href="#/dossiers" style="font-size:.88rem;color:var(--ink-55)">← Tous les collaborateurs</a>'+
+    (rec.demo ? '<div class="demobar">🎬 <span><b>Passeport de démonstration</b> — dossier fictif, entièrement rempli, pour montrer le passeport en fin de parcours : les 78 items évalués par les trois regards, les 12 badges, le golden badge et la synthèse. Supprimez-le quand vous n’en avez plus besoin, il ne reviendra pas.</span></div>' : "")+
     '<div class="pp-cover" style="margin-top:14px"><div class="pp-cover-in">'+
       '<div class="pp-id">'+
-        '<div class="kicker">'+pp.emoji+' Passeport des Savoirs</div>'+
-        '<h1>'+esc(pp.name.split(" ")[0])+' <em>'+esc(pp.name.split(" ").slice(1).join(" ") || "")+'</em></h1>'+
+        '<div class="kicker">'+svc.emoji+' Passeport des Savoirs · '+esc(svc.name)+'</div>'+
+        '<h1>'+esc((rec.nom||"Nouveau").split(" ")[0])+' <em>'+esc((rec.nom||"").split(" ").slice(1).join(" "))+'</em></h1>'+
         '<div class="pp-fields">'+
-          '<div class="pp-field"><label>Collaborateur</label><input data-meta="nom" placeholder="Prénom Nom" value="'+esc(st.meta.nom)+'"></div>'+
-          '<div class="pp-field"><label>Date d’arrivée</label><input data-meta="arrivee" type="date" value="'+esc(st.meta.arrivee)+'"></div>'+
-          '<div class="pp-field"><label>Buddy</label><input data-meta="buddy" placeholder="Prénom Nom" value="'+esc(st.meta.buddy)+'"></div>'+
+          '<div class="pp-field"><label>Collaborateur</label><input data-meta="nom" placeholder="Prénom Nom" value="'+esc(rec.nom)+'"></div>'+
+          '<div class="pp-field"><label>Date d’arrivée</label><input data-meta="arrivee" type="date" value="'+esc(rec.arrivee)+'"></div>'+
+          '<div class="pp-field"><label>Buddy</label><input data-meta="buddy" placeholder="Prénom Nom" value="'+esc(rec.buddy)+'"></div>'+
         '</div>'+
       '</div>'+
       '<div class="ring-wrap"><div class="ring">'+
         '<svg width="132" height="132" viewBox="0 0 132 132">'+
           '<circle cx="66" cy="66" r="'+R+'" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="9"/>'+
           '<circle cx="66" cy="66" r="'+R+'" fill="none" stroke="'+(stats.ambassador?"#EBD9A8":"#8FA6FF")+'" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/>'+
-        '</svg>'+
-        '<div class="ring-txt"><div><b>'+stats.pct+'%</b><span>Acquis</span></div></div>'+
-      '</div><div class="ring-cap">'+stats.badges+' / '+stats.badgesTotal+' badges'+(stats.ambassador?' · 🌟':'')+'</div></div>'+
+        '</svg><div class="ring-txt"><div><b>'+stats.pct+'%</b><span>Acquis</span></div></div>'+
+      '</div><div class="ring-cap">'+stats.badges+' / '+stats.badgesTotal+' badges'+(stats.ambassador?" · 🌟":"")+'</div></div>'+
     '</div></div>'+
 
     '<div class="rolebar">'+
       '<span class="lbl">Je remplis en tant que</span>'+
       '<div class="roleseg">'+roleBtns+'</div>'+
-      '<span style="font-size:.84rem;color:var(--ink-55)">'+rp.filled+' / '+rp.total+' items renseignés</span>'+
+      '<span id="roleprog" style="font-size:.84rem;color:var(--ink-55)">'+rp.filled+' / '+rp.total+' items renseignés</span>'+
+      '<span style="font-size:.8rem;color:var(--ink-40)">🔒 Les deux autres colonnes sont verrouillées.</span>'+
       '<div class="tools">'+
         '<button class="btn btn-ghost btn-sm" data-export>⬇︎ Exporter</button>'+
-        '<button class="btn btn-ghost btn-sm" data-import>⬆︎ Importer</button>'+
         '<button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Imprimer / PDF</button>'+
-        '<button class="btn btn-ghost btn-sm" data-reset>↺ Réinitialiser</button>'+
-        '<input type="file" accept="application/json" id="fileIn" style="display:none">'+
+        '<button class="btn btn-ghost btn-sm btn-danger" data-reset>↺ Réinitialiser</button>'+
       '</div>'+
     '</div>'+
 
@@ -1024,59 +1223,61 @@ function renderPassport(id){
       '<p>Chaque sous-bloc validé à 100% au niveau 🟢 donne un badge. Cliquez sur un tampon obtenu pour revoir sa pop-up.</p></div>'+
       '<div class="stampgrid" id="stamps"></div>'+
     '</div>'+
+
+    '<div id="aizone"></div>'+
   '</div>'+footer();
 
-  renderPanel(pp);
-  renderStamps(pp);
+  renderPanel(svc, rec);
+  renderStamps(svc, rec);
+  renderAI(svc, rec);
 
-  $$("[data-block]").forEach(b => b.onclick = () => { curBlock = b.getAttribute("data-block"); renderPassport(pp.id); });
+  $$("[data-block]").forEach(b => b.onclick = () => { curBlock = b.getAttribute("data-block"); renderPassport(rec.id); });
   $$("[data-role]").forEach(b => b.onclick = () => {
-    ROLE = b.getAttribute("data-role"); localStorage.setItem(LS_ROLE, ROLE); renderPassport(pp.id);
+    ROLE = b.getAttribute("data-role"); localStorage.setItem(LS_ROLE, ROLE); renderPassport(rec.id);
   });
   $$("[data-meta]").forEach(inp => inp.oninput = () => {
-    st.meta[inp.getAttribute("data-meta")] = inp.value; saveState();
+    rec[inp.getAttribute("data-meta")] = inp.value; touch(rec);
   });
-  $("[data-export]").onclick  = () => exportPassport(pp);
-  $("[data-import]").onclick  = () => $("#fileIn").click();
-  $("#fileIn").onchange       = e => importPassport(pp, e.target.files[0]);
-  $("[data-reset]").onclick   = () => {
-    if(!confirm("Effacer toutes les évaluations, commentaires et badges de ce passeport ?")) return;
-    STATE[pp.id] = {meta:{nom:"",arrivee:"",buddy:""}, items:{}, unlocked:[]}; saveState();
-    toast("Passeport réinitialisé."); renderPassport(pp.id);
+  $("[data-export]").onclick = () => exportRecord(rec);
+  $("[data-reset]").onclick = () => {
+    if(!confirm("Effacer toutes les évaluations, commentaires, badges et la synthèse de ce passeport ? Le collaborateur reste enregistré.")) return;
+    rec.items = {}; rec.unlocked = []; rec.synthese = null; touch(rec);
+    toast("Passeport réinitialisé."); renderPassport(rec.id);
   };
 }
 
-function renderPanel(pp){
-  const block = pp.blocks.find(b => b.id === curBlock);
-  const st = ppState(pp.id);
+function renderPanel(svc, rec){
+  const block = svc.blocks.find(b => b.id === curBlock);
 
   const legend = '<div class="scale-legend"><h4>Échelle — '+esc(block.name)+'</h4><ul>'+
     block.scale.map(s => '<li><span>'+s.e+'</span><span><b>'+esc(s.n)+'</b> — '+esc(s.d)+'</span></li>').join("")+
     '</ul></div>';
 
   const subs = block.subs.map((sub, si) => {
-    const x = subStats(pp, block, sub);
+    const x = subStats(rec, block, sub);
     const okey = block.id+"."+sub.id;
     const isOpen = openSubs[okey] !== undefined ? openSubs[okey] : (si === 0);
 
     const items = sub.items.map((label, i) => {
       const key = itemKey(block.id, sub.id, i);
-      const r = retained(st, key);
+      const r = retained(rec, key);
       const evs = ROLES.map(role => {
-        const e = getEval(st, key, role.id);
+        const e = getEval(rec, key, role.id);
+        /* Seule la colonne du rôle sélectionné dans « Je remplis en tant que »
+           est modifiable. Les deux autres restent lisibles mais verrouillées. */
+        const locked = ROLE !== role.id;
         const tri = block.scale.map((sc, lv) =>
-          '<button class="'+(e.lvl===lv?"on":"")+'" data-set="'+key+'|'+role.id+'|'+lv+'" title="'+esc(sc.n+" — "+sc.d)+'" aria-label="'+esc(role.short+" : "+sc.n)+'">'+sc.e+'</button>'
-        ).join("");
-        return '<div class="ev '+(ROLE===role.id?"active-role":"")+' '+(e.note?"has-note":"")+'" data-ev="'+key+'|'+role.id+'">'+
+          '<button '+(locked?'disabled tabindex="-1" ':'')+'class="'+(e.lvl===lv?"on":"")+'" data-set="'+key+'|'+role.id+'|'+lv+'"'+
+          ' title="'+esc(locked ? role.short+" — "+sc.n+" (verrouillé : sélectionnez « "+role.short+" » pour modifier)" : sc.n+" — "+sc.d)+'"'+
+          ' aria-label="'+esc(role.short+" : "+sc.n)+'">'+sc.e+'</button>').join("");
+        return '<div class="ev '+(locked?"locked":"active-role")+' '+(e.note?"has-note":"")+'" data-ev="'+key+'|'+role.id+'">'+
           '<div class="ev-top"><span class="ev-who">'+role.short+'</span>'+
-            '<div style="display:flex;gap:6px;align-items:center">'+
-              '<div class="tri">'+tri+'</div>'+
-              '<button class="cbtn '+(e.note?"has":"")+'" data-note="'+key+'|'+role.id+'" title="Commentaire de '+esc(role.short)+'">💬</button>'+
-            '</div>'+
-          '</div>'+
+            '<div style="display:flex;gap:6px;align-items:center"><div class="tri">'+tri+'</div>'+
+            (locked ? "" : '<button class="cbtn '+(e.note?"has":"")+'" data-note="'+key+'|'+role.id+'" title="Commentaire de '+esc(role.short)+'">💬</button>')+
+            '</div></div>'+
           '<div class="cprev">'+esc(e.note)+'</div>'+
-          '<textarea data-txt="'+key+'|'+role.id+'" placeholder="Commentaire de '+esc(role.short)+'…">'+esc(e.note)+'</textarea>'+
-        '</div>';
+          (locked ? "" : '<textarea data-txt="'+key+'|'+role.id+'" placeholder="Commentaire de '+esc(role.short)+'…">'+esc(e.note)+'</textarea>')+
+          '</div>';
       }).join("");
       return '<div class="item"><div class="item-top">'+
         '<span class="item-dot '+(r===1?"l1":r===2?"l2":"")+'" title="Niveau retenu"></span>'+
@@ -1088,57 +1289,49 @@ function renderPanel(pp){
       '<header class="sub-head" data-toggle="'+okey+'">'+
         '<span class="sub-num">'+(si+1)+'</span>'+
         '<div class="sub-tt"><h3>'+esc(sub.name)+'</h3><div class="sub-obj">'+esc(sub.obj)+'</div></div>'+
-        '<div class="sub-right">'+
-          '<span class="sub-count"><b>'+x.at2+'</b>/'+x.total+' 🟢</span>'+
+        '<div class="sub-right"><span class="sub-count"><b>'+x.at2+'</b>/'+x.total+' 🟢</span>'+
           '<span class="stamp-mini" title="'+esc(sub.badge.name)+'">'+sub.badge.emoji+'</span>'+
-          '<span class="chev">▾</span>'+
-        '</div>'+
+          '<span class="chev">▾</span></div>'+
       '</header>'+
       '<div class="sub-body">'+
         '<div class="badge-goal">🎖️ <span>Badge <b>'+esc(sub.badge.name)+' '+sub.badge.emoji+'</b>&nbsp;— débloqué lorsque les '+x.total+' items atteignent le niveau 🟢.</span></div>'+
-        items+
-      '</div></section>';
+        items+'</div></section>';
   }).join("");
 
   $("#panel").innerHTML = legend + subs;
 
   $$("[data-toggle]").forEach(h => h.onclick = e => {
     if(e.target.closest("button") && e.target.closest("button") !== h) return;
-    const k = h.getAttribute("data-toggle");
-    const sec = h.parentElement;
+    const k = h.getAttribute("data-toggle"), sec = h.parentElement;
     const now = !sec.classList.contains("open");
     sec.classList.toggle("open", now); openSubs[k] = now;
   });
-
   $$("[data-set]").forEach(b => b.onclick = () => {
+    if(b.disabled) return;                     // colonne verrouillée
     const p = b.getAttribute("data-set").split("|");
-    const key = p[0], role = p[1], lv = parseInt(p[2], 10);
-    const cur = getEval(st, key, role).lvl;
-    setEval(st, key, role, {lvl: cur === lv ? null : lv});   // re-clic = annule
-    refreshAfterChange(pp);
+    const cur = getEval(rec, p[0], p[1]).lvl, lv = parseInt(p[2], 10);
+    setEval(rec, p[0], p[1], {lvl: cur === lv ? null : lv});   // re-clic = annule
+    const tri = b.parentElement;
+    $$("button", tri).forEach((x, i) => x.classList.toggle("on", cur === lv ? false : i === lv));
+    refreshAfterChange(svc, rec);
   });
-
   $$("[data-note]").forEach(b => b.onclick = () => {
     const ev = $('[data-ev="'+b.getAttribute("data-note")+'"]');
-    const open = ev.classList.toggle("note-open");
-    if(open) $("textarea", ev).focus();
+    if(ev.classList.toggle("note-open")) $("textarea", ev).focus();
   });
-
-  $$("[data-txt]").forEach(t => {
-    t.oninput = () => {
-      const p = t.getAttribute("data-txt").split("|");
-      setEval(st, p[0], p[1], {note: t.value});
-      const ev = t.closest(".ev");
-      ev.classList.toggle("has-note", !!t.value.trim());
-      $(".cbtn", ev).classList.toggle("has", !!t.value.trim());
-      $(".cprev", ev).textContent = t.value;
-    };
+  $$("[data-txt]").forEach(t => t.oninput = () => {
+    const p = t.getAttribute("data-txt").split("|");
+    setEval(rec, p[0], p[1], {note: t.value});
+    const ev = t.closest(".ev"), has = !!t.value.trim();
+    ev.classList.toggle("has-note", has);
+    $(".cbtn", ev).classList.toggle("has", has);
+    $(".cprev", ev).textContent = t.value;
   });
 }
 
-/* Recalcule badges + entêtes sans perdre le scroll ni les sous-blocs ouverts. */
-function refreshAfterChange(pp){
-  const stats = checkBadges(pp);
+/* Recalcule sans re-rendre : conserve le scroll et les sous-blocs ouverts. */
+function refreshAfterChange(svc, rec){
+  const stats = checkBadges(svc, rec);
   const R = 58, C = 2*Math.PI*R;
   const ring = $$(".ring svg circle")[1];
   if(ring){
@@ -1147,42 +1340,38 @@ function refreshAfterChange(pp){
   }
   const rt = $(".ring-txt b"); if(rt) rt.textContent = stats.pct+"%";
   const rc = $(".ring-cap");   if(rc) rc.textContent = stats.badges+" / "+stats.badgesTotal+" badges"+(stats.ambassador?" · 🌟":"");
-  const rp = roleProgress(pp, ROLE);
-  const rl = $(".rolebar span:not(.lbl)"); if(rl) rl.textContent = rp.filled+" / "+rp.total+" items renseignés";
+  const rp = roleProgress(svc, rec, ROLE);
+  const rl = $("#roleprog");   if(rl) rl.textContent = rp.filled+" / "+rp.total+" items renseignés";
 
-  const block = pp.blocks.find(b => b.id === curBlock);
+  const block = svc.blocks.find(b => b.id === curBlock);
   block.subs.forEach(sub => {
-    const x = subStats(pp, block, sub);
+    const x = subStats(rec, block, sub);
     const sec = $('[data-sub="'+block.id+"."+sub.id+'"]');
     if(!sec) return;
     sec.classList.toggle("done", x.done);
     $(".sub-count", sec).innerHTML = "<b>"+x.at2+"</b>/"+x.total+" 🟢";
   });
-  pp.blocks.forEach(b => {
-    let d = 0; b.subs.forEach(s => { if(subStats(pp,b,s).done) d++; });
+  svc.blocks.forEach(b => {
+    let d = 0; b.subs.forEach(s => { if(subStats(rec,b,s).done) d++; });
     const t = $('[data-block="'+b.id+'"] .cnt'); if(t) t.textContent = d+"/"+b.subs.length+" 🎖️";
   });
-  // pastilles "niveau retenu"
   $$(".item").forEach(el => {
-    const first = $("[data-set]", el);
-    if(!first) return;
+    const first = $("[data-set]", el); if(!first) return;
     const key = first.getAttribute("data-set").split("|")[0];
-    const r = retained(ppState(pp.id), key);
-    const dot = $(".item-dot", el);
-    dot.className = "item-dot "+(r===1?"l1":r===2?"l2":"");
+    const r = retained(rec, key);
+    $(".item-dot", el).className = "item-dot "+(r===1?"l1":r===2?"l2":"");
   });
-  renderStamps(pp);
+  renderStamps(svc, rec);
 }
 
-function renderStamps(pp){
+function renderStamps(svc, rec){
   const host = $("#stamps"); if(!host) return;
-  const stats = ppStats(pp);
+  const stats = recStats(svc, rec);
   let h = "";
-  pp.blocks.forEach(b => b.subs.forEach(s => {
-    const done = subStats(pp, b, s).done;
+  svc.blocks.forEach(b => b.subs.forEach(s => {
+    const done = subStats(rec, b, s).done;
     h += '<div class="stamp '+(done?"unlocked":"locked")+'" '+(done?'data-open="'+b.id+'|'+s.id+'"':"")+'>'+
-      '<div class="stamp-ic">'+s.badge.emoji+'</div>'+
-      '<div class="stamp-nm">'+esc(s.badge.name)+'</div>'+
+      '<div class="stamp-ic">'+s.badge.emoji+'</div><div class="stamp-nm">'+esc(s.badge.name)+'</div>'+
       '<div class="stamp-src">'+esc(b.name)+'</div></div>';
   }));
   h += '<div class="stamp golden '+(stats.ambassador?"unlocked":"locked")+'" '+(stats.ambassador?'data-golden="1"':"")+'>'+
@@ -1190,262 +1379,389 @@ function renderStamps(pp){
     '<div class="stamp-src">'+stats.badges+' / '+stats.badgesTotal+' badges acquis</div></div>';
   host.innerHTML = h;
   $$("[data-open]", host).forEach(el => el.onclick = () => {
-    const p = el.getAttribute("data-open").split("|"); reopenBadge(pp, p[0], p[1]);
+    const p = el.getAttribute("data-open").split("|");
+    const b = svc.blocks.find(x => x.id === p[0]);
+    const s = b && b.subs.find(x => x.id === p[1]);
+    if(s) showBadgeQueue(svc, rec, [{type:"badge", block:b, sub:s}]);
   });
-  const g = $("[data-golden]", host); if(g) g.onclick = () => reopenGolden(pp);
+  const g = $("[data-golden]", host);
+  if(g) g.onclick = () => showBadgeQueue(svc, rec, [{type:"golden"}]);
 }
 
 /* ==========================================================================
-   8. EXPORT / IMPORT
+   9. ESPACE SYNTHÈSE
    ========================================================================== */
 
-function exportPassport(pp){
-  const st = ppState(pp.id);
-  const payload = {
-    format:"passeport-des-savoirs", version:1,
-    passportId:pp.id, passportName:pp.name,
-    definition: CUSTOM.some(c => c.id === pp.id) ? pp : undefined,
-    meta:st.meta, items:st.items, unlocked:st.unlocked
+/* Met le passeport à plat en texte, pour le brief envoyé à l’IA. */
+function passportToText(svc, rec){
+  const st = recStats(svc, rec);
+  const L = [];
+  L.push("PASSEPORT DES SAVOIRS — "+svc.name.toUpperCase());
+  L.push("Collaborateur : "+(rec.nom || "non renseigné"));
+  L.push("Date d’arrivée : "+(rec.arrivee ? fmtDate(rec.arrivee) : "non renseignée"));
+  L.push("Buddy : "+(rec.buddy || "non renseigné"));
+  L.push("Progression globale : "+st.pct+"% des items au niveau 2 · "+st.badges+"/"+st.badgesTotal+" badges"+
+         (st.ambassador ? " · golden badge Ambassadeur de l’hôtel acquis" : ""));
+  L.push("");
+  L.push("LECTURE DES NIVEAUX — 0 = non découvert/non observé, 1 = découverte/en développement, 2 = acquisition.");
+  L.push("Chaque item porte jusqu’à trois évaluations : AUTO (le collaborateur), BUDDY, COO. « — » signifie non renseigné.");
+  L.push("");
+
+  svc.blocks.forEach(b => {
+    L.push("======== BLOC "+b.name.toUpperCase()+" ========");
+    L.push("Échelle de ce bloc :");
+    b.scale.forEach((s, i) => L.push("  niveau "+i+" — "+s.n.replace(/^Niveau \d+ — /,"")+" : "+s.d));
+    L.push("");
+    b.subs.forEach(sub => {
+      const x = subStats(rec, b, sub);
+      L.push("-- "+sub.name+" ("+x.at2+"/"+x.total+" au niveau 2 — badge « "+sub.badge.name+" » "+
+             (x.done ? "ACQUIS" : "non acquis")+")");
+      L.push("   Objectif : "+sub.obj);
+      sub.items.forEach((label, i) => {
+        const key = itemKey(b.id, sub.id, i);
+        const parts = ROLES.map(r => {
+          const e = getEval(rec, key, r.id);
+          return r.short.toUpperCase()+"="+(e.lvl === null ? "—" : e.lvl);
+        });
+        L.push("   • "+label+"  ["+parts.join(" ")+"]");
+        ROLES.forEach(r => {
+          const e = getEval(rec, key, r.id);
+          if(e.note && e.note.trim()) L.push("       commentaire "+r.short+" : "+e.note.trim());
+        });
+      });
+      L.push("");
+    });
+  });
+  return L.join("\n");
+}
+
+function buildPrompt(svc, rec){
+  return [
+"Tu es un responsable des ressources humaines expérimenté dans l’hôtellerie haut de gamme.",
+"Voici le Passeport des Savoirs d’un collaborateur en cours d’intégration. Il est évalué sur trois blocs",
+"(Savoir, Savoir-faire, Savoir-être), item par item, par trois personnes : le collaborateur lui-même",
+"(auto-évaluation), son buddy, et le COO.",
+"",
+"Rédige une synthèse d’intégration en français, à destination du COO et du buddy. Sois factuel, concret et",
+"bienveillant, sans flatterie ni jargon. Appuie chaque affirmation sur les données du passeport.",
+"",
+"Structure attendue, en markdown :",
+"",
+"## Où en est l’intégration",
+"Trois à cinq lignes : niveau global, blocs les plus avancés, blocs en retard, badges obtenus.",
+"",
+"## Points forts",
+"Trois à cinq puces. Cite les sous-blocs et items concernés.",
+"",
+"## Écarts de perception",
+"Les items où l’auto-évaluation diffère nettement de celle du buddy ou du COO, dans un sens comme dans",
+"l’autre. Explique ce que cet écart peut signifier (manque de confiance, angle mort, critères mal partagés).",
+"Si aucun écart notable, dis-le en une ligne.",
+"",
+"## Axes de progression prioritaires",
+"Trois à cinq puces, classées par priorité. Pour chacune : le constat, puis l’action concrète proposée.",
+"",
+"## Plan des 30 prochains jours",
+"Quatre à six actions datées ou séquencées, chacune avec un responsable (collaborateur, buddy ou COO).",
+"",
+"## Prêt pour l’autonomie ?",
+"Un verdict net — oui, pas encore, ou partiellement — avec la ou les conditions qui restent à remplir.",
+"",
+"Ignore les items non renseignés plutôt que de les compter comme des lacunes, mais signale en fin de synthèse",
+"si une part importante du passeport reste à évaluer.",
+"",
+"----- DONNÉES DU PASSEPORT -----",
+"",
+passportToText(svc, rec)
+  ].join("\n");
+}
+
+function renderAI(svc, rec){
+  const host = $("#aizone"); if(!host) return;
+  const has = !!(rec.synthese && rec.synthese.text && rec.synthese.text.trim());
+  const st = recStats(svc, rec);
+  const auto = !!AI_ENDPOINT;
+
+  const head =
+    '<div class="ai-head">'+
+      '<div class="ai-seal">✨</div>'+
+      '<div class="t"><div class="kick">Espace synthèse</div>'+
+      '<h2>La synthèse du passeport</h2>'+
+      '<p>Une lecture d’ensemble des trois regards — collaborateur, buddy et COO — pour préparer le point d’intégration : points forts, écarts de perception, axes de progression et plan des 30 prochains jours.</p></div>'+
+    '</div>';
+
+  let body;
+  if(has){
+    body = '<div class="ai-body">'+
+      '<div class="ai-meta"><span>Générée le '+fmtDateTime(rec.synthese.at)+'</span>'+
+        '<span>·</span><span>Passeport à '+st.pct+'% au moment de la synthèse</span></div>'+
+      '<div class="ai-out">'+mdLite(rec.synthese.text)+'</div>'+
+      '<div class="ai-acts" style="margin-top:20px">'+
+        (auto?'<button class="btn btn-gold" data-gen>✨ Regénérer</button>'
+             :'<button class="btn btn-gold" data-prompt>✨ Regénérer — copier le brief</button>')+
+        '<button class="btn btn-ghost" data-edit>Modifier</button>'+
+        '<button class="btn btn-ghost btn-danger" data-clear>Supprimer</button>'+
+      '</div>'+
+      '<div class="ai-paste" id="paste"><div class="f" style="margin-top:6px">'+
+        '<label>Texte de la synthèse</label><textarea id="synthtxt">'+esc(rec.synthese.text)+'</textarea></div>'+
+        '<div class="ai-acts"><button class="btn btn-primary" data-save>Enregistrer</button>'+
+        '<button class="btn btn-ghost" data-cancel>Annuler</button></div></div>'+
+    '</div>';
+  } else {
+    body = '<div class="ai-body">'+
+      (auto ? "" :
+      '<div class="ai-steps">'+
+        '<div class="ai-step"><b><i>1</i>Copier le brief</b><p>Le passeport complet — les 3 blocs, chaque item, les trois évaluations et tous les commentaires — est assemblé en un texte prêt à envoyer.</p></div>'+
+        '<div class="ai-step"><b><i>2</i>Coller dans Claude</b><p>Ouvrez Claude, collez, envoyez. La consigne de rédaction est déjà incluse dans le brief.</p></div>'+
+        '<div class="ai-step"><b><i>3</i>Rapatrier la synthèse</b><p>Collez la réponse ici : elle est enregistrée dans le dossier du collaborateur, imprimée et exportée avec lui.</p></div>'+
+      '</div>')+
+      '<div class="ai-acts">'+
+        (auto?'<button class="btn btn-gold" data-gen>✨ Générer la synthèse</button>'
+             :'<button class="btn btn-gold" data-prompt>✨ Copier le brief pour l’IA</button>'+
+              '<a class="btn btn-ghost" href="https://claude.ai/new" target="_blank" rel="noopener">Ouvrir Claude ↗</a>')+
+        '<button class="btn btn-ghost" data-edit>Coller une synthèse</button>'+
+      '</div>'+
+      (st.rated === 0
+        ? '<div class="ai-note">⚠️ Aucun item n’est encore évalué : la synthèse n’aurait rien à analyser. Renseignez d’abord quelques items.</div>'
+        : st.rated < st.total*0.3
+          ? '<div class="ai-note">ℹ️ Seuls '+st.rated+' items sur '+st.total+' sont évalués. La synthèse sera d’autant plus utile que le passeport est rempli.</div>'
+          : "")+
+      '<div class="ai-paste" id="paste"><div class="f" style="margin-top:6px">'+
+        '<label>Coller ici la synthèse produite par l’IA</label>'+
+        '<textarea id="synthtxt" placeholder="Collez la réponse de Claude…"></textarea></div>'+
+        '<div class="ai-acts"><button class="btn btn-primary" data-save>Enregistrer la synthèse</button>'+
+        '<button class="btn btn-ghost" data-cancel>Annuler</button></div></div>'+
+    '</div>';
+  }
+
+  host.innerHTML = '<section class="ai">'+head+body+'</section>';
+
+  const paste = $("#paste", host);
+  const bEdit = $("[data-edit]", host);
+  if(bEdit) bEdit.onclick = () => { paste.classList.add("on"); $("#synthtxt").focus(); };
+  const bCancel = $("[data-cancel]", host);
+  if(bCancel) bCancel.onclick = () => paste.classList.remove("on");
+  const bSave = $("[data-save]", host);
+  if(bSave) bSave.onclick = () => {
+    const txt = $("#synthtxt").value.trim();
+    if(!txt){ toast("La synthèse est vide."); return; }
+    rec.synthese = {text:txt, at:new Date().toISOString()};
+    touch(rec); toast("Synthèse enregistrée."); renderAI(svc, rec);
   };
+  const bClear = $("[data-clear]", host);
+  if(bClear) bClear.onclick = () => {
+    if(!confirm("Supprimer la synthèse de ce passeport ?")) return;
+    rec.synthese = null; touch(rec); toast("Synthèse supprimée."); renderAI(svc, rec);
+  };
+  const bPrompt = $("[data-prompt]", host);
+  if(bPrompt) bPrompt.onclick = () => promptModal(svc, rec);
+  const bGen = $("[data-gen]", host);
+  if(bGen) bGen.onclick = () => generateAI(svc, rec, bGen);
+}
+
+function promptModal(svc, rec){
+  const prompt = buildPrompt(svc, rec);
+  const ov = $("#ov");
+  ov.innerHTML = '<div class="modal wide">'+
+    '<button class="modal-x" data-x>✕</button>'+
+    '<div class="kick">✨ Brief pour l’IA</div>'+
+    '<h2 style="margin-bottom:8px">Le passeport de '+esc(rec.nom||"ce collaborateur")+', prêt à analyser</h2>'+
+    '<p style="font-size:.92rem;color:var(--ink-55);margin-bottom:18px">Copiez ce texte, collez-le dans Claude, puis rapatriez la réponse dans l’espace synthèse. La consigne de rédaction est déjà en tête du brief.</p>'+
+    '<textarea class="promptbox" id="pbox" readonly>'+esc(prompt)+'</textarea>'+
+    '<div class="modal-acts">'+
+      '<span style="margin-right:auto;font-size:.82rem;color:var(--ink-40)">'+prompt.length.toLocaleString("fr-FR")+' caractères</span>'+
+      '<a class="btn btn-ghost" href="https://claude.ai/new" target="_blank" rel="noopener">Ouvrir Claude ↗</a>'+
+      '<button class="btn btn-gold" data-copy>Copier le brief</button>'+
+    '</div></div>';
+  ov.classList.add("on");
+  $("[data-x]", ov).onclick = closeModal;
+  $("[data-copy]", ov).onclick = () => {
+    copyText(prompt).then(ok => {
+      if(ok){ toast("Brief copié — collez-le dans Claude."); closeModal(); }
+      else { $("#pbox").select(); toast("Copie automatique refusée : le texte est sélectionné, faites ⌘C."); }
+    });
+  };
+}
+
+/* Génération directe — active uniquement si AI_ENDPOINT est renseigné. */
+function generateAI(svc, rec, btn){
+  const old = btn.innerHTML;
+  btn.innerHTML = '<span class="ai-spin"></span> Génération…';
+  btn.disabled = true;
+  fetch(AI_ENDPOINT, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({prompt: buildPrompt(svc, rec)})
+  })
+  .then(r => { if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+  .then(d => {
+    const txt = (d && (d.text || d.content || d.completion) || "").trim();
+    if(!txt) throw new Error("réponse vide");
+    rec.synthese = {text:txt, at:new Date().toISOString()};
+    touch(rec); toast("Synthèse générée."); renderAI(svc, rec);
+  })
+  .catch(err => {
+    btn.innerHTML = old; btn.disabled = false;
+    toast("Génération impossible ("+err.message+"). Utilisez le brief à copier.");
+  });
+}
+
+/* ==========================================================================
+   10. EXPORT
+   ========================================================================== */
+
+function exportRecord(rec){
+  if(!rec) return;
+  const svc = getService(rec.service);
+  const payload = {format:"passeport-des-savoirs", version:2, service:rec.service,
+                   serviceName: svc ? svc.name : rec.service, record: rec};
   const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+  const who = (rec.nom || "collaborateur").toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "collaborateur";
   const a = document.createElement("a");
-  const who = (st.meta.nom || "collaborateur").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
   a.href = URL.createObjectURL(blob);
-  a.download = "passeport-"+pp.id+"-"+who+".json";
+  a.download = "passeport-"+rec.service+"-"+who+".json";
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(a.href);
   toast("Passeport exporté.");
 }
 
-function importPassport(pp, file){
-  if(!file) return;
-  const rd = new FileReader();
-  rd.onload = () => {
-    let d;
-    try{ d = JSON.parse(rd.result); }
-    catch(e){ toast("Fichier illisible : ce n’est pas un JSON valide."); return; }
-    if(!d || d.format !== "passeport-des-savoirs"){ toast("Ce fichier n’est pas un export de Passeport des Savoirs."); return; }
-    if(d.passportId !== pp.id && !confirm("Ce fichier provient du passeport « "+(d.passportName||d.passportId)+" ». L’importer quand même dans "+pp.name+" ?")) return;
-    if(!confirm("L’import remplace les évaluations actuelles de ce passeport. Continuer ?")) return;
-    STATE[pp.id] = {meta:d.meta||{nom:"",arrivee:"",buddy:""}, items:d.items||{}, unlocked:d.unlocked||[]};
-    saveState(); toast("Passeport importé."); renderPassport(pp.id);
+/* ==========================================================================
+   11. PASSEPORT DE DÉMONSTRATION
+   Un dossier fictif entièrement rempli, posé au premier chargement pour montrer
+   le passeport en fin de parcours : les 78 items évalués par les trois regards,
+   les 12 badges, le golden badge et une synthèse. Supprimable comme un autre ;
+   une fois supprimé il ne revient pas.
+   ========================================================================== */
+
+const LS_SEEDED = "pds.seeded.v1";
+const DEMO_ID   = "demo-receptionniste";
+
+/* Par défaut chaque item est à 2 pour les trois évaluateurs. Ce tableau ne
+   porte que les écarts et les commentaires : a/b/c = niveau auto/buddy/COO,
+   na/nb/nc = commentaire correspondant. */
+const DEMO_NOTES = {
+  "savoir.s1.0":{nb:"A relu le brand book et su restituer l’histoire du bâtiment lors du briefing du 12 juin."},
+  "savoir.s1.3":{a:1, na:"Je confonds encore Deluxe et Junior Suite sur les surfaces.",
+                 nb:"Hésitation levée après le tour des chambres du 18 juin.", nc:"Vérifié en entretien, plus d’erreur."},
+  "savoir.s1.5":{nb:"Connaît l’offre Séjour Prolongé. À réactualiser à chaque changement de saison."},
+  "savoir.s2.1":{a:2, b:1, na:"Je pense les maîtriser.",
+                 nb:"Formule d’accueil téléphonique incomplète : oublie de se présenter par son prénom.",
+                 nc:"Reprise en binôme, conforme depuis début juillet."},
+  "savoir.s2.4":{nb:"A participé à l’exercice d’évacuation du 25 juin : position et consignes maîtrisées."},
+  "savoir.s2.5":{a:1, na:"Je ne sais pas toujours si un cas justifie d’appeler le COO.",
+                 nc:"Cas d’escalade cadrés le 3 juillet, jugement fiable depuis."},
+  "savoir.s3.1":{nb:"A suivi une matinée avec Marc en maintenance, comprend les délais d’intervention."},
+  "savoir.s3.2":{nb:"Une matinée en salle PDJ le 2 juillet, sait dépanner au débarrassage en cas de rush."},
+  "savoir.s3.6":{a:1, na:"J’utilise Slack mais je ne sais pas toujours quel canal choisir.",
+                 nb:"Canaux clarifiés, utilise #reception-hk correctement."},
+
+  "faire.f1.1":{b:1, nb:"Très à l’aise avec la clientèle loisirs, plus scolaire avec les corporate.",
+                nc:"Écart normal à ce stade, progression nette en juillet."},
+  "faire.f1.5":{nc:"Retour client Booking du 8 juillet la citant par son prénom."},
+  "faire.f2.0":{nb:"12 check-in observés en autonomie, aucun oubli de procédure."},
+  "faire.f2.4":{a:1, b:1, na:"Les pré-autorisations me demandent encore de vérifier la procédure.",
+                nb:"Sait faire, mais avec le mémo sous les yeux.", nc:"Autonome depuis le 20 juillet."},
+  "faire.f2.5":{nb:"A géré seule une arrivée à 2h du matin le 14 juillet, sans réveiller le manager."},
+  "faire.f2.7":{a:1, na:"Les extras groupés sur une facture longue me ralentissent.",
+                nb:"Exactitude bonne, rapidité à gagner.", nc:"Rythme conforme fin juillet."},
+  "faire.f3.0":{nb:"Maîtrise Mews, plus rapide que la moyenne de l’équipe."},
+  "faire.f3.6":{a:1, na:"Je n’osais pas proposer, j’ai commencé mi-juillet.",
+                nb:"3 upsells convertis sur la dernière semaine de juillet.",
+                nc:"Belle progression, à encourager sur les arrivées corporate."},
+  "faire.f3.7":{a:1, b:1, na:"Je pense encore rarement au restaurant.",
+                nb:"Réflexe à installer, le potentiel est là.", nc:"Cadré au point du 1er août, réflexe acquis."},
+  "faire.f3.9":{nb:"Réponses claires, ton conforme aux modèles, aucune relance client."},
+  "faire.f4.1":{nb:"Chambre non prête le 21 juillet : a désamorcé seule, client reparti satisfait."},
+  "faire.f4.5":{a:1, b:1, na:"Je n’ai pas encore vécu de surbooking réel.",
+                nb:"Procédure connue en théorie, jamais mise en pratique.",
+                nc:"Cas simulé le 5 août : réaction et délogement conformes."},
+  "faire.f4.7":{nc:"Dossier de dédommagement suivi jusqu’au bout, sans aucune relance de ma part."},
+
+  "etre.e1.1":{nb:"Propose spontanément un plan de quartier aux nouveaux arrivants."},
+  "etre.e1.4":{nc:"Jamais un client en attente sans être salué, y compris en plein check-out."},
+  "etre.e2.3":{nb:"Prend les remarques sans se justifier et applique dès le service suivant."},
+  "etre.e3.1":{nb:"Partage l’état d’occupation chaque matin sur le canal réception."},
+  "etre.e3.2":{a:1, b:1, na:"Je consulte Elium mais je ne publie pas.",
+               nb:"Lecture régulière, aucune contribution pour l’instant.",
+               nc:"A publié la fiche « gérer une arrivée tardive » le 4 août."},
+  "etre.e4.0":{nb:"Week-end du 19 juillet à 92% d’occupation : calme et méthodique."},
+  "etre.e4.2":{a:1, na:"Je me sens encore déstabilisée sur le moment.",
+               nb:"Ne le montre pas, la voix reste posée.", nc:"Ressenti interne, sans effet sur le service."},
+  "etre.e5.1":{nb:"Aucun retard sur neuf semaines."},
+  "etre.e5.3":{nc:"A demandé d’elle-même à suivre une journée de revenue management."}
+};
+
+const DEMO_SYNTHESE = [
+"## Où en est l’intégration",
+"Camille Durand a validé **100 % des items au niveau 2** et obtenu les **12 badges** du passeport Réceptionniste, golden badge *Ambassadeur de l’hôtel* inclus. Le parcours a duré dix semaines, du 2 juin au 10 août. Les blocs Savoir et Savoir-être ont été acquis rapidement ; le Savoir-faire a demandé plus de temps, en particulier sur la vente additionnelle et les situations exceptionnelles.",
+"",
+"## Points forts",
+"- **Check-in & Check-out** : autonomie complète et rapide, 12 arrivées observées sans oubli de procédure, dont une arrivée à 2h du matin gérée seule.",
+"- **Maîtrise de Mews** : plus rapide que la moyenne de l’équipe dès la quatrième semaine.",
+"- **Sens du service** : anticipation spontanée des besoins, retour client Booking la citant par son prénom.",
+"- **Sang-froid** : week-end à 92 % d’occupation traversé avec méthode ; réclamation « chambre non prête » désamorcée seule.",
+"- **Réceptivité au feedback** : prend les remarques sans se justifier et corrige dès le service suivant.",
+"",
+"## Écarts de perception",
+"Camille s’est systématiquement **sous-évaluée** par rapport à son buddy et au COO. Sept items sont concernés : catégories de chambres, escalade managériale, canaux interservices, encaissement à l’arrivée, explication de facture, upsell, cross-sell, sang-froid face à un client mécontent, contribution sur Elium.",
+"",
+"Un seul écart en sens inverse : sur les **standards de service attendus**, elle s’était placée au niveau 2 quand le buddy relevait une formule d’accueil téléphonique incomplète. Point corrigé début juillet.",
+"",
+"Ce profil — prudence sur soi, résultats conformes — est un signe de rigueur plus que de fragilité. Il mérite d’être nommé explicitement en entretien : Camille gagnerait en aisance commerciale à s’autoriser plus tôt ce qu’elle sait déjà faire.",
+"",
+"## Axes de progression prioritaires",
+"1. **Vente additionnelle** — constat : l’upsell n’a démarré qu’à mi-parcours, par réserve personnelle, et le cross-sell restaurant reste peu réflexe. Action : objectif de deux propositions par service sur les arrivées corporate, avec suivi hebdomadaire du taux de conversion.",
+"2. **Situations exceptionnelles** — constat : le surbooking n’a été travaillé qu’en simulation, faute de cas réel. Action : maintenir la révision de la procédure au premier surbooking effectif, en binôme.",
+"3. **Contribution collective** — constat : première publication Elium seulement en fin de parcours. Action : une fiche pratique par trimestre, sur un sujet de son choix.",
+"4. **Transmission** — constat : parcours complet et procédures maîtrisées. Action : la positionner comme buddy sur la prochaine arrivée en réception.",
+"",
+"## Plan des 30 prochains jours",
+"- **Semaine 1** — Entretien de fin d’intégration : restituer l’écart d’auto-évaluation et fixer l’objectif upsell. *(COO)*",
+"- **Semaine 1** — Passage de relais : Camille devient buddy du prochain arrivant réception. *(COO)*",
+"- **Semaine 2** — Demi-journée d’observation revenue management, demandée par elle. *(COO)*",
+"- **Semaine 2 à 4** — Suivi hebdomadaire des propositions d’upsell et de cross-sell. *(buddy)*",
+"- **Semaine 3** — Rédaction d’une fiche Elium sur la gestion des arrivées tardives. *(collaborateur)*",
+"- **Semaine 4** — Revue à 30 jours : tenue des objectifs commerciaux et premier retour sur le rôle de buddy. *(COO)*",
+"",
+"## Prêt pour l’autonomie ?",
+"**Oui.** Le passeport est complet, validé item par item par le buddy et le COO, et les rares écarts relevés en cours de route ont tous été résolus. Camille peut travailler en autonomie sur l’ensemble du poste, y compris en shift seule. La seule réserve porte sur le surbooking, jamais rencontré en conditions réelles : à accompagner la première fois. Elle est en capacité d’accompagner à son tour un nouvel arrivant."
+].join("\n");
+
+function seedDemo(){
+  const svc = getService("receptionniste");
+  if(!svc) return;
+  const now = new Date().toISOString();
+  const rec = {
+    id: DEMO_ID, service:"receptionniste", demo:true,
+    nom:"Camille Durand", arrivee:"2026-06-02", buddy:"Léa Martin",
+    items:{}, unlocked:[], synthese:{text:DEMO_SYNTHESE, at:now},
+    createdAt:"2026-06-02T09:00:00.000Z", updatedAt:now
   };
-  rd.readAsText(file);
+  svc.blocks.forEach(b => b.subs.forEach(s => {
+    s.items.forEach((_, i) => {
+      const key = itemKey(b.id, s.id, i);
+      const o = DEMO_NOTES[key] || {};
+      rec.items[key] = {
+        auto: {lvl: o.a === undefined ? 2 : o.a, note: o.na || ""},
+        buddy:{lvl: o.b === undefined ? 2 : o.b, note: o.nb || ""},
+        coo:  {lvl: o.c === undefined ? 2 : o.c, note: o.nc || ""}
+      };
+    });
+    rec.unlocked.push(b.id+"."+s.id);
+  }));
+  rec.unlocked.push("__ambassadeur__");
+  RECORDS.push(rec); saveRecords();
 }
 
 /* ==========================================================================
-   9. BUILDER — créer son propre passeport
+   12. DÉMARRAGE
    ========================================================================== */
 
-let draft = null;
-
-function newDraft(seedId){
-  const seed = seedId ? getPassport(seedId) : null;
-  return {
-    id:"", name: seed ? seed.name : "", emoji: seed ? seed.emoji : "🧭",
-    tagline: seed ? (seed.tagline||"") : "",
-    blocks: (seed ? seed.blocks : skeleton("","","","").blocks).map(b => ({
-      id:b.id, name:b.name, emoji:b.emoji,
-      scale: b.scale.map(s => ({e:s.e, n:s.n, d:s.d})),
-      subs: b.subs.map(s => ({
-        id:s.id, name:s.name, obj:s.obj,
-        badge:{name:s.badge.name, emoji:s.badge.emoji},
-        items:s.items.slice()
-      }))
-    }))
-  };
+if(!localStorage.getItem(LS_SEEDED)){
+  try{ localStorage.setItem(LS_SEEDED, "1"); }catch(e){}
+  if(!RECORDS.length) seedDemo();
 }
-
-function slug(s){
-  return String(s).toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "passeport";
-}
-
-function renderBuilder(seedId){
-  if(!draft || (seedId && draft._seed !== seedId)){ draft = newDraft(seedId); draft._seed = seedId || null; }
-
-  const blocksHTML = draft.blocks.map((b, bi) =>
-    '<div class="bblock"><header><span class="tag">Bloc '+(bi+1)+'</span>'+
-      '<div class="f" style="flex:1"><input data-b="'+bi+'|name" value="'+esc(b.name)+'" placeholder="Nom du bloc"></div>'+
-      '<div class="f" style="width:78px"><input data-b="'+bi+'|emoji" value="'+esc(b.emoji)+'" placeholder="Emoji" maxlength="4" style="text-align:center"></div>'+
-    '</header>'+
-    '<details class="scaleedit"><summary>Personnaliser l’échelle à 3 niveaux de ce bloc</summary>'+
-      '<div class="frow" style="margin-top:12px">'+b.scale.map((s, li) =>
-        '<div class="f"><label>'+s.e+' Niveau '+li+'</label>'+
-        '<input data-sc="'+bi+'|'+li+'|n" value="'+esc(s.n)+'" placeholder="Intitulé">'+
-        '<textarea data-sc="'+bi+'|'+li+'|d" style="min-height:62px;margin-top:8px" placeholder="Définition">'+esc(s.d)+'</textarea></div>'
-      ).join("")+'</div>'+
-    '</details>'+
-    b.subs.map((s, si) =>
-      '<div class="bsub"><button class="del" data-delsub="'+bi+'|'+si+'">Supprimer</button>'+
-        '<div class="frow"><div class="f"><label>Sous-bloc '+(si+1)+' — nom</label>'+
-          '<input data-s="'+bi+'|'+si+'|name" value="'+esc(s.name)+'" placeholder="Ex. Connaissance de l’établissement"></div></div>'+
-        '<div class="f" style="margin-bottom:14px"><label>Objectif</label>'+
-          '<textarea data-s="'+bi+'|'+si+'|obj" style="min-height:66px" placeholder="Ce que le collaborateur doit être capable de faire…">'+esc(s.obj)+'</textarea></div>'+
-        '<div class="frow"><div class="f"><label>🎖️ Nom du badge</label>'+
-            '<input data-s="'+bi+'|'+si+'|bname" value="'+esc(s.badge.name)+'" placeholder="Ex. Explorateur de l’hôtel"></div>'+
-          '<div class="f" style="max-width:110px"><label>Emoji</label>'+
-            '<input data-s="'+bi+'|'+si+'|bemoji" value="'+esc(s.badge.emoji)+'" maxlength="4" style="text-align:center;font-size:1.2rem"></div></div>'+
-        '<div class="f"><label>Items — un par ligne</label>'+
-          '<textarea data-s="'+bi+'|'+si+'|items" style="min-height:130px" placeholder="Connaît l’histoire et le positionnement de l’établissement.&#10;Connaît les valeurs et la promesse client.">'+esc(s.items.join("\n"))+'</textarea>'+
-          '<div class="fhint">'+s.items.length+' item(s). Le badge s’obtiendra quand tous seront au niveau 🟢.</div></div>'+
-      '</div>'
-    ).join("")+
-    '<button class="btn btn-ghost btn-sm" data-addsub="'+bi+'">➕ Ajouter un sous-bloc</button>'+
-    '</div>'
-  ).join("");
-
-  const nItems  = draft.blocks.reduce((a,b) => a + b.subs.reduce((x,s) => x + s.items.length, 0), 0);
-  const nBadges = draft.blocks.reduce((a,b) => a + b.subs.length, 0);
-
-  $("#app").innerHTML = header("builder")+
-  '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
-    '<div class="section-head"><div class="section-kicker">Sur mesure</div>'+
-    '<h2>Créer son propre <span class="serif italic">passeport</span></h2>'+
-    '<p>Définissez le service, puis ses sous-blocs, objectifs, badges et items. Les trois blocs Savoir / Savoir-faire / Savoir-être et les échelles à 3 niveaux sont préconfigurés.</p></div>'+
-
-    '<div class="form-card"><h3>Le service</h3><p class="hint">Ce qui apparaîtra sur la carte du passeport, sur la page d’accueil.</p>'+
-      '<div class="frow">'+
-        '<div class="f"><label>Nom du service</label><input id="d-name" value="'+esc(draft.name)+'" placeholder="Ex. Housekeeping"></div>'+
-        '<div class="f" style="max-width:120px"><label>Emoji</label><input id="d-emoji" value="'+esc(draft.emoji)+'" maxlength="4" style="text-align:center;font-size:1.3rem"></div>'+
-      '</div>'+
-      '<div class="f"><label>Accroche</label><input id="d-tag" value="'+esc(draft.tagline)+'" placeholder="Ex. Gardien du confort et de la propreté impeccable."></div>'+
-      (draft._seed ? '' : '<div class="f" style="margin-top:14px"><label>Partir d’un modèle existant</label>'+
-        '<select id="d-seed"><option value="">Passeport vierge</option>'+
-        allPassports().filter(p => p.blocks.some(b => b.subs.length)).map(p => '<option value="'+p.id+'">Copier : '+esc(p.name)+'</option>').join("")+
-        '</select><div class="fhint">Recopie tous les sous-blocs, badges et items du passeport choisi, que vous pourrez ensuite adapter.</div></div>')+
-    '</div>'+
-
-    blocksHTML+
-
-    '<div class="form-card" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;position:sticky;bottom:16px">'+
-      '<div style="flex:1;min-width:190px"><b id="c-items">'+nItems+'</b> items · <b id="c-badges">'+nBadges+'</b> badges'+
-        '<div class="hint" style="margin:4px 0 0">Le golden badge 🌟 Ambassadeur de l’hôtel se débloquera avec les <span id="c-badges2">'+nBadges+'</span> badges.</div></div>'+
-      '<button class="btn btn-ghost" data-loadjson>⬆︎ Importer un JSON</button>'+
-      '<button class="btn btn-primary" data-save>Créer le passeport →</button>'+
-      '<input type="file" accept="application/json" id="defIn" style="display:none">'+
-    '</div>'+
-  '</div>'+footer();
-
-  /* liaisons */
-  $("#d-name").oninput  = e => { draft.name = e.target.value; };
-  $("#d-emoji").oninput = e => { draft.emoji = e.target.value; };
-  $("#d-tag").oninput   = e => { draft.tagline = e.target.value; };
-  const seedSel = $("#d-seed");
-  if(seedSel) seedSel.onchange = e => {
-    if(!e.target.value){ draft = newDraft(null); draft._seed = null; }
-    else { draft = newDraft(e.target.value); draft._seed = null; draft.name = ""; }
-    renderBuilder(null);
-  };
-
-  $$("[data-b]").forEach(inp => inp.oninput = () => {
-    const p = inp.getAttribute("data-b").split("|"); draft.blocks[+p[0]][p[1]] = inp.value;
-  });
-  $$("[data-sc]").forEach(inp => inp.oninput = () => {
-    const p = inp.getAttribute("data-sc").split("|"); draft.blocks[+p[0]].scale[+p[1]][p[2]] = inp.value;
-  });
-  $$("[data-s]").forEach(inp => inp.oninput = () => {
-    const p = inp.getAttribute("data-s").split("|");
-    const s = draft.blocks[+p[0]].subs[+p[1]];
-    if(p[2] === "name") s.name = inp.value;
-    else if(p[2] === "obj") s.obj = inp.value;
-    else if(p[2] === "bname") s.badge.name = inp.value;
-    else if(p[2] === "bemoji") s.badge.emoji = inp.value;
-    else if(p[2] === "items"){
-      s.items = inp.value.split("\n").map(x => x.replace(/^\s*[-•*]\s*/,"").trim()).filter(Boolean);
-      const hint = inp.parentElement.querySelector(".fhint");
-      if(hint) hint.textContent = s.items.length+" item(s). Le badge s’obtiendra quand tous seront au niveau 🟢.";
-      builderTotals();
-    }
-  });
-  $$("[data-addsub]").forEach(b => b.onclick = () => {
-    const bi = +b.getAttribute("data-addsub");
-    const n = draft.blocks[bi].subs.length + 1;
-    draft.blocks[bi].subs.push({id:draft.blocks[bi].id+n+"-"+Math.random().toString(36).slice(2,6),
-      name:"", obj:"", badge:{name:"", emoji:"🎖️"}, items:[]});
-    renderBuilder(draft._seed);
-  });
-  $$("[data-delsub]").forEach(b => b.onclick = () => {
-    const p = b.getAttribute("data-delsub").split("|");
-    if(!confirm("Supprimer ce sous-bloc et ses items ?")) return;
-    draft.blocks[+p[0]].subs.splice(+p[1], 1); renderBuilder(draft._seed);
-  });
-  $("[data-loadjson]").onclick = () => $("#defIn").click();
-  $("#defIn").onchange = e => {
-    const f = e.target.files[0]; if(!f) return;
-    const rd = new FileReader();
-    rd.onload = () => {
-      let d; try{ d = JSON.parse(rd.result); }catch(err){ toast("JSON invalide."); return; }
-      const def = d && (d.definition || (d.blocks ? d : null));
-      if(!def || !def.blocks){ toast("Ce fichier ne contient pas de définition de passeport."); return; }
-      draft = newDraft(null);
-      draft.name = def.name || ""; draft.emoji = def.emoji || "🧭"; draft.tagline = def.tagline || "";
-      draft.blocks = def.blocks.map(b => ({
-        id:b.id, name:b.name, emoji:b.emoji || "•",
-        scale:(b.scale||SCALES.savoir).map(s => ({e:s.e, n:s.n, d:s.d})),
-        subs:(b.subs||[]).map(s => ({id:s.id, name:s.name, obj:s.obj,
-          badge:{name:(s.badge||{}).name||"", emoji:(s.badge||{}).emoji||"🎖️"}, items:(s.items||[]).slice()}))
-      }));
-      toast("Définition importée."); renderBuilder(null);
-    };
-    rd.readAsText(f);
-  };
-  $("[data-save]").onclick = saveDraft;
-}
-
-/* Met à jour les totaux du pied de page du builder pendant la saisie. */
-function builderTotals(){
-  const nItems  = draft.blocks.reduce((a,b) => a + b.subs.reduce((x,s) => x + s.items.length, 0), 0);
-  const nBadges = draft.blocks.reduce((a,b) => a + b.subs.length, 0);
-  const a = $("#c-items"), b = $("#c-badges"), c = $("#c-badges2");
-  if(a) a.textContent = nItems;
-  if(b) b.textContent = nBadges;
-  if(c) c.textContent = nBadges;
-}
-
-function saveDraft(){
-  if(!draft.name.trim()){ toast("Donnez un nom au service."); $("#d-name").focus(); return; }
-  const subs = [];
-  draft.blocks.forEach(b => b.subs.forEach(s => subs.push({b, s})));
-  if(!subs.length){ toast("Ajoutez au moins un sous-bloc."); return; }
-  const bad = subs.find(x => !x.s.name.trim() || !x.s.items.length);
-  if(bad){ toast("Chaque sous-bloc a besoin d’un nom et d’au moins un item."); return; }
-  subs.forEach(x => { if(!x.s.badge.name.trim()) x.s.badge.name = "Badge « "+x.s.name.trim()+" »"; });
-
-  /* Construit depuis la carte d’un service prédéfini encore vide : on reprend son id,
-     le passeport sur mesure remplace alors le squelette. Sinon, id dérivé du nom,
-     suffixé si un passeport porte déjà cet id. */
-  const taken = id => allPassports().some(p => p.id === id);
-  let id;
-  if(draft._seed && isSkeletonId(draft._seed) && !CUSTOM.some(c => c.id === draft._seed)){
-    id = draft._seed;
-  } else {
-    id = slug(draft.name);
-    while(taken(id)) id = slug(draft.name)+"-"+Math.random().toString(36).slice(2,5);
-  }
-
-  const pp = {
-    id, name:draft.name.trim(), emoji:draft.emoji.trim() || "🧭", tagline:draft.tagline.trim(), custom:true,
-    blocks: draft.blocks.filter(b => b.subs.length).map(b => ({
-      id:b.id, name:b.name.trim() || "Bloc", emoji:b.emoji.trim() || "•",
-      scale:b.scale.map(s => ({e:s.e, n:s.n.trim(), d:s.d.trim()})),
-      subs:b.subs.map((s, i) => ({
-        id:s.id || (b.id+(i+1)), name:s.name.trim(), obj:s.obj.trim(),
-        badge:{name:s.badge.name.trim(), emoji:s.badge.emoji.trim() || "🎖️"},
-        items:s.items.slice()
-      }))
-    }))
-  };
-  CUSTOM.push(pp); saveCustom();
-  draft = null;
-  toast("Passeport « "+pp.name+" » créé.");
-  location.hash = "#/p/"+id;
-}
-
-/* ==========================================================================
-   10. DÉMARRAGE
-   ========================================================================== */
 route();
 </script>
 </body>
