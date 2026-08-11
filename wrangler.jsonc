@@ -1,0 +1,13 @@
+{
+  // Configuration Cloudflare Workers — site statique, aucun code serveur.
+  // Le nom doit correspondre exactement au nom du Worker dans le dashboard,
+  // sinon le build échoue.
+  "name": "passeport-savoirs",
+  "compatibility_date": "2026-08-01",
+
+  // Pas de clé "main" : le Worker ne sert que des fichiers statiques.
+  // Le site tient dans index.html à la racine du dépôt.
+  "assets": {
+    "directory": "./"
+  }
+}
