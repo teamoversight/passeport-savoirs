@@ -40,8 +40,9 @@
   --shadow-md:0 2px 6px rgba(0,1,30,.06),0 14px 40px rgba(0,1,30,.09);
   --shadow-lg:0 30px 90px rgba(0,1,30,.22);
   --maxw:1180px;
-  --lvl1:#E9C46A;
-  --lvl2:#7C9182;
+  --lvl1:#C4553D;
+  --lvl2:#D98A3D;
+  --lvl3:#7C9182;
 }
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -126,6 +127,7 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .scale-card.l0{border-left-color:#D9D4CB}
 .scale-card.l1{border-left-color:var(--lvl1)}
 .scale-card.l2{border-left-color:var(--lvl2)}
+.scale-card.l3{border-left-color:var(--lvl3)}
 .scale-card .lv{display:flex;align-items:center;gap:9px;font-weight:600;font-size:.95rem;margin-bottom:6px}
 .scale-card p{font-size:.88rem;color:var(--ink-70)}
 
@@ -147,7 +149,6 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .svc-meta{display:flex;gap:16px;font-size:.82rem;color:var(--ink-55);flex-wrap:wrap}
 .svc-meta b{color:var(--ink);font-weight:600}
 .svc-actions{margin-top:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.svc-stamps{display:flex;gap:5px;flex-wrap:wrap;font-size:1rem;opacity:.3;filter:grayscale(1)}
 
 /* ---------- Dossiers ---------- */
 .doss-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:22px}
@@ -256,8 +257,9 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .item-top{display:flex;gap:12px;align-items:flex-start}
 .item-lbl{flex:1;font-size:.95rem;line-height:1.55;padding-top:2px}
 .item-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:9px;background:#DDD8CF;border:1px solid var(--ink-12)}
-.item-dot.l1{background:var(--lvl1);border-color:#C9A83F}
-.item-dot.l2{background:var(--lvl2);border-color:#63735F}
+.item-dot.l1{background:var(--lvl1);border-color:#9C3F2C}
+.item-dot.l2{background:var(--lvl2);border-color:#B06E28}
+.item-dot.l3{background:var(--lvl3);border-color:#63735F}
 .evals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px;align-items:start}
 .ev{background:var(--grey-light);border-radius:11px;padding:10px 12px;border:1px solid transparent;transition:.16s}
 .ev.active-role{background:var(--blue-light);border-color:rgba(73,107,255,.3)}
@@ -396,8 +398,9 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .tbl tr:last-child td{border-bottom:none}
 .tbl .nm{font-weight:600}
 .tbl code{background:var(--grey-light);border-radius:6px;padding:2px 8px;font-size:.82rem}
-.tbl select{border:1px solid var(--ink-12);border-radius:8px;padding:7px 10px;font-size:.85rem;background:#fff;max-width:190px}
-.tbl select:focus{outline:none;border-color:var(--blue-flash)}
+.tbl select,.tbl .codein{border:1px solid var(--ink-12);border-radius:8px;padding:7px 10px;font-size:.85rem;background:#fff;max-width:190px}
+.tbl .codein{width:122px;font-family:ui-monospace,Menlo,monospace}
+.tbl select:focus,.tbl .codein:focus{outline:none;border-color:var(--blue-flash);box-shadow:0 0 0 3px rgba(73,107,255,.12)}
 .tbl .acts{text-align:right;white-space:nowrap}
 .tblwrap{overflow-x:auto}
 .rolechip{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:3px 9px;border-radius:999px}
@@ -493,23 +496,20 @@ const AI_ENDPOINT = "";
    1. DONNÉES DE RÉFÉRENCE
    ========================================================================== */
 
-const SCALES = {
-  savoir: [
-    {e:"⚪", n:"Niveau 0 — Non découvert", d:"Le collaborateur n’a pas encore été exposé au sujet."},
-    {e:"🟡", n:"Niveau 1 — Découverte",    d:"Le collaborateur a vu / entendu / observé."},
-    {e:"🟢", n:"Niveau 2 — Acquisition",   d:"Le collaborateur comprend, sait expliquer."}
-  ],
-  faire: [
-    {e:"⚪", n:"Niveau 0 — Non découvert", d:"Le collaborateur n’a pas encore été exposé au sujet."},
-    {e:"🟡", n:"Niveau 1 — Découverte",    d:"Le collaborateur a vu / entendu / observé."},
-    {e:"🟢", n:"Niveau 2 — Acquisition",   d:"Le collaborateur comprend, sait expliquer et mettre en pratique en autonomie."}
-  ],
-  etre: [
-    {e:"⚪", n:"Niveau 0 — Non observé",      d:"Le collaborateur n’a pas encore démontré ce savoir-être."},
-    {e:"🟡", n:"Niveau 1 — En développement", d:"Le savoir-être est présent mais irrégulier ou nécessite de l’accompagnement."},
-    {e:"🟢", n:"Niveau 2 — Acquisition",      d:"Le savoir-être est observé régulièrement et répond aux attentes."}
-  ]
-};
+/* Échelle unique à quatre niveaux, commune aux trois blocs.
+   ACQUIS est le seuil du badge : un sous-bloc est validé quand tous ses items
+   l’atteignent. Les intitulés sont ceux d’Oversight, les définitions servent aux
+   infobulles et à la légende. */
+const SCALE = [
+  {e:"⚪", n:"Non vérifié",            d:"L’item n’a pas encore été évalué."},
+  {e:"🔴", n:"Non acquis",             d:"Évalué : la compétence n’est pas encore là."},
+  {e:"🟠", n:"En cours d’acquisition", d:"En progression, encore irrégulier ou accompagné."},
+  {e:"🟢", n:"Acquis",                 d:"Maîtrisé et conforme aux attentes."}
+];
+const ACQUIS = 3;
+
+/* Conservé pour la lisibilité des déclarations de blocs ci-dessous. */
+const SCALES = {savoir:SCALE, faire:SCALE, etre:SCALE};
 
 const ROLES = [
   {id:"auto",  short:"Collaborateur", long:"Auto-évaluation du collaborateur"},
@@ -521,7 +521,6 @@ const RECEPTIONNISTE = {
   id:"receptionniste",
   name:"Réceptionniste",
   emoji:"🛎️",
-  tagline:"Premier visage de la Maison, chef d’orchestre du parcours client.",
   blocks:[
     {
       id:"savoir", name:"Savoir", emoji:"📖", scale:SCALES.savoir,
@@ -705,8 +704,8 @@ const RECEPTIONNISTE = {
 
 /* Services dont les items restent à définir : la structure et les échelles sont
    prêtes, le contenu métier se saisit directement dans ce fichier. */
-function skeleton(id, name, emoji, tagline){
-  return {id, name, emoji, tagline, skeleton:true, blocks:[
+function skeleton(id, name, emoji){
+  return {id, name, emoji, skeleton:true, blocks:[
     {id:"savoir", name:"Savoir",       emoji:"📖", scale:SCALES.savoir, subs:[]},
     {id:"faire",  name:"Savoir-faire", emoji:"🛠️", scale:SCALES.faire,  subs:[]},
     {id:"etre",   name:"Savoir-être",  emoji:"💫", scale:SCALES.etre,   subs:[]}
@@ -715,10 +714,10 @@ function skeleton(id, name, emoji, tagline){
 
 const SERVICES = [
   RECEPTIONNISTE,
-  skeleton("housekeeping",  "Housekeeping",   "🛏️", "Gardien du confort et de la propreté impeccable."),
-  skeleton("maintenance",   "Maintenance",    "🔧", "Garant du bon fonctionnement de la Maison."),
-  skeleton("petitdejeuner", "Petit Déjeuner", "🥐", "Premier sourire de la journée, première dégustation."),
-  skeleton("fb",            "F&B",            "🍽️", "Art de recevoir à table, du service au conseil.")
+  skeleton("housekeeping",  "Housekeeping",   "🛏️"),
+  skeleton("maintenance",   "Maintenance",    "🔧"),
+  skeleton("petitdejeuner", "Petit Déjeuner", "🥐"),
+  skeleton("fb",            "F&B",            "🍽️")
 ];
 
 const getService = id => SERVICES.find(s => s.id === id) || null;
@@ -788,23 +787,23 @@ function retained(rec, key){
    ========================================================================== */
 
 function subStats(rec, block, sub){
-  let total = sub.items.length, at2 = 0, rated = 0;
+  let total = sub.items.length, acquis = 0, rated = 0;
   sub.items.forEach((_, i) => {
     const r = retained(rec, itemKey(block.id, sub.id, i));
     if(r !== null) rated++;
-    if(r === 2) at2++;
+    if(r === ACQUIS) acquis++;
   });
-  return {total, at2, rated, done: total > 0 && at2 === total};
+  return {total, acquis, rated, done: total > 0 && acquis === total};
 }
 function recStats(svc, rec){
-  let total = 0, at2 = 0, rated = 0, badges = 0, badgesTotal = 0;
+  let total = 0, acquis = 0, rated = 0, badges = 0, badgesTotal = 0;
   svc.blocks.forEach(b => b.subs.forEach(s => {
     const x = subStats(rec, b, s);
-    total += x.total; at2 += x.at2; rated += x.rated;
+    total += x.total; acquis += x.acquis; rated += x.rated;
     badgesTotal++; if(x.done) badges++;
   }));
-  return {total, at2, rated, badges, badgesTotal,
-          pct: total ? Math.round(at2/total*100) : 0,
+  return {total, acquis, rated, badges, badgesTotal,
+          pct: total ? Math.round(acquis/total*100) : 0,
           ambassador: badgesTotal > 0 && badges === badgesTotal};
 }
 function roleProgress(svc, rec, role){
@@ -982,7 +981,7 @@ let USERS  = readJSON(LS_USERS, []);
 function saveHotels(){ writeJSON(LS_HOTELS, HOTELS); }
 function saveUsers(){ writeJSON(LS_USERS, USERS); }
 
-const ROLE_LABEL = {collaborateur:"Collaborateur", officer:"Officer", admin:"Administrateur"};
+const ROLE_LABEL = {collaborateur:"Collaborateur", officer:"Officer / buddy", admin:"Administrateur"};
 
 const getHotel  = id => HOTELS.find(h => h.id === id) || null;
 const hotelName = id => { const h = getHotel(id); return h ? h.name : "Hôtel non défini"; };
@@ -1004,7 +1003,8 @@ function signOut(){
 function canSee(u, rec){
   if(!u || !rec) return false;
   if(u.role === "admin")   return true;
-  if(u.role === "officer") return !!rec.hotel && rec.hotel === u.hotel;
+  /* la démonstration sert de référence : tous les Officers y ont accès */
+  if(u.role === "officer") return rec.demo || (!!rec.hotel && rec.hotel === u.hotel);
   return (u.recordIds || []).includes(rec.id);
 }
 function visibleRecords(u){ return u ? RECORDS.filter(r => canSee(u, r)) : []; }
@@ -1016,6 +1016,8 @@ function allowedRoles(u){
   return (u && u.role === "collaborateur") ? ["auto"] : ["auto","buddy","coo"];
 }
 const isAdmin = u => !!u && u.role === "admin";
+/* L’Officer / buddy crée et remplit les passeports de son hôtel. */
+const canCreate = u => !!u && (u.role === "admin" || u.role === "officer");
 
 /* ==========================================================================
    6. ROUTEUR
@@ -1108,38 +1110,30 @@ function renderLanding(){
     const ready = isReady(svc);
     /* l’Officer ne compte que les passeports de son hôtel */
     const n = visibleRecords(user).filter(r => r.service === svc.id).length;
-    let items = 0, badges = 0;
-    svc.blocks.forEach(b => b.subs.forEach(s => { items += s.items.length; badges++; }));
-    const stamps = [];
-    svc.blocks.forEach(b => b.subs.forEach(s => stamps.push('<span title="'+esc(s.badge.name)+'">'+s.badge.emoji+'</span>')));
-
     return '<article class="svc'+(ready?"":" soon")+'">'+
       '<div class="svc-top">'+
-        (ready?'<span class="svc-badge ok">Disponible</span>':'<span class="svc-badge todo">Items à définir</span>')+
+        (ready?'<span class="svc-badge ok">Disponible</span>':'<span class="svc-badge todo">À venir</span>')+
         '<span class="svc-emoji">'+svc.emoji+'</span>'+
         '<h3>'+esc(svc.name)+'</h3>'+
-        '<div class="svc-sub">'+esc(svc.tagline)+'</div>'+
       '</div>'+
       '<div class="svc-body">'+
         (ready
-          ? '<div class="svc-meta"><span><b>'+items+'</b> items</span><span><b>'+badges+'</b> badges</span>'+
-            '<span><b>'+n+'</b> '+(n>1?"passeports enregistrés":"passeport enregistré")+'</span></div>'+
-            '<div class="svc-stamps">'+stamps.join("")+'</div>'+
+          ? '<div class="svc-meta"><span><b>'+n+'</b> '+(n>1?"passeports enregistrés":"passeport enregistré")+'</span></div>'+
             '<div class="svc-actions">'+
-              (isAdmin(user)
+              (canCreate(user)
                 ? '<button class="btn btn-primary btn-sm" data-new="'+svc.id+'">Nouveau passeport →</button>'
                 : "")+
-              (n?'<a class="btn '+(isAdmin(user)?"btn-ghost":"btn-primary")+' btn-sm" href="#/dossiers?s='+svc.id+'">'+
-                 (isAdmin(user)?"Voir les "+n:"Voir les "+n+" passeport"+(n>1?"s":""))+'</a>':"")+
-              (!isAdmin(user) && !n
+              (n?'<a class="btn '+(canCreate(user)?"btn-ghost":"btn-primary")+' btn-sm" href="#/dossiers?s='+svc.id+'">'+
+                 'Voir les '+n+' passeport'+(n>1?"s":"")+'</a>':"")+
+              (!canCreate(user) && !n
                 ? '<span style="font-size:.85rem;color:var(--ink-40)">Aucun passeport sur votre périmètre</span>' : "")+
             '</div>'
-          : '<p style="font-size:.9rem;color:var(--ink-55)">Structure prête — les 3 blocs et les échelles à 3 niveaux sont configurés. Les items du service restent à définir.</p>'
+          : '<p style="font-size:.9rem;color:var(--ink-55)">Les items de ce service restent à définir.</p>'
         )+
       '</div></article>';
   }).join("");
 
-  const scaleCards = SCALES.savoir.map((s, i) =>
+  const scaleCards = SCALE.map((s, i) =>
     '<div class="scale-card l'+i+'"><div class="lv">'+s.e+' '+esc(s.n)+'</div><p>'+esc(s.d)+'</p></div>').join("");
 
   $("#app").innerHTML = header("home")+
@@ -1158,14 +1152,14 @@ function renderLanding(){
     '<p>Chaque passeport est configuré par blocs et sous-blocs. Chaque sous-bloc franchi donne droit à un tampon.</p></div>'+
     '<div class="grid-3">'+
       '<div class="pcard"><div class="ic">📖</div><h3>Savoir</h3><p>Ce que le collaborateur comprend et sait expliquer : l’établissement, son métier, et celui des autres services.</p></div>'+
-      '<div class="pcard"><div class="ic">🛠️</div><h3>Savoir-faire</h3><p>Ce qu’il sait exécuter en autonomie</p></div>'+
+      '<div class="pcard"><div class="ic">🛠️</div><h3>Savoir-faire</h3><p>Ce qu’il sait exécuter en autonomie.</p></div>'+
       '<div class="pcard"><div class="ic">💫</div><h3>Savoir-être</h3><p>Ce qui s’observe au quotidien : sens du service, communication, esprit d’équipe, adaptabilité, professionnalisme.</p></div>'+
     '</div>'+
     '<div class="section-head c" style="margin-top:52px"><div class="section-kicker">L’échelle</div>'+
     '<h2>Trois niveaux par item</h2></div>'+
     '<div class="scale-row">'+scaleCards+'</div>'+
     '<div class="grid-3" style="margin-top:24px">'+
-      '<div class="pcard"><div class="ic" style="background:var(--kaki-light)">🎖️</div><h3>Un badge par sous-bloc</h3><p>Le badge s’obtient lorsque <b>100% des items</b> du sous-bloc atteignent le niveau 2 🟢.</p></div>'+
+      '<div class="pcard"><div class="ic" style="background:var(--kaki-light)">🎖️</div><h3>Un badge par sous-bloc</h3><p>Le badge s’obtient lorsque <b>100% des items</b> du sous-bloc atteignent le niveau 🟢 Acquis.</p></div>'+
       '<div class="pcard"><div class="ic" style="background:var(--gold-light)">🌟</div><h3>Golden badge</h3><p>Tous les badges acquis débloquent la distinction <b>Ambassadeur de l’hôtel</b>.</p></div>'+
       '<div class="pcard"><div class="ic">👥</div><h3>Trois regards</h3><p>Chaque item est évalué par le <b>collaborateur</b> (auto-évaluation), le <b>buddy</b> et le <b>COO</b>, avec un commentaire possible pour chacun.</p></div>'+
     '</div>'+
@@ -1182,40 +1176,74 @@ function renderLanding(){
   $$("[data-new]").forEach(b => b.onclick = () => newRecordModal(b.getAttribute("data-new")));
 }
 
-/* Modale de création d’un passeport pour un collaborateur. */
+/* Trouve un identifiant libre dérivé du nom. */
+function freeLogin(nom){
+  const base = slugLogin(nom);
+  if(!loginTaken(base)) return base;
+  let i = 2;
+  while(loginTaken(base+i)) i++;
+  return base+i;
+}
+
+/* Modale de création d’un passeport pour un collaborateur.
+   Crée aussi son compte, sans quoi il ne pourrait pas s’auto-évaluer.
+   L’Officer / buddy ne crée que sur son propre hôtel ; l’administrateur choisit. */
 function newRecordModal(serviceId){
   const svc = getService(serviceId);
   if(!svc) return;
+  const user = currentUser();
+  if(!canCreate(user)) return;
+  const forced = user.role === "officer" ? user.hotel : "";
+
   const ov = $("#ov");
   ov.innerHTML = '<div class="modal form">'+
     '<button class="modal-x" data-x>✕</button>'+
     '<div class="kick">'+svc.emoji+' Passeport '+esc(svc.name)+'</div>'+
     '<h2 style="margin-bottom:8px">Nouveau collaborateur</h2>'+
-    '<p style="font-size:.92rem;color:var(--ink-55);margin-bottom:22px">Ces informations figurent sur la couverture du passeport et permettent de le retrouver.</p>'+
+    '<p style="font-size:.92rem;color:var(--ink-55);margin-bottom:22px">Son passeport et son compte sont créés ensemble, pour qu’il puisse s’auto-évaluer.</p>'+
     '<div class="f"><label>Nom du collaborateur</label><input id="n-nom" placeholder="Prénom Nom" autocomplete="off"></div>'+
-    '<div class="f"><label>Hôtel de rattachement</label><select id="n-hot">'+
-      (HOTELS.length ? HOTELS.map(h => '<option value="'+h.id+'">'+esc(h.name)+'</option>').join("")
-                     : '<option value="">Aucun hôtel — à créer dans Administration</option>')+
-      '</select></div>'+
+    (forced
+      ? '<div class="f"><label>Hôtel de rattachement</label><input value="'+esc(hotelName(forced))+'" readonly></div>'
+      : '<div class="f"><label>Hôtel de rattachement</label><select id="n-hot">'+
+        (HOTELS.length ? HOTELS.map(h => '<option value="'+h.id+'">'+esc(h.name)+'</option>').join("")
+                       : '<option value="">Aucun hôtel — à créer dans Administration</option>')+
+        '</select></div>')+
     '<div class="frow">'+
       '<div class="f"><label>Date d’arrivée</label><input id="n-arr" type="date"></div>'+
-      '<div class="f"><label>Buddy</label><input id="n-bud" placeholder="Prénom Nom" autocomplete="off"></div>'+
+      '<div class="f"><label>Buddy (facultatif)</label><input id="n-bud" placeholder="Aucun" autocomplete="off"></div>'+
     '</div>'+
     '<div class="modal-acts"><button class="btn btn-ghost" data-x>Annuler</button>'+
     '<button class="btn btn-primary" data-ok>Créer le passeport →</button></div></div>';
   ov.classList.add("on");
   $("#n-nom").focus();
   $$("[data-x]", ov).forEach(b => b.onclick = closeModal);
+
   const submit = () => {
     const nom = $("#n-nom").value.trim();
     if(!nom){ toast("Indiquez le nom du collaborateur."); $("#n-nom").focus(); return; }
-    if(!HOTELS.length){ toast("Créez d’abord un hôtel dans Administration."); return; }
-    const rec = createRecord(serviceId, {nom, arrivee:$("#n-arr").value, buddy:$("#n-bud").value, hotel:$("#n-hot").value});
-    closeModal();
-    location.hash = "#/d/"+rec.id;
+    const hotel = forced || ($("#n-hot") ? $("#n-hot").value : "");
+    if(!hotel){ toast("Créez d’abord un hôtel dans Administration."); return; }
+
+    const rec = createRecord(serviceId, {nom, arrivee:$("#n-arr").value, buddy:$("#n-bud").value, hotel});
+    const login = freeLogin(nom);
+    USERS.push({id:"u"+makeId(), login, code:"", role:"collaborateur", nom, hotel, recordIds:[rec.id]});
+    saveUsers();
+
+    /* on affiche l’identifiant : c’est la seule fois où il est présenté */
+    ov.innerHTML = '<div class="modal">'+
+      '<button class="modal-x" data-x>✕</button>'+
+      '<div class="kick">Passeport créé</div>'+
+      '<div class="medal">'+svc.emoji+'</div>'+
+      '<h2>'+esc(nom)+'</h2>'+
+      '<div class="who">Passeport '+esc(svc.name)+' · '+esc(hotelName(hotel))+'</div>'+
+      '<div class="msg">Son compte est créé avec l’identifiant <b>'+esc(login)+'</b>, sans code d’accès. '+
+        'Communiquez-le lui pour qu’il puisse s’auto-évaluer. Un code peut être ajouté depuis Administration.</div>'+
+      '<button class="btn btn-primary" data-open>Ouvrir le passeport →</button></div>';
+    $("[data-x]", ov).onclick = closeModal;
+    $("[data-open]", ov).onclick = () => { closeModal(); location.hash = "#/d/"+rec.id; };
   };
   $("[data-ok]", ov).onclick = submit;
-  ov.addEventListener("keydown", e => { if(e.key === "Enter") submit(); });
+  ov.addEventListener("keydown", e => { if(e.key === "Enter" && $("[data-ok]", ov)) submit(); });
 }
 
 /* ==========================================================================
@@ -1254,7 +1282,8 @@ function renderDossiers(){
         ? '<p>Ouvrez un passeport depuis un service pour démarrer l’intégration d’un collaborateur.</p>'+
           '<div style="margin-top:22px"><a class="btn btn-primary" href="#services">Choisir un service →</a></div>'
         : user && user.role === "officer"
-          ? '<p>Aucun passeport n’est encore rattaché à '+esc(hotelName(user.hotel))+'. L’administrateur les crée et les rattache aux hôtels.</p>'
+          ? '<p>Aucun passeport n’est encore rattaché à '+esc(hotelName(user.hotel))+'.</p>'+
+            '<div style="margin-top:22px"><a class="btn btn-primary" href="#services">Créer un passeport →</a></div>'
           : '<p>Aucun passeport ne vous est encore attribué. Adressez-vous à votre Officer ou à l’administrateur.</p>')+
       '</div>';
   } else if(!list.length){
@@ -1276,7 +1305,7 @@ function renderDossiers(){
           '</div>'+
           '<div class="doss-sub">'+
             '<span>Arrivée : '+fmtDate(r.arrivee)+'</span>'+
-            '<span>Buddy : '+esc(r.buddy || "—")+'</span>'+
+            (r.buddy ? '<span>Buddy : '+esc(r.buddy)+'</span>' : "")+
             '<span>'+st.badges+' / '+st.badgesTotal+' badges</span>'+
             '<span>Modifié le '+fmtDate(r.updatedAt)+'</span>'+
           '</div>'+
@@ -1374,7 +1403,7 @@ function renderPassport(recId){
           /* le collaborateur consulte sa couverture, il ne la modifie pas */
           '<div class="pp-field"><label>Collaborateur</label><input data-meta="nom" placeholder="Prénom Nom" value="'+esc(rec.nom)+'"'+(soloRole?" readonly":"")+'></div>'+
           '<div class="pp-field"><label>Date d’arrivée</label><input data-meta="arrivee" type="date" value="'+esc(rec.arrivee)+'"'+(soloRole?" readonly":"")+'></div>'+
-          '<div class="pp-field"><label>Buddy</label><input data-meta="buddy" placeholder="Prénom Nom" value="'+esc(rec.buddy)+'"'+(soloRole?" readonly":"")+'></div>'+
+          '<div class="pp-field"><label>Buddy (facultatif)</label><input data-meta="buddy" placeholder="Aucun" value="'+esc(rec.buddy)+'"'+(soloRole?" readonly":"")+'></div>'+
           (isAdmin(user) ? '<div class="pp-field"><label>Hôtel</label><input value="'+esc(hotelName(rec.hotel))+'" readonly></div>' : "")+
         '</div>'+
       '</div>'+
@@ -1466,7 +1495,7 @@ function renderPanel(svc, rec){
           '</div>';
       }).join("");
       return '<div class="item"><div class="item-top">'+
-        '<span class="item-dot '+(r===1?"l1":r===2?"l2":"")+'" title="Niveau retenu"></span>'+
+        '<span class="item-dot '+(r?"l"+r:"")+'" title="Niveau retenu"></span>'+
         '<div class="item-lbl">'+esc(label)+'</div></div>'+
         '<div class="evals">'+evs+'</div></div>';
     }).join("");
@@ -1475,7 +1504,7 @@ function renderPanel(svc, rec){
       '<header class="sub-head" data-toggle="'+okey+'">'+
         '<span class="sub-num">'+(si+1)+'</span>'+
         '<div class="sub-tt"><h3>'+esc(sub.name)+'</h3><div class="sub-obj">'+esc(sub.obj)+'</div></div>'+
-        '<div class="sub-right"><span class="sub-count"><b>'+x.at2+'</b>/'+x.total+' 🟢</span>'+
+        '<div class="sub-right"><span class="sub-count"><b>'+x.acquis+'</b>/'+x.total+' 🟢</span>'+
           '<span class="stamp-mini" title="'+esc(sub.badge.name)+'">'+sub.badge.emoji+'</span>'+
           '<span class="chev">▾</span></div>'+
       '</header>'+
@@ -1535,7 +1564,7 @@ function refreshAfterChange(svc, rec){
     const sec = $('[data-sub="'+block.id+"."+sub.id+'"]');
     if(!sec) return;
     sec.classList.toggle("done", x.done);
-    $(".sub-count", sec).innerHTML = "<b>"+x.at2+"</b>/"+x.total+" 🟢";
+    $(".sub-count", sec).innerHTML = "<b>"+x.acquis+"</b>/"+x.total+" 🟢";
   });
   svc.blocks.forEach(b => {
     let d = 0; b.subs.forEach(s => { if(subStats(rec,b,s).done) d++; });
@@ -1545,7 +1574,7 @@ function refreshAfterChange(svc, rec){
     const first = $("[data-set]", el); if(!first) return;
     const key = first.getAttribute("data-set").split("|")[0];
     const r = retained(rec, key);
-    $(".item-dot", el).className = "item-dot "+(r===1?"l1":r===2?"l2":"");
+    $(".item-dot", el).className = "item-dot "+(r ? "l"+r : "");
   });
   renderStamps(svc, rec);
 }
@@ -1585,22 +1614,22 @@ function passportToText(svc, rec){
   L.push("PASSEPORT DES SAVOIRS — "+svc.name.toUpperCase());
   L.push("Collaborateur : "+(rec.nom || "non renseigné"));
   L.push("Date d’arrivée : "+(rec.arrivee ? fmtDate(rec.arrivee) : "non renseignée"));
-  L.push("Buddy : "+(rec.buddy || "non renseigné"));
-  L.push("Progression globale : "+st.pct+"% des items au niveau 2 · "+st.badges+"/"+st.badgesTotal+" badges"+
+  L.push("Buddy : "+(rec.buddy || "aucun buddy désigné"));
+  L.push("Progression globale : "+st.pct+"% des items acquis · "+st.badges+"/"+st.badgesTotal+" badges"+
          (st.ambassador ? " · golden badge Ambassadeur de l’hôtel acquis" : ""));
   L.push("");
-  L.push("LECTURE DES NIVEAUX — 0 = non découvert/non observé, 1 = découverte/en développement, 2 = acquisition.");
+  L.push("LECTURE DES NIVEAUX — 0 = non vérifié, 1 = non acquis, 2 = en cours d’acquisition, 3 = acquis.");
   L.push("Chaque item porte jusqu’à trois évaluations : AUTO (le collaborateur), BUDDY, COO. « — » signifie non renseigné.");
   L.push("");
 
   svc.blocks.forEach(b => {
     L.push("======== BLOC "+b.name.toUpperCase()+" ========");
-    L.push("Échelle de ce bloc :");
+    L.push("Échelle :");
     b.scale.forEach((s, i) => L.push("  niveau "+i+" — "+s.n.replace(/^Niveau \d+ — /,"")+" : "+s.d));
     L.push("");
     b.subs.forEach(sub => {
       const x = subStats(rec, b, sub);
-      L.push("-- "+sub.name+" ("+x.at2+"/"+x.total+" au niveau 2 — badge « "+sub.badge.name+" » "+
+      L.push("-- "+sub.name+" ("+x.acquis+"/"+x.total+" acquis — badge « "+sub.badge.name+" » "+
              (x.done ? "ACQUIS" : "non acquis")+")");
       L.push("   Objectif : "+sub.obj);
       sub.items.forEach((label, i) => {
@@ -1812,7 +1841,6 @@ function renderLogin(){
   '<div class="login-wrap"><div class="login">'+
     '<div class="mark">🛂</div>'+
     '<h1>Passeport des Savoirs</h1>'+
-    '<p class="lead">Identifiez-vous pour accéder aux passeports de votre périmètre.</p>'+
     '<div class="err" id="err"></div>'+
     '<div class="f"><label>Identifiant</label>'+
       '<input id="l-login" placeholder="prenom.nom" autocomplete="username" autocapitalize="off" spellcheck="false"></div>'+
@@ -1823,7 +1851,7 @@ function renderLogin(){
       ? '<div class="login-note"><b>Comptes de démonstration</b><div class="roles-legend">'+
         demoUsers.map(u => '<div><code>'+esc(u.login)+'</code><span>'+esc(ROLE_LABEL[u.role])+
           (u.hotel ? " — "+esc(hotelName(u.hotel)) : " — tous les hôtels")+'</span></div>').join("")+
-        '</div><p style="margin-top:12px">Aucun code n’est requis sur ces comptes. Ils figurent dans le code source du site, qui est public : ils servent à découvrir l’outil, pas à protéger des données. L’administrateur doit créer les comptes réels et supprimer ceux-ci.</p></div>'
+        '</div></div>'
       : "")+
   '</div></div>';
 
@@ -1868,7 +1896,7 @@ function slugLogin(nom){
 function renderAdmin(){
   const tabs = [
     ["collaborateurs", "Collaborateurs", usersByRole("collaborateur").length],
-    ["officers",       "Officers",       usersByRole("officer").length],
+    ["officers",       "Officers / buddies", usersByRole("officer").length],
     ["hotels",         "Hôtels",         HOTELS.length],
     ["passeports",     "Passeports",     RECORDS.length]
   ].map(([id, label, n]) =>
@@ -1906,7 +1934,7 @@ function admHotels(){
   $("#admbody").innerHTML = '<div class="panel">'+
     '<h3>Les hôtels</h3><p class="hint">Chaque Officer et chaque passeport est rattaché à un hôtel. Un Officer ne voit que le sien.</p>'+
     (HOTELS.length
-      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Hôtel</th><th>Officers</th><th>Collaborateurs</th><th>Passeports</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Hôtel</th><th>Officers / buddies</th><th>Collaborateurs</th><th>Passeports</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
       : '<p style="font-size:.9rem;color:var(--ink-55)">Aucun hôtel pour l’instant.</p>')+
     '<div class="addform"><h4>Ajouter un hôtel</h4>'+
       '<div class="addgrid"><div class="f"><label>Nom de l’hôtel</label><input id="h-nom" placeholder="Ex. Hôtel Carnot"></div></div>'+
@@ -1944,7 +1972,8 @@ function admUsers(role){
       (isCol ? '<td>'+(recs.length
           ? recs.map(r => '<a href="#/d/'+r.id+'">'+esc((getService(r.service)||{}).name || r.service)+'</a>').join(", ")
           : '<span style="color:var(--ink-40)">aucun</span>')+'</td>' : "")+
-      '<td><code>'+(u.code ? "••••" : "aucun")+'</code></td>'+
+      '<td><input class="codein" data-uc="'+u.id+'" value="'+esc(u.code)+'" placeholder="aucun" '+
+        'title="Code d’accès — laisser vide pour une connexion sans code"></td>'+
       '<td class="acts"><button class="iconbtn danger" data-delu="'+u.id+'" title="Supprimer">🗑</button></td></tr>';
   }).join("");
 
@@ -1952,16 +1981,16 @@ function admUsers(role){
     '<option value="'+s.id+'">'+esc(s.name)+'</option>').join("");
 
   $("#admbody").innerHTML = '<div class="panel">'+
-    '<h3>'+(isCol ? "Les collaborateurs" : "Les Officers")+'</h3>'+
+    '<h3>'+(isCol ? "Les collaborateurs" : "Les Officers / buddies")+'</h3>'+
     '<p class="hint">'+(isCol
       ? "Créer un collaborateur crée en même temps son passeport. Il ne verra que le sien, et n’y remplira que sa colonne d’auto-évaluation."
-      : "Un Officer voit tous les passeports de son hôtel et peut remplir les trois colonnes d’évaluation.")+'</p>'+
+      : "Un Officer / buddy voit tous les passeports de son hôtel, peut en créer et remplir les trois colonnes d’évaluation.")+'</p>'+
     (list.length
       ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Nom</th><th>Identifiant</th><th>Hôtel</th>'+
-        (isCol?'<th>Passeports</th>':"")+'<th>Code</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+        (isCol?'<th>Passeports</th>':"")+'<th>Code d’accès</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
       : '<p style="font-size:.9rem;color:var(--ink-55)">Aucun compte pour l’instant.</p>')+
 
-    '<div class="addform"><h4>Ajouter '+(isCol?"un collaborateur":"un Officer")+'</h4>'+
+    '<div class="addform"><h4>Ajouter '+(isCol?"un collaborateur":"un Officer / buddy")+'</h4>'+
       '<div class="addgrid">'+
         '<div class="f"><label>Nom complet</label><input id="u-nom" placeholder="Prénom Nom"></div>'+
         '<div class="f"><label>Identifiant</label><input id="u-login" placeholder="prenom.nom" autocapitalize="off" spellcheck="false"></div>'+
@@ -1972,10 +2001,10 @@ function admUsers(role){
         ? '<div class="addgrid">'+
           '<div class="f"><label>Service du passeport</label><select id="u-svc">'+svcOptions+'</select></div>'+
           '<div class="f"><label>Date d’arrivée</label><input id="u-arr" type="date"></div>'+
-          '<div class="f"><label>Buddy</label><input id="u-bud" placeholder="Prénom Nom"></div>'+
+          '<div class="f"><label>Buddy (facultatif)</label><input id="u-bud" placeholder="Aucun"></div>'+
           '</div>'
         : "")+
-      '<button class="btn btn-primary btn-sm" data-addu>Ajouter '+(isCol?"le collaborateur et son passeport":"l’Officer")+'</button>'+
+      '<button class="btn btn-primary btn-sm" data-addu>Ajouter '+(isCol?"le collaborateur et son passeport":"l’Officer / buddy")+'</button>'+
     '</div></div>';
 
   /* saisie du nom → identifiant proposé automatiquement */
@@ -1999,9 +2028,18 @@ function admUsers(role){
       u.recordIds = [rec.id];
     }
     USERS.push(u); saveUsers();
-    toast((isCol?"Collaborateur":"Officer")+" ajouté.");
+    toast((isCol?"Collaborateur":"Officer / buddy")+" ajouté.");
     renderAdmin();
   };
+
+  $$("[data-uc]").forEach(i => {
+    i.onchange = () => {
+      const u = getUser(i.getAttribute("data-uc"));
+      u.code = i.value.trim(); saveUsers();
+      toast(u.code ? "Code de "+(u.nom||u.login)+" mis à jour." : "Code de "+(u.nom||u.login)+" retiré.");
+    };
+    i.onkeydown = e => { if(e.key === "Enter") i.blur(); };
+  });
 
   $$("[data-uh]").forEach(s => s.onchange = () => {
     const u = getUser(s.getAttribute("data-uh"));
@@ -2061,7 +2099,7 @@ function admPasseports(){
             '<div class="f"><label>Collaborateur</label><select id="p-col">'+colOptions+'</select></div>'+
             '<div class="f"><label>Service</label><select id="p-svc">'+svcOptions+'</select></div>'+
             '<div class="f"><label>Date d’arrivée</label><input id="p-arr" type="date"></div>'+
-            '<div class="f"><label>Buddy</label><input id="p-bud" placeholder="Prénom Nom"></div>'+
+            '<div class="f"><label>Buddy (facultatif)</label><input id="p-bud" placeholder="Aucun"></div>'+
           '</div>'+
           '<button class="btn btn-primary btn-sm" data-addp>Ajouter le passeport</button>'+
           '<p class="hint" style="margin:14px 0 0">Utile lorsqu’un collaborateur change de service ou en couvre plusieurs : il aura alors accès à chacun de ses passeports.</p>'
@@ -2124,43 +2162,44 @@ function exportRecord(rec){
 const LS_SEEDED = "pds.seeded.v1";
 const DEMO_ID   = "demo-receptionniste";
 
-/* Par défaut chaque item est à 2 pour les trois évaluateurs. Ce tableau ne
-   porte que les écarts et les commentaires : a/b/c = niveau auto/buddy/COO,
+/* Par défaut chaque item est à 🟢 Acquis pour les trois évaluateurs. Ce tableau
+   ne porte que les écarts et les commentaires. a/b/c = niveau auto/buddy/COO sur
+   l’échelle 0 non vérifié · 1 non acquis · 2 en cours d’acquisition · 3 acquis.
    na/nb/nc = commentaire correspondant. */
 const DEMO_NOTES = {
   "savoir.s1.0":{nb:"A relu le brand book et su restituer l’histoire du bâtiment lors du briefing du 12 juin."},
-  "savoir.s1.3":{a:1, na:"Je confonds encore Deluxe et Junior Suite sur les surfaces.",
+  "savoir.s1.3":{a:2, na:"Je confonds encore Deluxe et Junior Suite sur les surfaces.",
                  nb:"Hésitation levée après le tour des chambres du 18 juin.", nc:"Vérifié en entretien, plus d’erreur."},
   "savoir.s1.5":{nb:"Connaît l’offre Séjour Prolongé. À réactualiser à chaque changement de saison."},
-  "savoir.s2.1":{a:2, b:1, na:"Je pense les maîtriser.",
+  "savoir.s2.1":{a:3, b:2, na:"Je pense les maîtriser.",
                  nb:"Formule d’accueil téléphonique incomplète : oublie de se présenter par son prénom.",
                  nc:"Reprise en binôme, conforme depuis début juillet."},
   "savoir.s2.4":{nb:"A participé à l’exercice d’évacuation du 25 juin : position et consignes maîtrisées."},
-  "savoir.s2.5":{a:1, na:"Je ne sais pas toujours si un cas justifie d’appeler le COO.",
+  "savoir.s2.5":{a:2, na:"Je ne sais pas toujours si un cas justifie d’appeler le COO.",
                  nc:"Cas d’escalade cadrés le 3 juillet, jugement fiable depuis."},
   "savoir.s3.1":{nb:"A suivi une matinée avec Marc en maintenance, comprend les délais d’intervention."},
   "savoir.s3.2":{nb:"Une matinée en salle PDJ le 2 juillet, sait dépanner au débarrassage en cas de rush."},
-  "savoir.s3.6":{a:1, na:"J’utilise Slack mais je ne sais pas toujours quel canal choisir.",
+  "savoir.s3.6":{a:2, na:"J’utilise Slack mais je ne sais pas toujours quel canal choisir.",
                  nb:"Canaux clarifiés, utilise #reception-hk correctement."},
 
-  "faire.f1.1":{b:1, nb:"Très à l’aise avec la clientèle loisirs, plus scolaire avec les corporate.",
+  "faire.f1.1":{b:2, nb:"Très à l’aise avec la clientèle loisirs, plus scolaire avec les corporate.",
                 nc:"Écart normal à ce stade, progression nette en juillet."},
   "faire.f1.5":{nc:"Retour client Booking du 8 juillet la citant par son prénom."},
   "faire.f2.0":{nb:"12 check-in observés en autonomie, aucun oubli de procédure."},
-  "faire.f2.4":{a:1, b:1, na:"Les pré-autorisations me demandent encore de vérifier la procédure.",
+  "faire.f2.4":{a:2, b:2, na:"Les pré-autorisations me demandent encore de vérifier la procédure.",
                 nb:"Sait faire, mais avec le mémo sous les yeux.", nc:"Autonome depuis le 20 juillet."},
   "faire.f2.5":{nb:"A géré seule une arrivée à 2h du matin le 14 juillet, sans réveiller le manager."},
-  "faire.f2.7":{a:1, na:"Les extras groupés sur une facture longue me ralentissent.",
+  "faire.f2.7":{a:2, na:"Les extras groupés sur une facture longue me ralentissent.",
                 nb:"Exactitude bonne, rapidité à gagner.", nc:"Rythme conforme fin juillet."},
   "faire.f3.0":{nb:"Maîtrise Mews, plus rapide que la moyenne de l’équipe."},
-  "faire.f3.6":{a:1, na:"Je n’osais pas proposer, j’ai commencé mi-juillet.",
+  "faire.f3.6":{a:2, na:"Je n’osais pas proposer, j’ai commencé mi-juillet.",
                 nb:"3 upsells convertis sur la dernière semaine de juillet.",
                 nc:"Belle progression, à encourager sur les arrivées corporate."},
-  "faire.f3.7":{a:1, b:1, na:"Je pense encore rarement au restaurant.",
-                nb:"Réflexe à installer, le potentiel est là.", nc:"Cadré au point du 1er août, réflexe acquis."},
+  "faire.f3.7":{a:2, b:1, na:"Je pense encore rarement au restaurant.",
+                nb:"Réflexe absent début juillet : aucune proposition sur 15 check-in observés.", nc:"Cadré au point du 1er août, réflexe acquis."},
   "faire.f3.9":{nb:"Réponses claires, ton conforme aux modèles, aucune relance client."},
   "faire.f4.1":{nb:"Chambre non prête le 21 juillet : a désamorcé seule, client reparti satisfait."},
-  "faire.f4.5":{a:1, b:1, na:"Je n’ai pas encore vécu de surbooking réel.",
+  "faire.f4.5":{a:2, b:2, na:"Je n’ai pas encore vécu de surbooking réel.",
                 nb:"Procédure connue en théorie, jamais mise en pratique.",
                 nc:"Cas simulé le 5 août : réaction et délogement conformes."},
   "faire.f4.7":{nc:"Dossier de dédommagement suivi jusqu’au bout, sans aucune relance de ma part."},
@@ -2169,11 +2208,11 @@ const DEMO_NOTES = {
   "etre.e1.4":{nc:"Jamais un client en attente sans être salué, y compris en plein check-out."},
   "etre.e2.3":{nb:"Prend les remarques sans se justifier et applique dès le service suivant."},
   "etre.e3.1":{nb:"Partage l’état d’occupation chaque matin sur le canal réception."},
-  "etre.e3.2":{a:1, b:1, na:"Je consulte Elium mais je ne publie pas.",
-               nb:"Lecture régulière, aucune contribution pour l’instant.",
+  "etre.e3.2":{a:2, b:1, na:"Je consulte Elium mais je ne publie pas.",
+               nb:"Aucune contribution au 1er juillet, malgré deux relances.",
                nc:"A publié la fiche « gérer une arrivée tardive » le 4 août."},
   "etre.e4.0":{nb:"Week-end du 19 juillet à 92% d’occupation : calme et méthodique."},
-  "etre.e4.2":{a:1, na:"Je me sens encore déstabilisée sur le moment.",
+  "etre.e4.2":{a:2, na:"Je me sens encore déstabilisée sur le moment.",
                nb:"Ne le montre pas, la voix reste posée.", nc:"Ressenti interne, sans effet sur le service."},
   "etre.e5.1":{nb:"Aucun retard sur neuf semaines."},
   "etre.e5.3":{nc:"A demandé d’elle-même à suivre une journée de revenue management."}
@@ -2181,7 +2220,7 @@ const DEMO_NOTES = {
 
 const DEMO_SYNTHESE = [
 "## Où en est l’intégration",
-"Camille Durand a validé **100 % des items au niveau 2** et obtenu les **12 badges** du passeport Réceptionniste, golden badge *Ambassadeur de l’hôtel* inclus. Le parcours a duré dix semaines, du 2 juin au 10 août. Les blocs Savoir et Savoir-être ont été acquis rapidement ; le Savoir-faire a demandé plus de temps, en particulier sur la vente additionnelle et les situations exceptionnelles.",
+"Camille Durand a validé **100 % des items au niveau Acquis** et obtenu les **12 badges** du passeport Réceptionniste, golden badge *Ambassadeur de l’hôtel* inclus. Le parcours a duré dix semaines, du 2 juin au 10 août. Les blocs Savoir et Savoir-être ont été acquis rapidement ; le Savoir-faire a demandé plus de temps, en particulier sur la vente additionnelle et les situations exceptionnelles.",
 "",
 "## Points forts",
 "- **Check-in & Check-out** : autonomie complète et rapide, 12 arrivées observées sans oubli de procédure, dont une arrivée à 2h du matin gérée seule.",
@@ -2193,7 +2232,7 @@ const DEMO_SYNTHESE = [
 "## Écarts de perception",
 "Camille s’est systématiquement **sous-évaluée** par rapport à son buddy et au COO. Sept items sont concernés : catégories de chambres, escalade managériale, canaux interservices, encaissement à l’arrivée, explication de facture, upsell, cross-sell, sang-froid face à un client mécontent, contribution sur Elium.",
 "",
-"Un seul écart en sens inverse : sur les **standards de service attendus**, elle s’était placée au niveau 2 quand le buddy relevait une formule d’accueil téléphonique incomplète. Point corrigé début juillet.",
+"Un seul écart en sens inverse : sur les **standards de service attendus**, elle s’était placée au niveau Acquis quand le buddy relevait une formule d’accueil téléphonique incomplète. Point corrigé début juillet.",
 "",
 "Ce profil — prudence sur soi, résultats conformes — est un signe de rigueur plus que de fragilité. Il mérite d’être nommé explicitement en entretien : Camille gagnerait en aisance commerciale à s’autoriser plus tôt ce qu’elle sait déjà faire.",
 "",
@@ -2232,9 +2271,9 @@ function seedDemo(){
       const key = itemKey(b.id, s.id, i);
       const o = DEMO_NOTES[key] || {};
       rec.items[key] = {
-        auto: {lvl: o.a === undefined ? 2 : o.a, note: o.na || ""},
-        buddy:{lvl: o.b === undefined ? 2 : o.b, note: o.nb || ""},
-        coo:  {lvl: o.c === undefined ? 2 : o.c, note: o.nc || ""}
+        auto: {lvl: o.a === undefined ? ACQUIS : o.a, note: o.na || ""},
+        buddy:{lvl: o.b === undefined ? ACQUIS : o.b, note: o.nb || ""},
+        coo:  {lvl: o.c === undefined ? ACQUIS : o.c, note: o.nc || ""}
       };
     });
     rec.unlocked.push(b.id+"."+s.id);

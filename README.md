@@ -24,12 +24,17 @@ l’administrateur. Trois profils :
 | Profil | Voit | Remplit | Administre |
 |---|---|---|---|
 | **Collaborateur** | ses passeports uniquement | sa seule colonne d’auto-évaluation | — |
-| **Officer** | les passeports de son hôtel | les trois colonnes | — |
+| **Officer / buddy** | les passeports de son hôtel, plus la démonstration | les trois colonnes | crée des passeports sur son hôtel |
 | **Administrateur** | tous les passeports, tous hôtels | les trois colonnes | hôtels, Officers, collaborateurs, passeports |
 
 Le collaborateur consulte sa synthèse sans pouvoir la produire ni l’effacer, et sa couverture de
-passeport est en lecture seule. Seul l’administrateur peut créer, supprimer et réinitialiser un
-passeport.
+passeport est en lecture seule. L’Officer / buddy crée des passeports sur son hôtel ; seul
+l’administrateur supprime, réinitialise et modifie les codes d’accès.
+
+Créer un passeport crée aussi le **compte du collaborateur**, dont l’identifiant est affiché à
+ce moment-là — c’est la seule fois. Sans ce compte, l’intéressé ne pourrait pas s’auto-évaluer.
+
+Le **buddy est facultatif** : un passeport peut n’en avoir aucun.
 
 L’onglet **Administration** permet de créer les hôtels, les Officers et les collaborateurs, de
 les rattacher à un hôtel, et d’attribuer un passeport supplémentaire à un collaborateur qui
@@ -56,7 +61,7 @@ Au premier chargement, trois comptes de démonstration sont créés, sans code d
 | Identifiant | Profil |
 |---|---|
 | `admin` | Administrateur — tous les hôtels |
-| `officer` | Officer — Hôtel de démonstration |
+| `officer` | Officer / buddy — Hôtel de démonstration |
 | `camille.durand` | Collaborateur — Hôtel de démonstration |
 
 Ils figurent dans le code source, donc publiquement. **Première chose à faire en production :
@@ -66,7 +71,8 @@ créer les comptes réels avec des codes d’accès, puis supprimer ces trois-l�
 
 1. **Connexion** — identifiant et code d’accès.
 2. **Accueil** — le pitch, les 3 blocs, l’échelle, la règle des badges, puis les passeports par
-   service. Le bouton « Nouveau passeport » n’apparaît que pour l’administrateur.
+   service. Le bouton « Nouveau passeport » apparaît pour l’administrateur et pour
+   l’Officer / buddy.
 3. **Collaborateurs** — la liste des passeports du périmètre du profil connecté, avec recherche
    (nom du collaborateur, nom du buddy, service, hôtel), filtre par service, progression,
    badges, date de dernière modification.
@@ -91,15 +97,15 @@ Il se supprime comme n’importe quel autre passeport et ne revient pas : un ind
 
 - **3 blocs** : Savoir, Savoir-faire, Savoir-être.
 - **Sous-blocs** : chacun porte un objectif et un badge.
-- **Échelle à 3 niveaux** par item : ⚪ niveau 0, 🟡 niveau 1, 🟢 niveau 2. Les intitulés du
-  niveau 2 diffèrent selon le bloc (expliquer / mettre en pratique en autonomie / être observé
-  régulièrement).
+- **Échelle à quatre niveaux** par item, commune aux trois blocs : ⚪ Non vérifié · 🔴 Non
+  acquis · 🟠 En cours d’acquisition · 🟢 Acquis. Le seuil du badge est 🟢, défini par la
+  constante `ACQUIS`.
 - **3 évaluateurs** par item : le collaborateur (auto-évaluation), le buddy, le COO. Chacun a
   son niveau et son commentaire libre.
 - **Une seule colonne modifiable à la fois** : le sélecteur « Je remplis en tant que » ouvre la
   colonne du rôle choisi et verrouille les deux autres (repérées 🔒). Elles restent lisibles —
-  le buddy voit l’auto-évaluation du collaborateur — mais ni les niveaux ni les commentaires
-  d’autrui ne peuvent être modifiés par erreur.
+  le buddy voit l’auto-évaluation du collaborateur, et réciproquement — mais ni les niveaux ni
+  les commentaires d’autrui ne peuvent être modifiés par erreur.
 - **Badge de sous-bloc** : obtenu lorsque 100 % des items du sous-bloc sont au niveau 🟢.
 - **Golden badge 🌟 Ambassadeur de l’hôtel** : obtenu lorsque tous les badges sont acquis.
 
@@ -141,10 +147,10 @@ bouton bascule alors automatiquement en génération directe.
 | Service | État |
 |---|---|
 | Réceptionniste | Complet — 78 items, 12 badges |
-| Housekeeping | Structure et échelles prêtes, items à définir |
-| Maintenance | Structure et échelles prêtes, items à définir |
-| Petit Déjeuner | Structure et échelles prêtes, items à définir |
-| F&B | Structure et échelles prêtes, items à définir |
+| Housekeeping | À venir — items à définir |
+| Maintenance | À venir — items à définir |
+| Petit Déjeuner | À venir — items à définir |
+| F&B | À venir — items à définir |
 
 Les items des quatre derniers services doivent être définis avec chaque service.
 
