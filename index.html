@@ -168,7 +168,7 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .doss-nm{font-size:1.05rem;font-weight:600;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .doss-nm .svctag{font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;background:var(--grey-light);color:var(--ink-55);padding:3px 9px;border-radius:999px;font-weight:600}
 .doss-nm .aitag{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;background:var(--gold-light);color:var(--gold);padding:3px 9px;border-radius:999px;font-weight:600}
-.doss-nm .demotag{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;background:var(--blue-flash);color:#fff;padding:3px 9px;border-radius:999px;font-weight:600}
+.demotag{display:inline-block;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;background:var(--blue-flash);color:#fff;padding:3px 9px;border-radius:999px;font-weight:600;vertical-align:middle}
 .demobar{background:var(--blue-light);border:1px solid rgba(73,107,255,.3);border-radius:var(--radius-sm);padding:13px 18px;margin-top:14px;font-size:.88rem;color:var(--ink-70);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .demobar b{color:var(--ink)}
 .doss-sub{font-size:.83rem;color:var(--ink-55);margin-top:4px;display:flex;gap:14px;flex-wrap:wrap}
@@ -362,6 +362,53 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .toast.on{transform:translateX(-50%);opacity:1}
 
 .foot{padding:44px 0 34px;text-align:center;font-size:.84rem;color:var(--ink-55);border-top:1px solid var(--ink-07);margin-top:40px}
+
+/* ---------- Identification & session ---------- */
+.whoami{display:flex;flex-direction:column;line-height:1.25;padding:4px 12px;border-left:1px solid var(--ink-12);margin-left:6px}
+.whoami b{font-size:.86rem;font-weight:600}
+.whoami span{font-size:.72rem;color:var(--ink-55)}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:28px}
+.login{width:100%;max-width:430px;background:var(--white);border:1px solid var(--ink-07);border-radius:24px;padding:38px 34px;box-shadow:var(--shadow-md)}
+.login .mark{width:52px;height:52px;border-radius:14px;background:var(--blue-flash);color:#fff;display:grid;place-items:center;font-size:1.5rem;margin-bottom:22px;box-shadow:0 6px 18px rgba(73,107,255,.3)}
+.login h1{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:500;margin-bottom:8px}
+.login .lead{font-size:.92rem;color:var(--ink-55);margin-bottom:26px;line-height:1.6}
+.login .err{display:none;background:#FBEEEB;border:1px solid rgba(180,69,47,.3);color:#8E3623;border-radius:10px;padding:11px 14px;font-size:.87rem;margin-bottom:16px}
+.login .err.on{display:block}
+.login-note{margin-top:22px;padding-top:20px;border-top:1px solid var(--ink-07);font-size:.82rem;color:var(--ink-55);line-height:1.65}
+.login-note b{color:var(--ink)}
+.roles-legend{display:grid;gap:8px;margin-top:12px}
+.roles-legend div{display:flex;gap:9px;align-items:flex-start;font-size:.82rem;color:var(--ink-55)}
+.roles-legend code{background:var(--grey-light);border-radius:6px;padding:1px 7px;font-size:.78rem;color:var(--ink)}
+
+/* ---------- Administration ---------- */
+.admtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.admtabs button{padding:10px 18px;border-radius:999px;font-size:.9rem;background:rgba(255,255,255,.7);border:1px solid var(--ink-12);color:var(--ink-70);font-weight:500}
+.admtabs button:hover{border-color:var(--blue-flash);color:var(--blue-flash)}
+.admtabs button.on{background:var(--blue-dark);color:#fff;border-color:var(--blue-dark)}
+.admtabs button .pill{background:var(--ink-07);color:var(--ink-55);border-radius:999px;padding:1px 7px;font-size:.74rem;margin-left:6px}
+.admtabs button.on .pill{background:rgba(255,255,255,.2);color:#fff}
+.panel{background:var(--white);border:1px solid var(--ink-07);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow-sm);margin-bottom:18px}
+.panel > h3{font-size:1.1rem;margin-bottom:6px}
+.panel > .hint{font-size:.88rem;color:var(--ink-55);margin-bottom:20px;line-height:1.6}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem}
+.tbl th{text-align:left;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-55);font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--ink-12)}
+.tbl td{padding:12px 12px 12px 0;border-bottom:1px solid var(--ink-07);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .nm{font-weight:600}
+.tbl code{background:var(--grey-light);border-radius:6px;padding:2px 8px;font-size:.82rem}
+.tbl select{border:1px solid var(--ink-12);border-radius:8px;padding:7px 10px;font-size:.85rem;background:#fff;max-width:190px}
+.tbl select:focus{outline:none;border-color:var(--blue-flash)}
+.tbl .acts{text-align:right;white-space:nowrap}
+.tblwrap{overflow-x:auto}
+.rolechip{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:3px 9px;border-radius:999px}
+.rolechip.admin{background:var(--blue-dark);color:#fff}
+.rolechip.officer{background:var(--kaki);color:#fff}
+.rolechip.collaborateur{background:var(--blue-light);color:var(--blue-flash)}
+.addform{background:var(--grey-light);border-radius:var(--radius-sm);padding:20px;margin-top:20px}
+.addform h4{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-55);margin-bottom:16px}
+.addgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px}
+.warnbar{background:var(--gold-light);border:1px solid rgba(167,133,82,.35);border-radius:var(--radius-sm);padding:14px 18px;font-size:.87rem;color:var(--ink-70);line-height:1.65;margin-bottom:24px}
+.warnbar b{color:var(--ink)}
 
 /* ---------- Mobile ---------- */
 @media(max-width:760px){.evals{grid-template-columns:1fr}}
@@ -708,7 +755,7 @@ function makeId(){
 function createRecord(serviceId, meta){
   const now = new Date().toISOString();
   const rec = {
-    id: makeId(), service: serviceId,
+    id: makeId(), service: serviceId, hotel: meta.hotel || "",
     nom: (meta.nom || "").trim(), arrivee: meta.arrivee || "", buddy: (meta.buddy || "").trim(),
     items:{}, unlocked:[], synthese:null, createdAt: now, updatedAt: now
   };
@@ -915,15 +962,106 @@ function showBadgeQueue(svc, rec, queue){
 }
 
 /* ==========================================================================
-   5. ROUTEUR
+   5. HÔTELS, COMPTES ET SESSION
+
+   ATTENTION — ceci organise l’interface, ce n’est PAS une sécurité.
+   Le site est statique : tout le code est public et les données vivent dans le
+   localStorage du navigateur. Quiconque ouvre les outils de développement voit
+   l’ensemble des comptes et des passeports, quel que soit le profil connecté.
+   Une vraie séparation des accès exige un serveur qui authentifie et qui ne
+   renvoie à chaque profil que les données auxquelles il a droit.
    ========================================================================== */
 
+const LS_HOTELS  = "pds.hotels.v1";
+const LS_USERS   = "pds.users.v1";
+const LS_SESSION = "pds.session.v1";
+
+let HOTELS = readJSON(LS_HOTELS, []);
+let USERS  = readJSON(LS_USERS, []);
+
+function saveHotels(){ writeJSON(LS_HOTELS, HOTELS); }
+function saveUsers(){ writeJSON(LS_USERS, USERS); }
+
+const ROLE_LABEL = {collaborateur:"Collaborateur", officer:"Officer", admin:"Administrateur"};
+
+const getHotel  = id => HOTELS.find(h => h.id === id) || null;
+const hotelName = id => { const h = getHotel(id); return h ? h.name : "Hôtel non défini"; };
+const getUser   = id => USERS.find(u => u.id === id) || null;
+
+function findLogin(login){
+  const l = String(login || "").trim().toLowerCase();
+  return USERS.find(u => String(u.login).toLowerCase() === l) || null;
+}
+function currentUser(){ return getUser(localStorage.getItem(LS_SESSION) || ""); }
+function signIn(u){ try{ localStorage.setItem(LS_SESSION, u.id); }catch(e){} }
+function signOut(){
+  try{ localStorage.removeItem(LS_SESSION); }catch(e){}
+  location.hash = "#/";
+  route();
+}
+
+/* Qui a le droit de voir quel passeport. */
+function canSee(u, rec){
+  if(!u || !rec) return false;
+  if(u.role === "admin")   return true;
+  if(u.role === "officer") return !!rec.hotel && rec.hotel === u.hotel;
+  return (u.recordIds || []).includes(rec.id);
+}
+function visibleRecords(u){ return u ? RECORDS.filter(r => canSee(u, r)) : []; }
+
+/* Colonnes d’évaluation qu’un profil peut remplir : le collaborateur est
+   confiné à son auto-évaluation, l’Officer et l’administrateur mènent
+   l’entretien et remplissent les trois. */
+function allowedRoles(u){
+  return (u && u.role === "collaborateur") ? ["auto"] : ["auto","buddy","coo"];
+}
+const isAdmin = u => !!u && u.role === "admin";
+
+/* ==========================================================================
+   6. ROUTEUR
+   ========================================================================== */
+
+function hashParts(){ return location.hash.replace(/^#\/?/, "").split("/").filter(Boolean); }
+
 function route(){
-  const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
   window.scrollTo(0, 0);
   closeModal();
-  if(parts[0] === "d" && parts[1])      renderPassport(parts[1]);
-  else if(parts[0] === "dossiers")      renderDossiers();
+
+  const u = currentUser();
+  if(!u){ renderLogin(); return; }
+
+  const parts = hashParts();
+
+  /* Le collaborateur ne circule que dans ses propres passeports. */
+  if(u.role === "collaborateur"){
+    const mine = (u.recordIds || []).map(getRecord).filter(Boolean);
+    if(parts[0] === "d" && parts[1] && canSee(u, getRecord(parts[1]))){ renderPassport(parts[1]); return; }
+    if(parts[0] === "d" && parts[1]) toast("Ce passeport n’est pas le vôtre.");
+    /* on remet l’adresse en cohérence avec ce qui est réellement affiché */
+    if(mine.length === 1){
+      const want = "#/d/"+mine[0].id;
+      if(location.hash !== want){ location.hash = want; return; }   // relance route()
+      renderPassport(mine[0].id);
+    } else {
+      if(location.hash !== "#/dossiers"){ location.hash = "#/dossiers"; return; }
+      renderDossiers();
+    }
+    return;
+  }
+
+  if(parts[0] === "d" && parts[1]){
+    const rec = getRecord(parts[1]);
+    if(!canSee(u, rec)){
+      toast("Ce passeport n’est pas accessible avec votre profil.");
+      location.hash = "#/dossiers"; renderDossiers(); return;
+    }
+    renderPassport(parts[1]);
+  }
+  else if(parts[0] === "admin"){
+    if(!isAdmin(u)){ location.hash = "#/"; renderLanding(); return; }
+    renderAdmin();
+  }
+  else if(parts[0] === "dossiers") renderDossiers();
   else if(parts[0] === "services"){
     renderLanding();
     const el = $("#services");
@@ -934,14 +1072,25 @@ function route(){
 window.addEventListener("hashchange", route);
 
 function header(active){
-  const n = RECORDS.length;
+  const u = currentUser();
+  if(!u) return "";
+  const n = visibleRecords(u).length;
+  let nav;
+  if(u.role === "collaborateur"){
+    nav = '<a href="#/" class="on">Mon passeport</a>';
+  } else {
+    nav = '<a href="#/" class="'+(active==="home"?"on":"")+'">Accueil</a>'+
+          '<a href="#services">Les passeports</a>'+
+          '<a href="#/dossiers" class="'+(active==="dossiers"?"on":"")+'">Collaborateurs'+
+            (n?'<span class="pill">'+n+'</span>':"")+'</a>'+
+          (isAdmin(u) ? '<a href="#/admin" class="'+(active==="admin"?"on":"")+'">Administration</a>' : "");
+  }
   return '<div class="topbar"><div class="topbar-in">'+
     '<a class="brand" href="#/"><span class="brand-mark">🛂</span><span>Passeport des Savoirs<small>par Oversight</small></span></a>'+
-    '<nav class="topnav">'+
-      '<a href="#/" class="'+(active==="home"?"on":"")+'">Accueil</a>'+
-      '<a href="#services">Les passeports</a>'+
-      '<a href="#/dossiers" class="'+(active==="dossiers"?"on":"")+'">Collaborateurs'+
-        (n?'<span class="pill">'+n+'</span>':"")+'</a>'+
+    '<nav class="topnav">'+nav+
+      '<span class="whoami"><b>'+esc(u.nom || u.login)+'</b>'+
+        '<span>'+esc(ROLE_LABEL[u.role])+(u.hotel ? " · "+esc(hotelName(u.hotel)) : "")+'</span></span>'+
+      '<button class="btn btn-ghost btn-sm" data-logout>Déconnexion</button>'+
     '</nav></div></div>';
 }
 function footer(){
@@ -950,13 +1099,15 @@ function footer(){
 }
 
 /* ==========================================================================
-   6. ACCUEIL
+   7. ACCUEIL
    ========================================================================== */
 
 function renderLanding(){
+  const user = currentUser();
   const cards = SERVICES.map(svc => {
     const ready = isReady(svc);
-    const n = recordsOf(svc.id).length;
+    /* l’Officer ne compte que les passeports de son hôtel */
+    const n = visibleRecords(user).filter(r => r.service === svc.id).length;
     let items = 0, badges = 0;
     svc.blocks.forEach(b => b.subs.forEach(s => { items += s.items.length; badges++; }));
     const stamps = [];
@@ -975,8 +1126,13 @@ function renderLanding(){
             '<span><b>'+n+'</b> '+(n>1?"passeports enregistrés":"passeport enregistré")+'</span></div>'+
             '<div class="svc-stamps">'+stamps.join("")+'</div>'+
             '<div class="svc-actions">'+
-              '<button class="btn btn-primary btn-sm" data-new="'+svc.id+'">Nouveau passeport →</button>'+
-              (n?'<a class="btn btn-ghost btn-sm" href="#/dossiers?s='+svc.id+'">Voir les '+n+'</a>':"")+
+              (isAdmin(user)
+                ? '<button class="btn btn-primary btn-sm" data-new="'+svc.id+'">Nouveau passeport →</button>'
+                : "")+
+              (n?'<a class="btn '+(isAdmin(user)?"btn-ghost":"btn-primary")+' btn-sm" href="#/dossiers?s='+svc.id+'">'+
+                 (isAdmin(user)?"Voir les "+n:"Voir les "+n+" passeport"+(n>1?"s":""))+'</a>':"")+
+              (!isAdmin(user) && !n
+                ? '<span style="font-size:.85rem;color:var(--ink-40)">Aucun passeport sur votre périmètre</span>' : "")+
             '</div>'
           : '<p style="font-size:.9rem;color:var(--ink-55)">Structure prête — les 3 blocs et les échelles à 3 niveaux sont configurés. Les items du service restent à définir.</p>'
         )+
@@ -992,8 +1148,8 @@ function renderLanding(){
     '<h1>Le Passeport <em>des Savoirs</em></h1>'+
     '<p class="hero-lead">Le fil conducteur de l’intégration de chaque nouveau collaborateur. Faisant référence au voyage, il retrace son parcours, les compétences acquises, les étapes franchies et les expériences validées tout au long de son évolution au sein de l’établissement.</p>'+
     '<div class="hero-cta"><a class="btn btn-primary" href="#services">Découvrir les passeports</a>'+
-      (getRecord(DEMO_ID)?'<a class="btn btn-ghost" href="#/d/'+DEMO_ID+'">🎬 Voir un passeport rempli</a>':"")+
-      (RECORDS.some(r => !r.demo)?'<a class="btn btn-ghost" href="#/dossiers">Les passeports en cours</a>':"")+'</div>'+
+      (canSee(user, getRecord(DEMO_ID))?'<a class="btn btn-ghost" href="#/d/'+DEMO_ID+'">🎬 Voir un passeport rempli</a>':"")+
+      (visibleRecords(user).some(r => !r.demo)?'<a class="btn btn-ghost" href="#/dossiers">Les passeports en cours</a>':"")+'</div>'+
   '</div></section>'+
 
   '<section class="section"><div class="wrap">'+
@@ -1037,6 +1193,10 @@ function newRecordModal(serviceId){
     '<h2 style="margin-bottom:8px">Nouveau collaborateur</h2>'+
     '<p style="font-size:.92rem;color:var(--ink-55);margin-bottom:22px">Ces informations figurent sur la couverture du passeport et permettent de le retrouver.</p>'+
     '<div class="f"><label>Nom du collaborateur</label><input id="n-nom" placeholder="Prénom Nom" autocomplete="off"></div>'+
+    '<div class="f"><label>Hôtel de rattachement</label><select id="n-hot">'+
+      (HOTELS.length ? HOTELS.map(h => '<option value="'+h.id+'">'+esc(h.name)+'</option>').join("")
+                     : '<option value="">Aucun hôtel — à créer dans Administration</option>')+
+      '</select></div>'+
     '<div class="frow">'+
       '<div class="f"><label>Date d’arrivée</label><input id="n-arr" type="date"></div>'+
       '<div class="f"><label>Buddy</label><input id="n-bud" placeholder="Prénom Nom" autocomplete="off"></div>'+
@@ -1049,7 +1209,8 @@ function newRecordModal(serviceId){
   const submit = () => {
     const nom = $("#n-nom").value.trim();
     if(!nom){ toast("Indiquez le nom du collaborateur."); $("#n-nom").focus(); return; }
-    const rec = createRecord(serviceId, {nom, arrivee:$("#n-arr").value, buddy:$("#n-bud").value});
+    if(!HOTELS.length){ toast("Créez d’abord un hôtel dans Administration."); return; }
+    const rec = createRecord(serviceId, {nom, arrivee:$("#n-arr").value, buddy:$("#n-bud").value, hotel:$("#n-hot").value});
     closeModal();
     location.hash = "#/d/"+rec.id;
   };
@@ -1064,30 +1225,38 @@ function newRecordModal(serviceId){
 let dossQuery = "", dossFilter = "";
 
 function renderDossiers(){
+  const user = currentUser();
+  const scope = visibleRecords(user);            // périmètre du profil connecté
   const m = location.hash.match(/[?&]s=([a-z0-9_-]+)/i);
   if(m) dossFilter = m[1];
 
   const chips = '<button class="'+(dossFilter?"":"on")+'" data-f="">Tous</button>'+
-    SERVICES.filter(s => recordsOf(s.id).length).map(s =>
+    SERVICES.filter(s => scope.some(r => r.service === s.id)).map(s =>
       '<button class="'+(dossFilter===s.id?"on":"")+'" data-f="'+s.id+'">'+s.emoji+' '+esc(s.name)+
-      ' <span style="opacity:.6">'+recordsOf(s.id).length+'</span></button>').join("");
+      ' <span style="opacity:.6">'+scope.filter(r => r.service === s.id).length+'</span></button>').join("");
 
   const q = dossQuery.trim().toLowerCase();
-  const list = RECORDS
+  const list = scope
     .filter(r => !dossFilter || r.service === dossFilter)
     .filter(r => {
       if(!q) return true;
       const svc = getService(r.service);
-      return [r.nom, r.buddy, svc && svc.name].filter(Boolean).join(" ").toLowerCase().includes(q);
+      return [r.nom, r.buddy, svc && svc.name, hotelName(r.hotel)]
+        .filter(Boolean).join(" ").toLowerCase().includes(q);
     })
     .slice()
     .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
 
   let body;
-  if(!RECORDS.length){
-    body = '<div class="empty"><div class="big">🛂</div><h3>Aucun passeport enregistré</h3>'+
-      '<p>Ouvrez un passeport depuis un service pour démarrer l’intégration d’un collaborateur.</p>'+
-      '<div style="margin-top:22px"><a class="btn btn-primary" href="#services">Choisir un service →</a></div></div>';
+  if(!scope.length){
+    body = '<div class="empty"><div class="big">🛂</div><h3>Aucun passeport sur votre périmètre</h3>'+
+      (isAdmin(user)
+        ? '<p>Ouvrez un passeport depuis un service pour démarrer l’intégration d’un collaborateur.</p>'+
+          '<div style="margin-top:22px"><a class="btn btn-primary" href="#services">Choisir un service →</a></div>'
+        : user && user.role === "officer"
+          ? '<p>Aucun passeport n’est encore rattaché à '+esc(hotelName(user.hotel))+'. L’administrateur les crée et les rattache aux hôtels.</p>'
+          : '<p>Aucun passeport ne vous est encore attribué. Adressez-vous à votre Officer ou à l’administrateur.</p>')+
+      '</div>';
   } else if(!list.length){
     body = '<div class="empty"><div class="big">🔍</div><h3>Aucun résultat</h3>'+
       '<p>Aucun passeport ne correspond à cette recherche.</p></div>';
@@ -1101,6 +1270,7 @@ function renderDossiers(){
           '<div class="doss-nm">'+esc(r.nom || "Sans nom")+
             (r.demo ? '<span class="demotag">Démo</span>' : "")+
             '<span class="svctag">'+esc(svc.name)+'</span>'+
+            (isAdmin(user) ? '<span class="svctag">'+esc(hotelName(r.hotel))+'</span>' : "")+
             (r.synthese && r.synthese.text ? '<span class="aitag">✨ Synthèse</span>' : "")+
             (st.ambassador ? '<span class="aitag">🌟 Ambassadeur</span>' : "")+
           '</div>'+
@@ -1117,7 +1287,7 @@ function renderDossiers(){
           '<div class="doss-acts">'+
             '<a class="btn btn-primary btn-sm" href="#/d/'+r.id+'">Ouvrir</a>'+
             '<button class="iconbtn" data-exp="'+r.id+'" title="Exporter en JSON">⬇︎</button>'+
-            '<button class="iconbtn danger" data-del="'+r.id+'" title="Supprimer">🗑</button>'+
+            (isAdmin(user) ? '<button class="iconbtn danger" data-del="'+r.id+'" title="Supprimer">🗑</button>' : "")+
           '</div>'+
         '</div></article>';
     }).join("")+'</div>';
@@ -1127,12 +1297,16 @@ function renderDossiers(){
   '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
     '<div class="section-head"><div class="section-kicker">Collaborateurs</div>'+
     '<h2>Les passeports <span class="serif italic">enregistrés</span></h2>'+
-    '<p>Chaque nouveau collaborateur a son passeport. Retrouvez-le ici à tout moment pour poursuivre l’évaluation, l’imprimer ou générer sa synthèse.</p></div>'+
+    '<p>'+(isAdmin(user)
+        ? 'Tous les passeports, tous hôtels confondus. Retrouvez-en un à tout moment pour poursuivre l’évaluation, l’imprimer ou générer sa synthèse.'
+        : user && user.role === "officer"
+          ? 'Les passeports de '+esc(hotelName(user.hotel))+'. Votre profil ne donne accès qu’à cet hôtel.'
+          : 'Vos passeports.')+'</p></div>'+
     '<div class="doss-tools">'+
       '<div class="search"><span class="mag">🔍</span>'+
         '<input id="q" placeholder="Rechercher un collaborateur, un buddy, un service…" value="'+esc(dossQuery)+'"></div>'+
     '</div>'+
-    (RECORDS.length ? '<div class="filters" style="margin-bottom:22px">'+chips+'</div>' : "")+
+    (scope.length ? '<div class="filters" style="margin-bottom:22px">'+chips+'</div>' : "")+
     body+
   '</div>'+footer();
 
@@ -1168,12 +1342,19 @@ function renderPassport(recId){
   if(!svc || !isReady(svc)){ location.hash = "#/dossiers"; return; }
   if(!curBlock || !svc.blocks.some(b => b.id === curBlock)) curBlock = svc.blocks[0].id;
 
+  const user  = currentUser();
+  const allow = allowedRoles(user);
+  /* Le profil détermine les colonnes accessibles : si ROLE n’en fait pas
+     partie (collaborateur), on le ramène sur la première autorisée. */
+  if(allow.indexOf(ROLE) === -1) ROLE = allow[0];
+
   const stats = checkBadges(svc, rec, true);
   const R = 58, C = 2*Math.PI*R, off = C*(1 - stats.pct/100);
   const rp = roleProgress(svc, rec, ROLE);
 
-  const roleBtns = ROLES.map(r =>
+  const roleBtns = ROLES.filter(r => allow.indexOf(r.id) > -1).map(r =>
     '<button data-role="'+r.id+'" class="'+(ROLE===r.id?"on":"")+'" title="'+esc(r.long)+'">'+r.short+'</button>').join("");
+  const soloRole = allow.length === 1;
 
   const tabs = svc.blocks.map(b => {
     let d = 0; b.subs.forEach(s => { if(subStats(rec,b,s).done) d++; });
@@ -1183,16 +1364,18 @@ function renderPassport(recId){
 
   $("#app").innerHTML = header()+
   '<div class="wrap" style="padding-top:30px;padding-bottom:50px">'+
-    '<a class="backlink" href="#/dossiers" style="font-size:.88rem;color:var(--ink-55)">← Tous les collaborateurs</a>'+
+    (soloRole ? "" : '<a class="backlink" href="#/dossiers" style="font-size:.88rem;color:var(--ink-55)">← Tous les collaborateurs</a>')+
     (rec.demo ? '<div class="demobar">🎬 <span><b>Passeport de démonstration</b> — dossier fictif, entièrement rempli, pour montrer le passeport en fin de parcours : les 78 items évalués par les trois regards, les 12 badges, le golden badge et la synthèse. Supprimez-le quand vous n’en avez plus besoin, il ne reviendra pas.</span></div>' : "")+
     '<div class="pp-cover" style="margin-top:14px"><div class="pp-cover-in">'+
       '<div class="pp-id">'+
         '<div class="kicker">'+svc.emoji+' Passeport des Savoirs · '+esc(svc.name)+'</div>'+
         '<h1>'+esc((rec.nom||"Nouveau").split(" ")[0])+' <em>'+esc((rec.nom||"").split(" ").slice(1).join(" "))+'</em></h1>'+
         '<div class="pp-fields">'+
-          '<div class="pp-field"><label>Collaborateur</label><input data-meta="nom" placeholder="Prénom Nom" value="'+esc(rec.nom)+'"></div>'+
-          '<div class="pp-field"><label>Date d’arrivée</label><input data-meta="arrivee" type="date" value="'+esc(rec.arrivee)+'"></div>'+
-          '<div class="pp-field"><label>Buddy</label><input data-meta="buddy" placeholder="Prénom Nom" value="'+esc(rec.buddy)+'"></div>'+
+          /* le collaborateur consulte sa couverture, il ne la modifie pas */
+          '<div class="pp-field"><label>Collaborateur</label><input data-meta="nom" placeholder="Prénom Nom" value="'+esc(rec.nom)+'"'+(soloRole?" readonly":"")+'></div>'+
+          '<div class="pp-field"><label>Date d’arrivée</label><input data-meta="arrivee" type="date" value="'+esc(rec.arrivee)+'"'+(soloRole?" readonly":"")+'></div>'+
+          '<div class="pp-field"><label>Buddy</label><input data-meta="buddy" placeholder="Prénom Nom" value="'+esc(rec.buddy)+'"'+(soloRole?" readonly":"")+'></div>'+
+          (isAdmin(user) ? '<div class="pp-field"><label>Hôtel</label><input value="'+esc(hotelName(rec.hotel))+'" readonly></div>' : "")+
         '</div>'+
       '</div>'+
       '<div class="ring-wrap"><div class="ring">'+
@@ -1204,14 +1387,16 @@ function renderPassport(recId){
     '</div></div>'+
 
     '<div class="rolebar">'+
-      '<span class="lbl">Je remplis en tant que</span>'+
+      '<span class="lbl">'+(soloRole ? "Vous remplissez" : "Je remplis en tant que")+'</span>'+
       '<div class="roleseg">'+roleBtns+'</div>'+
       '<span id="roleprog" style="font-size:.84rem;color:var(--ink-55)">'+rp.filled+' / '+rp.total+' items renseignés</span>'+
-      '<span style="font-size:.8rem;color:var(--ink-40)">🔒 Les deux autres colonnes sont verrouillées.</span>'+
+      '<span style="font-size:.8rem;color:var(--ink-40)">🔒 '+(soloRole
+        ? "Votre profil ne donne accès qu’à votre auto-évaluation."
+        : "Les deux autres colonnes sont verrouillées.")+'</span>'+
       '<div class="tools">'+
         '<button class="btn btn-ghost btn-sm" data-export>⬇︎ Exporter</button>'+
         '<button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Imprimer / PDF</button>'+
-        '<button class="btn btn-ghost btn-sm btn-danger" data-reset>↺ Réinitialiser</button>'+
+        (isAdmin(user) ? '<button class="btn btn-ghost btn-sm btn-danger" data-reset>↺ Réinitialiser</button>' : "")+
       '</div>'+
     '</div>'+
 
@@ -1239,7 +1424,8 @@ function renderPassport(recId){
     rec[inp.getAttribute("data-meta")] = inp.value; touch(rec);
   });
   $("[data-export]").onclick = () => exportRecord(rec);
-  $("[data-reset]").onclick = () => {
+  const bReset = $("[data-reset]");            // réservé à l’administrateur
+  if(bReset) bReset.onclick = () => {
     if(!confirm("Effacer toutes les évaluations, commentaires, badges et la synthèse de ce passeport ? Le collaborateur reste enregistré.")) return;
     rec.items = {}; rec.unlocked = []; rec.synthese = null; touch(rec);
     toast("Passeport réinitialisé."); renderPassport(rec.id);
@@ -1481,6 +1667,8 @@ function renderAI(svc, rec){
   const has = !!(rec.synthese && rec.synthese.text && rec.synthese.text.trim());
   const st = recStats(svc, rec);
   const auto = !!AI_ENDPOINT;
+  /* Le collaborateur consulte la synthèse ; il ne la génère ni ne l’efface. */
+  const readOnly = allowedRoles(currentUser()).length === 1;
 
   const head =
     '<div class="ai-head">'+
@@ -1491,7 +1679,16 @@ function renderAI(svc, rec){
     '</div>';
 
   let body;
-  if(has){
+  if(readOnly){
+    /* Vue collaborateur : consultation seule. */
+    body = '<div class="ai-body">'+
+      (has
+        ? '<div class="ai-meta"><span>Rédigée le '+fmtDateTime(rec.synthese.at)+'</span></div>'+
+          '<div class="ai-out">'+mdLite(rec.synthese.text)+'</div>'+
+          '<div class="ai-note">Cette synthèse est rédigée par votre Officer ou le COO à partir des trois évaluations. Vous la consultez ici et pouvez l’imprimer avec votre passeport.</div>'
+        : '<div class="ai-note">Aucune synthèse n’a encore été rédigée pour votre passeport. Elle est établie par votre Officer ou le COO à partir des trois évaluations, et apparaîtra ici.</div>')+
+    '</div>';
+  } else if(has){
     body = '<div class="ai-body">'+
       '<div class="ai-meta"><span>Générée le '+fmtDateTime(rec.synthese.at)+'</span>'+
         '<span>·</span><span>Passeport à '+st.pct+'% au moment de la synthèse</span></div>'+
@@ -1606,7 +1803,297 @@ function generateAI(svc, rec, btn){
 }
 
 /* ==========================================================================
-   10. EXPORT
+   11. IDENTIFICATION
+   ========================================================================== */
+
+function renderLogin(){
+  const demoUsers = USERS.filter(u => u.demo);
+  $("#app").innerHTML =
+  '<div class="login-wrap"><div class="login">'+
+    '<div class="mark">🛂</div>'+
+    '<h1>Passeport des Savoirs</h1>'+
+    '<p class="lead">Identifiez-vous pour accéder aux passeports de votre périmètre.</p>'+
+    '<div class="err" id="err"></div>'+
+    '<div class="f"><label>Identifiant</label>'+
+      '<input id="l-login" placeholder="prenom.nom" autocomplete="username" autocapitalize="off" spellcheck="false"></div>'+
+    '<div class="f"><label>Code d’accès</label>'+
+      '<input id="l-code" type="password" placeholder="laisser vide si aucun code" autocomplete="current-password"></div>'+
+    '<button class="btn btn-primary" data-in style="width:100%;justify-content:center;margin-top:6px">Se connecter</button>'+
+    (demoUsers.length
+      ? '<div class="login-note"><b>Comptes de démonstration</b><div class="roles-legend">'+
+        demoUsers.map(u => '<div><code>'+esc(u.login)+'</code><span>'+esc(ROLE_LABEL[u.role])+
+          (u.hotel ? " — "+esc(hotelName(u.hotel)) : " — tous les hôtels")+'</span></div>').join("")+
+        '</div><p style="margin-top:12px">Aucun code n’est requis sur ces comptes. Ils figurent dans le code source du site, qui est public : ils servent à découvrir l’outil, pas à protéger des données. L’administrateur doit créer les comptes réels et supprimer ceux-ci.</p></div>'
+      : "")+
+  '</div></div>';
+
+  const showErr = msg => { const e = $("#err"); e.textContent = msg; e.classList.add("on"); };
+  const submit = () => {
+    const login = $("#l-login").value.trim();
+    if(!login){ showErr("Saisissez votre identifiant."); $("#l-login").focus(); return; }
+    const u = findLogin(login);
+    if(!u){ showErr("Identifiant inconnu. Vérifiez l’orthographe ou contactez l’administrateur."); return; }
+    if((u.code || "") !== $("#l-code").value){ showErr("Code d’accès incorrect."); $("#l-code").focus(); return; }
+    signIn(u);
+    location.hash = "#/";
+    route();
+  };
+  $("[data-in]").onclick = submit;
+  $$("#l-login, #l-code").forEach(i => i.onkeydown = e => { if(e.key === "Enter") submit(); });
+  $("#l-login").focus();
+}
+
+/* ==========================================================================
+   12. ADMINISTRATION
+   ========================================================================== */
+
+let admTab = "collaborateurs";
+
+function usersByRole(role){ return USERS.filter(u => u.role === role); }
+function recordsOfUser(u){ return (u.recordIds || []).map(getRecord).filter(Boolean); }
+
+function hotelOptions(sel, allowEmpty){
+  return (allowEmpty ? '<option value="">— Aucun —</option>' : "")+
+    HOTELS.map(h => '<option value="'+h.id+'"'+(h.id===sel?" selected":"")+'>'+esc(h.name)+'</option>').join("");
+}
+function loginTaken(login, exceptId){
+  const l = String(login).trim().toLowerCase();
+  return USERS.some(u => u.id !== exceptId && String(u.login).toLowerCase() === l);
+}
+function slugLogin(nom){
+  return String(nom).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .trim().replace(/[^a-z0-9]+/g,".").replace(/^\.|\.$/g,"") || "utilisateur";
+}
+
+function renderAdmin(){
+  const tabs = [
+    ["collaborateurs", "Collaborateurs", usersByRole("collaborateur").length],
+    ["officers",       "Officers",       usersByRole("officer").length],
+    ["hotels",         "Hôtels",         HOTELS.length],
+    ["passeports",     "Passeports",     RECORDS.length]
+  ].map(([id, label, n]) =>
+    '<button class="'+(admTab===id?"on":"")+'" data-tab="'+id+'">'+label+'<span class="pill">'+n+'</span></button>').join("");
+
+  $("#app").innerHTML = header("admin")+
+  '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
+    '<div class="section-head"><div class="section-kicker">Administration</div>'+
+    '<h2>Comptes, hôtels et <span class="serif italic">passeports</span></h2>'+
+    '<p>Créez les hôtels, les Officers et les collaborateurs, rattachez-les, et attribuez les passeports.</p></div>'+
+    '<div class="warnbar">⚠️ <b>Ces profils organisent l’interface, ils ne protègent pas les données.</b> '+
+      'Le site est statique : son code est public et tout est stocké dans le navigateur. '+
+      'N’y saisissez rien de confidentiel, et considérez les codes d’accès comme un simple garde-fou, pas comme un secret.</div>'+
+    '<div class="admtabs">'+tabs+'</div>'+
+    '<div id="admbody"></div>'+
+  '</div>'+footer();
+
+  $$("[data-tab]").forEach(b => b.onclick = () => { admTab = b.getAttribute("data-tab"); renderAdmin(); });
+  if(admTab === "hotels")            admHotels();
+  else if(admTab === "officers")     admUsers("officer");
+  else if(admTab === "collaborateurs") admUsers("collaborateur");
+  else                               admPasseports();
+}
+
+/* ---------- Hôtels ---------- */
+function admHotels(){
+  const rows = HOTELS.map(h => {
+    const nOff = USERS.filter(u => u.role === "officer" && u.hotel === h.id).length;
+    const nCol = USERS.filter(u => u.role === "collaborateur" && u.hotel === h.id).length;
+    const nRec = RECORDS.filter(r => r.hotel === h.id).length;
+    return '<tr><td class="nm">'+esc(h.name)+'</td><td>'+nOff+'</td><td>'+nCol+'</td><td>'+nRec+'</td>'+
+      '<td class="acts"><button class="iconbtn danger" data-delh="'+h.id+'" title="Supprimer">🗑</button></td></tr>';
+  }).join("");
+
+  $("#admbody").innerHTML = '<div class="panel">'+
+    '<h3>Les hôtels</h3><p class="hint">Chaque Officer et chaque passeport est rattaché à un hôtel. Un Officer ne voit que le sien.</p>'+
+    (HOTELS.length
+      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Hôtel</th><th>Officers</th><th>Collaborateurs</th><th>Passeports</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      : '<p style="font-size:.9rem;color:var(--ink-55)">Aucun hôtel pour l’instant.</p>')+
+    '<div class="addform"><h4>Ajouter un hôtel</h4>'+
+      '<div class="addgrid"><div class="f"><label>Nom de l’hôtel</label><input id="h-nom" placeholder="Ex. Hôtel Carnot"></div></div>'+
+      '<button class="btn btn-primary btn-sm" data-addh>Ajouter l’hôtel</button></div>'+
+  '</div>';
+
+  $("[data-addh]").onclick = () => {
+    const name = $("#h-nom").value.trim();
+    if(!name){ toast("Indiquez le nom de l’hôtel."); return; }
+    if(HOTELS.some(h => h.name.toLowerCase() === name.toLowerCase())){ toast("Cet hôtel existe déjà."); return; }
+    HOTELS.push({id:"h"+makeId(), name}); saveHotels();
+    toast("Hôtel ajouté."); renderAdmin();
+  };
+  $$("[data-delh]").forEach(b => b.onclick = () => {
+    const id = b.getAttribute("data-delh"), h = getHotel(id);
+    const nU = USERS.filter(u => u.hotel === id).length, nR = RECORDS.filter(r => r.hotel === id).length;
+    if(nU || nR){ toast("Détachez d’abord les "+nU+" compte(s) et "+nR+" passeport(s) de cet hôtel."); return; }
+    if(!confirm("Supprimer l’hôtel « "+h.name+" » ?")) return;
+    HOTELS = HOTELS.filter(x => x.id !== id); saveHotels();
+    toast("Hôtel supprimé."); renderAdmin();
+  });
+}
+
+/* ---------- Officers et collaborateurs ---------- */
+function admUsers(role){
+  const list = usersByRole(role);
+  const isCol = role === "collaborateur";
+
+  const rows = list.map(u => {
+    const recs = recordsOfUser(u);
+    return '<tr>'+
+      '<td class="nm">'+esc(u.nom || "—")+(u.demo?' <span class="demotag">Démo</span>':"")+'</td>'+
+      '<td><code>'+esc(u.login)+'</code></td>'+
+      '<td><select data-uh="'+u.id+'">'+hotelOptions(u.hotel, true)+'</select></td>'+
+      (isCol ? '<td>'+(recs.length
+          ? recs.map(r => '<a href="#/d/'+r.id+'">'+esc((getService(r.service)||{}).name || r.service)+'</a>').join(", ")
+          : '<span style="color:var(--ink-40)">aucun</span>')+'</td>' : "")+
+      '<td><code>'+(u.code ? "••••" : "aucun")+'</code></td>'+
+      '<td class="acts"><button class="iconbtn danger" data-delu="'+u.id+'" title="Supprimer">🗑</button></td></tr>';
+  }).join("");
+
+  const svcOptions = SERVICES.filter(isReady).map(s =>
+    '<option value="'+s.id+'">'+esc(s.name)+'</option>').join("");
+
+  $("#admbody").innerHTML = '<div class="panel">'+
+    '<h3>'+(isCol ? "Les collaborateurs" : "Les Officers")+'</h3>'+
+    '<p class="hint">'+(isCol
+      ? "Créer un collaborateur crée en même temps son passeport. Il ne verra que le sien, et n’y remplira que sa colonne d’auto-évaluation."
+      : "Un Officer voit tous les passeports de son hôtel et peut remplir les trois colonnes d’évaluation.")+'</p>'+
+    (list.length
+      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Nom</th><th>Identifiant</th><th>Hôtel</th>'+
+        (isCol?'<th>Passeports</th>':"")+'<th>Code</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      : '<p style="font-size:.9rem;color:var(--ink-55)">Aucun compte pour l’instant.</p>')+
+
+    '<div class="addform"><h4>Ajouter '+(isCol?"un collaborateur":"un Officer")+'</h4>'+
+      '<div class="addgrid">'+
+        '<div class="f"><label>Nom complet</label><input id="u-nom" placeholder="Prénom Nom"></div>'+
+        '<div class="f"><label>Identifiant</label><input id="u-login" placeholder="prenom.nom" autocapitalize="off" spellcheck="false"></div>'+
+        '<div class="f"><label>Hôtel</label><select id="u-hot">'+hotelOptions("", true)+'</select></div>'+
+        '<div class="f"><label>Code d’accès (optionnel)</label><input id="u-code" placeholder="laisser vide"></div>'+
+      '</div>'+
+      (isCol
+        ? '<div class="addgrid">'+
+          '<div class="f"><label>Service du passeport</label><select id="u-svc">'+svcOptions+'</select></div>'+
+          '<div class="f"><label>Date d’arrivée</label><input id="u-arr" type="date"></div>'+
+          '<div class="f"><label>Buddy</label><input id="u-bud" placeholder="Prénom Nom"></div>'+
+          '</div>'
+        : "")+
+      '<button class="btn btn-primary btn-sm" data-addu>Ajouter '+(isCol?"le collaborateur et son passeport":"l’Officer")+'</button>'+
+    '</div></div>';
+
+  /* saisie du nom → identifiant proposé automatiquement */
+  const nomI = $("#u-nom"), logI = $("#u-login");
+  nomI.oninput = () => { if(!logI.dataset.touched) logI.value = slugLogin(nomI.value); };
+  logI.oninput = () => { logI.dataset.touched = "1"; };
+
+  $("[data-addu]").onclick = () => {
+    const nom = nomI.value.trim(), login = logI.value.trim();
+    if(!nom){ toast("Indiquez le nom."); nomI.focus(); return; }
+    if(!login){ toast("Indiquez un identifiant."); logI.focus(); return; }
+    if(loginTaken(login)){ toast("Cet identifiant est déjà utilisé."); logI.focus(); return; }
+    const hotel = $("#u-hot").value;
+    if(!hotel){ toast("Rattachez ce compte à un hôtel."); return; }
+
+    const u = {id:"u"+makeId(), login, code:$("#u-code").value.trim(), role, nom, hotel, recordIds:[]};
+    if(isCol){
+      const svcId = $("#u-svc").value;
+      if(!svcId){ toast("Aucun service disponible : définissez d’abord les items d’un service."); return; }
+      const rec = createRecord(svcId, {nom, arrivee:$("#u-arr").value, buddy:$("#u-bud").value, hotel});
+      u.recordIds = [rec.id];
+    }
+    USERS.push(u); saveUsers();
+    toast((isCol?"Collaborateur":"Officer")+" ajouté.");
+    renderAdmin();
+  };
+
+  $$("[data-uh]").forEach(s => s.onchange = () => {
+    const u = getUser(s.getAttribute("data-uh"));
+    u.hotel = s.value; saveUsers();
+    /* les passeports du collaborateur suivent son rattachement */
+    recordsOfUser(u).forEach(r => { r.hotel = s.value; });
+    saveRecords();
+    toast(u.hotel ? "Rattaché à "+hotelName(u.hotel)+"." : "Détaché de tout hôtel.");
+    renderAdmin();
+  });
+
+  $$("[data-delu]").forEach(b => b.onclick = () => {
+    const u = getUser(b.getAttribute("data-delu"));
+    const recs = recordsOfUser(u);
+    const msg = recs.length
+      ? "Supprimer le compte de « "+(u.nom||u.login)+" » ainsi que ses "+recs.length+" passeport(s) ? Les évaluations, commentaires et synthèses seront perdus."
+      : "Supprimer le compte de « "+(u.nom||u.login)+" » ?";
+    if(!confirm(msg)) return;
+    const ids = recs.map(r => r.id);
+    RECORDS = RECORDS.filter(r => ids.indexOf(r.id) === -1); saveRecords();
+    USERS = USERS.filter(x => x.id !== u.id); saveUsers();
+    toast("Compte supprimé."); renderAdmin();
+  });
+}
+
+/* ---------- Passeports ---------- */
+function admPasseports(){
+  const cols = usersByRole("collaborateur");
+
+  const rows = RECORDS.slice()
+    .sort((a,b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))
+    .map(r => {
+      const svc = getService(r.service);
+      const st = recStats(svc, r);
+      const owner = cols.find(u => (u.recordIds||[]).indexOf(r.id) > -1);
+      return '<tr>'+
+        '<td class="nm">'+esc(r.nom || "Sans nom")+(r.demo?' <span class="demotag">Démo</span>':"")+'</td>'+
+        '<td>'+esc(svc ? svc.name : r.service)+'</td>'+
+        '<td><select data-rh="'+r.id+'">'+hotelOptions(r.hotel, true)+'</select></td>'+
+        '<td>'+(owner ? '<code>'+esc(owner.login)+'</code>' : '<span style="color:var(--ink-40)">aucun compte</span>')+'</td>'+
+        '<td>'+st.pct+'% · '+st.badges+'/'+st.badgesTotal+'</td>'+
+        '<td class="acts"><a class="btn btn-ghost btn-sm" href="#/d/'+r.id+'">Ouvrir</a></td></tr>';
+    }).join("");
+
+  const svcOptions = SERVICES.filter(isReady).map(s => '<option value="'+s.id+'">'+esc(s.name)+'</option>').join("");
+  const colOptions = cols.map(u => '<option value="'+u.id+'">'+esc(u.nom||u.login)+'</option>').join("");
+
+  $("#admbody").innerHTML = '<div class="panel">'+
+    '<h3>Tous les passeports</h3>'+
+    '<p class="hint">Changez le rattachement d’un passeport pour le faire passer d’un hôtel à un autre. La colonne Compte indique quel collaborateur y accède.</p>'+
+    (RECORDS.length
+      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Collaborateur</th><th>Service</th><th>Hôtel</th><th>Compte</th><th>Progression</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      : '<p style="font-size:.9rem;color:var(--ink-55)">Aucun passeport pour l’instant.</p>')+
+    '<div class="addform"><h4>Ajouter un passeport à un collaborateur existant</h4>'+
+      (cols.length
+        ? '<div class="addgrid">'+
+            '<div class="f"><label>Collaborateur</label><select id="p-col">'+colOptions+'</select></div>'+
+            '<div class="f"><label>Service</label><select id="p-svc">'+svcOptions+'</select></div>'+
+            '<div class="f"><label>Date d’arrivée</label><input id="p-arr" type="date"></div>'+
+            '<div class="f"><label>Buddy</label><input id="p-bud" placeholder="Prénom Nom"></div>'+
+          '</div>'+
+          '<button class="btn btn-primary btn-sm" data-addp>Ajouter le passeport</button>'+
+          '<p class="hint" style="margin:14px 0 0">Utile lorsqu’un collaborateur change de service ou en couvre plusieurs : il aura alors accès à chacun de ses passeports.</p>'
+        : '<p style="font-size:.9rem;color:var(--ink-55)">Créez d’abord un collaborateur dans l’onglet Collaborateurs.</p>')+
+    '</div></div>';
+
+  $$("[data-rh]").forEach(s => s.onchange = () => {
+    const r = getRecord(s.getAttribute("data-rh"));
+    r.hotel = s.value; touch(r);
+    toast(r.hotel ? "Passeport rattaché à "+hotelName(r.hotel)+"." : "Passeport détaché.");
+    renderAdmin();
+  });
+
+  const bAdd = $("[data-addp]");
+  if(bAdd) bAdd.onclick = () => {
+    const u = getUser($("#p-col").value);
+    if(!u){ toast("Choisissez un collaborateur."); return; }
+    const svcId = $("#p-svc").value;
+    if(!svcId){ toast("Choisissez un service."); return; }
+    if(!u.hotel){ toast("Rattachez d’abord ce collaborateur à un hôtel."); return; }
+    if(recordsOfUser(u).some(r => r.service === svcId)){
+      toast("Ce collaborateur a déjà un passeport pour ce service."); return;
+    }
+    const rec = createRecord(svcId, {nom:u.nom, arrivee:$("#p-arr").value, buddy:$("#p-bud").value, hotel:u.hotel});
+    u.recordIds = (u.recordIds || []).concat(rec.id); saveUsers();
+    toast("Passeport ajouté à "+(u.nom||u.login)+".");
+    renderAdmin();
+  };
+}
+
+/* ==========================================================================
+   13. EXPORT
    ========================================================================== */
 
 function exportRecord(rec){
@@ -1728,12 +2215,14 @@ const DEMO_SYNTHESE = [
 "**Oui.** Le passeport est complet, validé item par item par le buddy et le COO, et les rares écarts relevés en cours de route ont tous été résolus. Camille peut travailler en autonomie sur l’ensemble du poste, y compris en shift seule. La seule réserve porte sur le surbooking, jamais rencontré en conditions réelles : à accompagner la première fois. Elle est en capacité d’accompagner à son tour un nouvel arrivant."
 ].join("\n");
 
+const DEMO_HOTEL = "h-demo";
+
 function seedDemo(){
   const svc = getService("receptionniste");
   if(!svc) return;
   const now = new Date().toISOString();
   const rec = {
-    id: DEMO_ID, service:"receptionniste", demo:true,
+    id: DEMO_ID, service:"receptionniste", demo:true, hotel: DEMO_HOTEL,
     nom:"Camille Durand", arrivee:"2026-06-02", buddy:"Léa Martin",
     items:{}, unlocked:[], synthese:{text:DEMO_SYNTHESE, at:now},
     createdAt:"2026-06-02T09:00:00.000Z", updatedAt:now
@@ -1754,14 +2243,42 @@ function seedDemo(){
   RECORDS.push(rec); saveRecords();
 }
 
+/* Comptes d’amorçage. Ils figurent dans le code source, qui est public :
+   ils servent à ouvrir l’outil la première fois, pas à protéger quoi que ce
+   soit. L’administrateur crée les comptes réels puis supprime ceux-ci. */
+function seedAccounts(){
+  if(!HOTELS.length){
+    HOTELS.push({id: DEMO_HOTEL, name:"Hôtel de démonstration"});
+    saveHotels();
+  }
+  if(!USERS.length){
+    USERS.push(
+      {id:"u-admin", login:"admin", code:"", role:"admin", nom:"Administrateur",
+       hotel:"", recordIds:[], demo:true},
+      {id:"u-officer", login:"officer", code:"", role:"officer", nom:"Léa Martin",
+       hotel:DEMO_HOTEL, recordIds:[], demo:true},
+      {id:"u-collab", login:"camille.durand", code:"", role:"collaborateur", nom:"Camille Durand",
+       hotel:DEMO_HOTEL, recordIds:[DEMO_ID], demo:true}
+    );
+    saveUsers();
+  }
+}
+
 /* ==========================================================================
-   12. DÉMARRAGE
+   14. DÉMARRAGE
    ========================================================================== */
 
 if(!localStorage.getItem(LS_SEEDED)){
   try{ localStorage.setItem(LS_SEEDED, "1"); }catch(e){}
   if(!RECORDS.length) seedDemo();
 }
+seedAccounts();
+
+/* Déconnexion : le bouton est reconstruit à chaque rendu, on délègue. */
+$("#app").addEventListener("click", e => {
+  if(e.target.closest("[data-logout]")) signOut();
+});
+
 route();
 </script>
 </body>
