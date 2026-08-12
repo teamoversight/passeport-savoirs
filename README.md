@@ -16,20 +16,70 @@ expériences validées tout au long de son évolution au sein de l’établissem
 Fichier autonome (HTML + CSS + JavaScript). Seules ressources externes : les polices Google
 Fonts *Inter* et *Playfair Display*.
 
-## Les trois écrans
+## Identification et profils
 
-1. **Accueil** — le pitch, les 3 blocs, l’échelle, la règle des badges, puis les passeports par
-   service. Le bouton « Nouveau passeport » ouvre un passeport au nom d’un collaborateur.
-2. **Collaborateurs** — la liste de tous les passeports enregistrés, avec recherche (nom du
-   collaborateur, nom du buddy, service), filtre par service, progression, badges, date de
-   dernière modification. C’est là qu’on retrouve un passeport pour le poursuivre.
-3. **Le passeport** — la couverture, les 3 blocs, les items, la collection de tampons et
+L’accès se fait par **identifiant**, avec un **code d’accès optionnel** défini par
+l’administrateur. Trois profils :
+
+| Profil | Voit | Remplit | Administre |
+|---|---|---|---|
+| **Collaborateur** | ses passeports uniquement | sa seule colonne d’auto-évaluation | — |
+| **Officer** | les passeports de son hôtel | les trois colonnes | — |
+| **Administrateur** | tous les passeports, tous hôtels | les trois colonnes | hôtels, Officers, collaborateurs, passeports |
+
+Le collaborateur consulte sa synthèse sans pouvoir la produire ni l’effacer, et sa couverture de
+passeport est en lecture seule. Seul l’administrateur peut créer, supprimer et réinitialiser un
+passeport.
+
+L’onglet **Administration** permet de créer les hôtels, les Officers et les collaborateurs, de
+les rattacher à un hôtel, et d’attribuer un passeport supplémentaire à un collaborateur qui
+change de service. Créer un collaborateur crée en même temps son passeport.
+
+### ⚠️ Ce n’est pas une sécurité
+
+Le site est statique : **tout son code est public** et les données vivent dans le `localStorage`
+du navigateur. Le contrôle par profil organise l’interface, il ne protège rien. Quiconque ouvre
+les outils de développement voit l’ensemble des comptes et des passeports, quel que soit le
+profil connecté. Les codes d’accès sont un garde-fou contre l’erreur, pas un secret.
+
+**N’y saisissez donc aucune information que vous ne pourriez pas rendre publique.**
+
+Pour une vraie séparation des accès, il faut un serveur qui authentifie et qui ne renvoie à
+chaque profil que les données auxquelles il a droit. Le modèle de données y est prêt : `HOTELS`,
+`USERS`, `RECORDS`, et les fonctions `canSee()` et `allowedRoles()` qui concentrent toutes les
+règles de visibilité.
+
+### Comptes d’amorçage
+
+Au premier chargement, trois comptes de démonstration sont créés, sans code d’accès :
+
+| Identifiant | Profil |
+|---|---|
+| `admin` | Administrateur — tous les hôtels |
+| `officer` | Officer — Hôtel de démonstration |
+| `camille.durand` | Collaborateur — Hôtel de démonstration |
+
+Ils figurent dans le code source, donc publiquement. **Première chose à faire en production :
+créer les comptes réels avec des codes d’accès, puis supprimer ces trois-là.**
+
+## Les quatre écrans
+
+1. **Connexion** — identifiant et code d’accès.
+2. **Accueil** — le pitch, les 3 blocs, l’échelle, la règle des badges, puis les passeports par
+   service. Le bouton « Nouveau passeport » n’apparaît que pour l’administrateur.
+3. **Collaborateurs** — la liste des passeports du périmètre du profil connecté, avec recherche
+   (nom du collaborateur, nom du buddy, service, hôtel), filtre par service, progression,
+   badges, date de dernière modification.
+4. **Le passeport** — la couverture, les 3 blocs, les items, la collection de tampons et
    l’espace synthèse.
+
+L’administrateur dispose d’un cinquième écran, **Administration**.
 
 ## Passeport de démonstration
 
 Au premier chargement, un dossier fictif est posé dans la liste : **Camille Durand**, repérée
-par une étiquette « Démo ». Il est entièrement rempli — les 78 items évalués par les trois
+par une étiquette « Démo », rattachée à l’Hôtel de démonstration et accessible avec le compte
+collaborateur `camille.durand`. Il est entièrement rempli — les 78 items évalués par les trois
 regards, 31 items commentés, 12 écarts d’auto-évaluation, les 12 badges, le golden badge et une
 synthèse — et sert à montrer le passeport en fin de parcours sans avoir à le remplir soi-même.
 
@@ -112,8 +162,8 @@ Tout est enregistré dans le **`localStorage` du navigateur** : les passeports r
 poste et dans le navigateur où ils ont été saisis. Il n’y a pas de serveur.
 
 - Le collaborateur, le buddy et le COO remplissent le même passeport **sur le même poste**
-  (l’entretien d’intégration, par exemple) — chacun sélectionne son rôle, ce qui ouvre sa
-  colonne et verrouille les deux autres.
+  (l’entretien d’intégration, par exemple). Le profil connecté détermine les colonnes
+  accessibles : un collaborateur n’ouvre que son auto-évaluation, un Officer les trois.
 - **Exporter** produit un JSON contenant les trois colonnes, les commentaires, les badges et la
   synthèse : c’est le format d’archivage. Il n’y a pas de réimport dans l’interface — un JSON
   exporté se relit dans un éditeur de texte, ou se réinjecte à la main dans le stockage du
