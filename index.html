@@ -407,6 +407,7 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .rolechip.admin{background:var(--blue-dark);color:#fff}
 .rolechip.officer{background:var(--kaki);color:#fff}
 .rolechip.collaborateur{background:var(--blue-light);color:var(--blue-flash)}
+.rolechip.proprietaire{background:var(--gold-light);color:var(--gold)}
 .addform{background:var(--grey-light);border-radius:var(--radius-sm);padding:20px;margin-top:20px}
 .addform h4{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-55);margin-bottom:16px}
 .addgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px}
@@ -981,7 +982,8 @@ let USERS  = readJSON(LS_USERS, []);
 function saveHotels(){ writeJSON(LS_HOTELS, HOTELS); }
 function saveUsers(){ writeJSON(LS_USERS, USERS); }
 
-const ROLE_LABEL = {collaborateur:"Collaborateur", officer:"Officer / buddy", admin:"Administrateur"};
+const ROLE_LABEL = {collaborateur:"Collaborateur", officer:"Officer / buddy",
+                    proprietaire:"Propriétaire", admin:"Administrateur"};
 
 const getHotel  = id => HOTELS.find(h => h.id === id) || null;
 const hotelName = id => { const h = getHotel(id); return h ? h.name : "Hôtel non défini"; };
@@ -1005,6 +1007,8 @@ function canSee(u, rec){
   if(u.role === "admin")   return true;
   /* la démonstration sert de référence : tous les Officers y ont accès */
   if(u.role === "officer") return rec.demo || (!!rec.hotel && rec.hotel === u.hotel);
+  /* le propriétaire est strictement borné à son hôtel */
+  if(u.role === "proprietaire") return !!rec.hotel && rec.hotel === u.hotel;
   return (u.recordIds || []).includes(rec.id);
 }
 function visibleRecords(u){ return u ? RECORDS.filter(r => canSee(u, r)) : []; }
@@ -1012,16 +1016,20 @@ function visibleRecords(u){ return u ? RECORDS.filter(r => canSee(u, r)) : []; }
 /* Colonnes d’évaluation qu’un profil peut remplir.
    Le collaborateur est confiné à son auto-évaluation ; l’Officer / buddy porte
    les regards externes — buddy et COO — sans pouvoir toucher l’auto-évaluation ;
-   l’administrateur n’est pas restreint. */
+   le propriétaire ne remplit rien ; l’administrateur n’est pas restreint. */
 function allowedRoles(u){
   if(!u) return [];
   if(u.role === "collaborateur") return ["auto"];
   if(u.role === "officer")       return ["buddy","coo"];
+  if(u.role === "proprietaire")  return [];
   return ["auto","buddy","coo"];
 }
 const isAdmin = u => !!u && u.role === "admin";
 /* L’Officer / buddy crée et remplit les passeports de son hôtel. */
 const canCreate = u => !!u && (u.role === "admin" || u.role === "officer");
+/* Profil de lecture seule : il consulte les passeports et la synthèse,
+   sans pouvoir toucher une seule évaluation ni la couverture. */
+const isViewer = u => !!u && allowedRoles(u).length === 0;
 
 /* ==========================================================================
    6. ROUTEUR
@@ -1176,7 +1184,9 @@ function renderLanding(){
   '<section class="section" id="services"><div class="wrap">'+
     '<div class="section-head c"><div class="section-kicker">Par service</div>'+
     '<h2>Les <span class="serif italic">passeports</span></h2>'+
-    '<p>Un Passeport des Savoirs par service. Ouvrez-en un pour un nouveau collaborateur : son passeport est enregistré et se retrouve à tout moment dans l’onglet Collaborateurs.</p></div>'+
+    '<p>'+(isViewer(user)
+      ? 'Un Passeport des Savoirs par service. Vous accédez en lecture aux passeports ouverts sur '+esc(hotelName(user.hotel))+' : progression, badges et synthèse d’intégration.'
+      : 'Un Passeport des Savoirs par service. Ouvrez-en un pour un nouveau collaborateur : son passeport est enregistré et se retrouve à tout moment dans l’onglet Collaborateurs.')+'</p></div>'+
     '<div class="svc-grid">'+cards+'</div>'+
   '</div></section>'+
   footer();
@@ -1290,7 +1300,9 @@ function renderDossiers(){
         : user && user.role === "officer"
           ? '<p>Aucun passeport n’est encore rattaché à '+esc(hotelName(user.hotel))+'.</p>'+
             '<div style="margin-top:22px"><a class="btn btn-primary" href="#services">Créer un passeport →</a></div>'
-          : '<p>Aucun passeport ne vous est encore attribué. Adressez-vous à votre Officer ou à l’administrateur.</p>')+
+          : user && user.role === "proprietaire"
+            ? '<p>Aucun passeport n’est encore ouvert sur '+esc(hotelName(user.hotel))+'. Ils apparaîtront ici dès que l’Officer en créera.</p>'
+            : '<p>Aucun passeport ne vous est encore attribué. Adressez-vous à votre Officer ou à l’administrateur.</p>')+
       '</div>';
   } else if(!list.length){
     body = '<div class="empty"><div class="big">🔍</div><h3>Aucun résultat</h3>'+
@@ -1336,7 +1348,9 @@ function renderDossiers(){
         ? 'Tous les passeports, tous hôtels confondus. Retrouvez-en un à tout moment pour poursuivre l’évaluation, l’imprimer ou générer sa synthèse.'
         : user && user.role === "officer"
           ? 'Les passeports de '+esc(hotelName(user.hotel))+'. Votre profil ne donne accès qu’à cet hôtel.'
-          : 'Vos passeports.')+'</p></div>'+
+          : user && user.role === "proprietaire"
+            ? 'Les passeports de '+esc(hotelName(user.hotel))+', en lecture seule. Ouvrez-en un pour suivre la progression, les badges et la synthèse d’intégration.'
+            : 'Vos passeports.')+'</p></div>'+
     '<div class="doss-tools">'+
       '<div class="search"><span class="mag">🔍</span>'+
         '<input id="q" placeholder="Rechercher un collaborateur, un buddy, un service…" value="'+esc(dossQuery)+'"></div>'+
@@ -1378,17 +1392,20 @@ function renderPassport(recId){
 
   const user  = currentUser();
   const allow = allowedRoles(user);
+  const viewer = allow.length === 0;         // propriétaire : consultation seule
   /* Le profil détermine les colonnes accessibles : si ROLE n’en fait pas
      partie (collaborateur), on le ramène sur la première autorisée. */
-  if(allow.indexOf(ROLE) === -1) ROLE = allow[0];
+  if(!viewer && allow.indexOf(ROLE) === -1) ROLE = allow[0];
 
   const stats = checkBadges(svc, rec, true);
   const R = 58, C = 2*Math.PI*R, off = C*(1 - stats.pct/100);
-  const rp = roleProgress(svc, rec, ROLE);
+  const rp = viewer ? {filled:stats.rated, total:stats.total} : roleProgress(svc, rec, ROLE);
 
   const roleBtns = ROLES.filter(r => allow.indexOf(r.id) > -1).map(r =>
     '<button data-role="'+r.id+'" class="'+(ROLE===r.id?"on":"")+'" title="'+esc(r.long)+'">'+r.short+'</button>').join("");
   const soloRole = allow.length === 1;
+  /* couverture figée pour le collaborateur comme pour le propriétaire */
+  const lockCover = soloRole || viewer;
 
   const tabs = svc.blocks.map(b => {
     let d = 0; b.subs.forEach(s => { if(subStats(rec,b,s).done) d++; });
@@ -1406,9 +1423,9 @@ function renderPassport(recId){
         '<h1>'+esc((rec.nom||"Nouveau").split(" ")[0])+' <em>'+esc((rec.nom||"").split(" ").slice(1).join(" "))+'</em></h1>'+
         '<div class="pp-fields">'+
           /* le collaborateur consulte sa couverture, il ne la modifie pas */
-          '<div class="pp-field"><label>Collaborateur</label><input data-meta="nom" placeholder="Prénom Nom" value="'+esc(rec.nom)+'"'+(soloRole?" readonly":"")+'></div>'+
-          '<div class="pp-field"><label>Date d’arrivée</label><input data-meta="arrivee" type="date" value="'+esc(rec.arrivee)+'"'+(soloRole?" readonly":"")+'></div>'+
-          '<div class="pp-field"><label>Buddy (facultatif)</label><input data-meta="buddy" placeholder="Aucun" value="'+esc(rec.buddy)+'"'+(soloRole?" readonly":"")+'></div>'+
+          '<div class="pp-field"><label>Collaborateur</label><input data-meta="nom" placeholder="Prénom Nom" value="'+esc(rec.nom)+'"'+(lockCover?" readonly":"")+'></div>'+
+          '<div class="pp-field"><label>Date d’arrivée</label><input data-meta="arrivee" type="date" value="'+esc(rec.arrivee)+'"'+(lockCover?" readonly":"")+'></div>'+
+          '<div class="pp-field"><label>Buddy (facultatif)</label><input data-meta="buddy" placeholder="Aucun" value="'+esc(rec.buddy)+'"'+(lockCover?" readonly":"")+'></div>'+
           (isAdmin(user) ? '<div class="pp-field"><label>Hôtel</label><input value="'+esc(hotelName(rec.hotel))+'" readonly></div>' : "")+
         '</div>'+
       '</div>'+
@@ -1421,12 +1438,17 @@ function renderPassport(recId){
     '</div></div>'+
 
     '<div class="rolebar">'+
-      '<span class="lbl">'+(soloRole ? "Vous remplissez" : "Je remplis en tant que")+'</span>'+
-      '<div class="roleseg">'+roleBtns+'</div>'+
-      '<span id="roleprog" style="font-size:.84rem;color:var(--ink-55)">'+rp.filled+' / '+rp.total+' items renseignés</span>'+
-      '<span style="font-size:.8rem;color:var(--ink-40)">🔒 '+(soloRole
-        ? "Votre profil ne donne accès qu’à votre auto-évaluation."
-        : "Les deux autres colonnes sont verrouillées.")+'</span>'+
+      (viewer
+        ? '<span class="lbl">Consultation</span>'
+        : '<span class="lbl">'+(soloRole ? "Vous remplissez" : "Je remplis en tant que")+'</span>'+
+          '<div class="roleseg">'+roleBtns+'</div>')+
+      '<span id="roleprog" style="font-size:.84rem;color:var(--ink-55)">'+rp.filled+' / '+rp.total+
+        (viewer ? ' items évalués' : ' items renseignés')+'</span>'+
+      '<span style="font-size:.8rem;color:var(--ink-40)">🔒 '+(viewer
+        ? "Votre profil est en lecture seule : les trois colonnes sont verrouillées."
+        : soloRole
+          ? "Votre profil ne donne accès qu’à votre auto-évaluation."
+          : "Les deux autres colonnes sont verrouillées.")+'</span>'+
       '<div class="tools">'+
         '<button class="btn btn-ghost btn-sm" data-export>⬇︎ Exporter</button>'+
         '<button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Imprimer / PDF</button>'+
@@ -1468,6 +1490,7 @@ function renderPassport(recId){
 
 function renderPanel(svc, rec){
   const block = svc.blocks.find(b => b.id === curBlock);
+  const viewer = isViewer(currentUser());   // propriétaire : tout est verrouillé
 
   const legend = '<div class="scale-legend"><h4>Échelle — '+esc(block.name)+'</h4><ul>'+
     block.scale.map(s => '<li><span>'+s.e+'</span><span><b>'+esc(s.n)+'</b> — '+esc(s.d)+'</span></li>').join("")+
@@ -1484,11 +1507,16 @@ function renderPanel(svc, rec){
       const evs = ROLES.map(role => {
         const e = getEval(rec, key, role.id);
         /* Seule la colonne du rôle sélectionné dans « Je remplis en tant que »
-           est modifiable. Les deux autres restent lisibles mais verrouillées. */
-        const locked = ROLE !== role.id;
+           est modifiable. Les deux autres restent lisibles mais verrouillées.
+           Le propriétaire n’en ouvre aucune. */
+        const locked = viewer || ROLE !== role.id;
         const tri = block.scale.map((sc, lv) =>
           '<button '+(locked?'disabled tabindex="-1" ':'')+'class="'+(e.lvl===lv?"on":"")+'" data-set="'+key+'|'+role.id+'|'+lv+'"'+
-          ' title="'+esc(locked ? role.short+" — "+sc.n+" (verrouillé : sélectionnez « "+role.short+" » pour modifier)" : sc.n+" — "+sc.d)+'"'+
+          ' title="'+esc(locked
+            ? role.short+" — "+sc.n+(viewer
+                ? " (lecture seule)"
+                : " (verrouillé : sélectionnez « "+role.short+" » pour modifier)")
+            : sc.n+" — "+sc.d)+'"'+
           ' aria-label="'+esc(role.short+" : "+sc.n)+'">'+sc.e+'</button>').join("");
         return '<div class="ev '+(locked?"locked":"active-role")+' '+(e.note?"has-note":"")+'" data-ev="'+key+'|'+role.id+'">'+
           '<div class="ev-top"><span class="ev-who">'+role.short+'</span>'+
@@ -1694,8 +1722,11 @@ function renderAI(svc, rec){
   const has = !!(rec.synthese && rec.synthese.text && rec.synthese.text.trim());
   const st = recStats(svc, rec);
   const auto = !!AI_ENDPOINT;
-  /* Le collaborateur consulte la synthèse ; il ne la génère ni ne l’efface. */
-  const readOnly = allowedRoles(currentUser()).length === 1;
+  /* Le collaborateur et le propriétaire consultent la synthèse ;
+     ils ne la génèrent ni ne l’effacent. */
+  const me       = currentUser();
+  const viewer   = isViewer(me);                        // propriétaire
+  const readOnly = viewer || allowedRoles(me).length === 1;
 
   const head =
     '<div class="ai-head">'+
@@ -1707,13 +1738,18 @@ function renderAI(svc, rec){
 
   let body;
   if(readOnly){
-    /* Vue collaborateur : consultation seule. */
+    /* Vue collaborateur et propriétaire : consultation seule. */
     body = '<div class="ai-body">'+
       (has
-        ? '<div class="ai-meta"><span>Rédigée le '+fmtDateTime(rec.synthese.at)+'</span></div>'+
+        ? '<div class="ai-meta"><span>Rédigée le '+fmtDateTime(rec.synthese.at)+'</span>'+
+            (viewer ? '<span>·</span><span>Passeport à '+st.pct+'%</span>' : "")+'</div>'+
           '<div class="ai-out">'+mdLite(rec.synthese.text)+'</div>'+
-          '<div class="ai-note">Cette synthèse est rédigée par votre Officer ou le COO à partir des trois évaluations. Vous la consultez ici et pouvez l’imprimer avec votre passeport.</div>'
-        : '<div class="ai-note">Aucune synthèse n’a encore été rédigée pour votre passeport. Elle est établie par votre Officer ou le COO à partir des trois évaluations, et apparaîtra ici.</div>')+
+          '<div class="ai-note">'+(viewer
+            ? 'Cette synthèse est rédigée par l’Officer ou le COO à partir des trois évaluations. Votre profil la donne en lecture : vous pouvez la consulter et l’imprimer avec le passeport.'
+            : 'Cette synthèse est rédigée par votre Officer ou le COO à partir des trois évaluations. Vous la consultez ici et pouvez l’imprimer avec votre passeport.')+'</div>'
+        : '<div class="ai-note">'+(viewer
+            ? 'Aucune synthèse n’a encore été rédigée pour ce passeport. Elle est établie par l’Officer ou le COO à partir des trois évaluations, et apparaîtra ici.'
+            : 'Aucune synthèse n’a encore été rédigée pour votre passeport. Elle est établie par votre Officer ou le COO à partir des trois évaluations, et apparaîtra ici.')+'</div>')+
     '</div>';
   } else if(has){
     body = '<div class="ai-body">'+
@@ -1903,7 +1939,7 @@ function renderAdmin(){
   '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
     '<div class="section-head"><div class="section-kicker">Administration</div>'+
     '<h2>Comptes, hôtels et <span class="serif italic">passeports</span></h2>'+
-    '<p>Créez les hôtels, les comptes — collaborateurs comme Officers / buddies — rattachez-les, et attribuez les passeports.</p></div>'+
+    '<p>Créez les hôtels, les comptes — collaborateurs, Officers / buddies et propriétaires — rattachez-les, et attribuez les passeports.</p></div>'+
     '<div class="warnbar">⚠️ <b>Ces profils organisent l’interface, ils ne protègent pas les données.</b> '+
       'Le site est statique : son code est public et tout est stocké dans le navigateur. '+
       'N’y saisissez rien de confidentiel, et considérez les codes d’accès comme un simple garde-fou, pas comme un secret.</div>'+
@@ -1921,16 +1957,17 @@ function renderAdmin(){
 function admHotels(){
   const rows = HOTELS.map(h => {
     const nOff = USERS.filter(u => u.role === "officer" && u.hotel === h.id).length;
+    const nPro = USERS.filter(u => u.role === "proprietaire" && u.hotel === h.id).length;
     const nCol = USERS.filter(u => u.role === "collaborateur" && u.hotel === h.id).length;
     const nRec = RECORDS.filter(r => r.hotel === h.id).length;
-    return '<tr><td class="nm">'+esc(h.name)+'</td><td>'+nOff+'</td><td>'+nCol+'</td><td>'+nRec+'</td>'+
+    return '<tr><td class="nm">'+esc(h.name)+'</td><td>'+nOff+'</td><td>'+nPro+'</td><td>'+nCol+'</td><td>'+nRec+'</td>'+
       '<td class="acts"><button class="iconbtn danger" data-delh="'+h.id+'" title="Supprimer">🗑</button></td></tr>';
   }).join("");
 
   $("#admbody").innerHTML = '<div class="panel">'+
-    '<h3>Les hôtels</h3><p class="hint">Chaque Officer et chaque passeport est rattaché à un hôtel. Un Officer ne voit que le sien.</p>'+
+    '<h3>Les hôtels</h3><p class="hint">Chaque Officer, chaque propriétaire et chaque passeport est rattaché à un hôtel. Ni l’Officer ni le propriétaire ne voient au-delà du leur.</p>'+
     (HOTELS.length
-      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Hôtel</th><th>Officers / buddies</th><th>Collaborateurs</th><th>Passeports</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Hôtel</th><th>Officers / buddies</th><th>Propriétaires</th><th>Collaborateurs</th><th>Passeports</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
       : '<p style="font-size:.9rem;color:var(--ink-55)">Aucun hôtel pour l’instant.</p>')+
     '<div class="addform"><h4>Ajouter un hôtel</h4>'+
       '<div class="addgrid"><div class="f"><label>Nom de l’hôtel</label><input id="h-nom" placeholder="Ex. Hôtel Carnot"></div></div>'+
@@ -1960,10 +1997,11 @@ let admHotelFilter = "";     // "" = tous les hôtels
 function admComptes(){
   /* l’administrateur n’a pas d’hôtel et n’apparaît pas dans un filtre par hôtel */
   const all = USERS.filter(u => u.role !== "admin");
+  const rank = {officer:0, proprietaire:1, collaborateur:2};
   const list = all.filter(u =>
       !admHotelFilter || (admHotelFilter === "__none__" ? !u.hotel : u.hotel === admHotelFilter))
     .slice().sort((a, b) =>
-      (a.role === b.role ? 0 : a.role === "officer" ? -1 : 1) ||
+      (rank[a.role] - rank[b.role]) ||
       String(a.nom || a.login).localeCompare(String(b.nom || b.login), "fr"));
 
   const chips = '<button class="'+(admHotelFilter?"":"on")+'" data-fh="">Tous les hôtels'+
@@ -1987,7 +2025,9 @@ function admComptes(){
       '<td><select data-uh="'+u.id+'">'+hotelOptions(u.hotel, true)+'</select></td>'+
       '<td>'+(u.role === "officer"
           ? '<span style="color:var(--ink-55)">tous ceux de son hôtel</span>'
-          : recs.length
+          : u.role === "proprietaire"
+            ? '<span style="color:var(--ink-55)">tous ceux de son hôtel — lecture seule</span>'
+            : recs.length
             ? recs.map(r => '<a href="#/d/'+r.id+'">'+esc((getService(r.service)||{}).name || r.service)+'</a>').join(", ")
             : '<span style="color:var(--ink-40)">aucun</span>')+'</td>'+
       '<td><input class="codein" data-uc="'+u.id+'" value="'+esc(u.code)+'" placeholder="aucun" '+
@@ -2001,7 +2041,8 @@ function admComptes(){
   $("#admbody").innerHTML = '<div class="panel">'+
     '<h3>Les comptes</h3>'+
     '<p class="hint">Un <b>collaborateur</b> possède un passeport, ne voit que le sien et n’y remplit que sa colonne d’auto-évaluation. '+
-      'Un <b>Officer / buddy</b> n’a pas de passeport : il accède à tous ceux de son hôtel, peut en créer et remplir les trois colonnes.</p>'+
+      'Un <b>Officer / buddy</b> n’a pas de passeport : il accède à tous ceux de son hôtel, peut en créer et remplir les trois colonnes. '+
+      'Un <b>propriétaire</b> voit les passeports de son hôtel et leur synthèse, sans rien pouvoir remplir ni créer.</p>'+
     (HOTELS.length > 1 ? '<div class="filters" style="margin-bottom:20px">'+chips+'</div>' : "")+
     (list.length
       ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Nom</th><th>Profil</th><th>Identifiant</th>'+
@@ -2014,6 +2055,7 @@ function admComptes(){
         '<div class="f"><label>Profil</label><select id="u-role">'+
           '<option value="collaborateur">Collaborateur — avec passeport</option>'+
           '<option value="officer">Officer / buddy — sans passeport</option>'+
+          '<option value="proprietaire">Propriétaire — lecture seule</option>'+
           '</select></div>'+
         '<div class="f"><label>Nom complet</label><input id="u-nom" placeholder="Prénom Nom"></div>'+
         '<div class="f"><label>Identifiant</label><input id="u-login" placeholder="prenom.nom" autocapitalize="off" spellcheck="false"></div>'+
@@ -2039,7 +2081,9 @@ function admComptes(){
     $("#u-passeport").style.display = isCol ? "" : "none";
     $("#u-mention").innerHTML = isCol
       ? "Son passeport et son compte sont créés ensemble. Il ne verra que ce passeport et n’y remplira que sa colonne d’auto-évaluation."
-      : "Aucun passeport ne lui sera attaché. Il accédera à <b>tous les passeports de son hôtel</b>, pourra en créer et remplir les trois colonnes d’évaluation.";
+      : roleI.value === "proprietaire"
+        ? "Aucun passeport ne lui sera attaché. Il consultera <b>tous les passeports de son hôtel</b> et leur synthèse, <b>sans pouvoir en remplir ni en créer aucun</b>."
+        : "Aucun passeport ne lui sera attaché. Il accédera à <b>tous les passeports de son hôtel</b>, pourra en créer et remplir les trois colonnes d’évaluation.";
   };
   roleI.onchange = syncRole;
   syncRole();
@@ -2069,7 +2113,7 @@ function admComptes(){
       u.recordIds = [rec.id];
     }
     USERS.push(u); saveUsers();
-    toast((isCol ? "Collaborateur" : "Officer / buddy")+" ajouté.");
+    toast(ROLE_LABEL[role]+" ajouté.");
     renderAdmin();
   };
 
@@ -2341,11 +2385,28 @@ function seedAccounts(){
        hotel:"", recordIds:[], demo:true},
       {id:"u-officer", login:"officer", code:"", role:"officer", nom:"Léa Martin",
        hotel:DEMO_HOTEL, recordIds:[], demo:true},
+      {id:"u-proprio", login:"proprietaire", code:"", role:"proprietaire", nom:"Claire Vasseur",
+       hotel:DEMO_HOTEL, recordIds:[], demo:true},
       {id:"u-collab", login:"camille.durand", code:"", role:"collaborateur", nom:"Camille Durand",
        hotel:DEMO_HOTEL, recordIds:[DEMO_ID], demo:true}
     );
     saveUsers();
   }
+}
+
+/* Le profil propriétaire est arrivé après les trois premiers : sur un navigateur
+   déjà amorcé, son compte de démonstration n’existe pas. On le pose une fois, et
+   seulement si les comptes de démonstration sont encore en place — un compte
+   supprimé volontairement ne doit pas reparaître. */
+const LS_SEEDED_PROPRIO = "pds.seeded.proprietaire.v1";
+function seedProprietaire(){
+  if(localStorage.getItem(LS_SEEDED_PROPRIO)) return;
+  try{ localStorage.setItem(LS_SEEDED_PROPRIO, "1"); }catch(e){}
+  if(findLogin("proprietaire") || !getHotel(DEMO_HOTEL)) return;
+  if(!USERS.some(u => u.demo && u.hotel === DEMO_HOTEL)) return;
+  USERS.push({id:"u-proprio", login:"proprietaire", code:"", role:"proprietaire",
+              nom:"Claire Vasseur", hotel:DEMO_HOTEL, recordIds:[], demo:true});
+  saveUsers();
 }
 
 /* ==========================================================================
@@ -2357,6 +2418,7 @@ if(!localStorage.getItem(LS_SEEDED)){
   if(!RECORDS.length) seedDemo();
 }
 seedAccounts();
+seedProprietaire();
 
 /* Déconnexion : le bouton est reconstruit à chaque rendu, on délègue. */
 $("#app").addEventListener("click", e => {

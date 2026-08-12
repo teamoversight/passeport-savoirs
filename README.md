@@ -19,26 +19,34 @@ Fonts *Inter* et *Playfair Display*.
 ## Identification et profils
 
 L’accès se fait par **identifiant**, avec un **code d’accès optionnel** défini par
-l’administrateur. Trois profils :
+l’administrateur. Quatre profils :
 
 | Profil | Voit | Remplit | Administre |
 |---|---|---|---|
 | **Collaborateur** | ses passeports uniquement | sa seule colonne d’auto-évaluation | — |
 | **Officer / buddy** | les passeports de son hôtel, plus la démonstration | les colonnes buddy et COO | crée des passeports sur son hôtel |
+| **Propriétaire** | les passeports de son hôtel | rien — lecture seule | — |
 | **Administrateur** | tous les passeports, tous hôtels | les trois colonnes | hôtels, comptes, passeports |
 
 Le collaborateur consulte sa synthèse sans pouvoir la produire ni l’effacer, et sa couverture de
 passeport est en lecture seule. L’Officer / buddy crée des passeports sur son hôtel ; seul
 l’administrateur supprime, réinitialise et modifie les codes d’accès.
 
+Le **propriétaire** est un profil de consultation : il ouvre les passeports de son hôtel, lit les
+trois colonnes, la progression, les badges et **la synthèse d’intégration**, et peut exporter ou
+imprimer. Il ne modifie aucun niveau, aucun commentaire, aucune couverture, ne crée ni ne supprime
+de passeport, et ne produit pas la synthèse. Contrairement à l’Officer, il n’a **pas** accès au
+passeport de démonstration, sauf s’il est lui-même rattaché à l’Hôtel de démonstration.
+
 Créer un passeport crée aussi le **compte du collaborateur**, dont l’identifiant est affiché à
 ce moment-là — c’est la seule fois. Sans ce compte, l’intéressé ne pourrait pas s’auto-évaluer.
 
 Le **buddy est facultatif** : un passeport peut n’en avoir aucun.
 
-L’onglet **Administration** permet de créer les hôtels, les Officers et les collaborateurs, de
-les rattacher à un hôtel, et d’attribuer un passeport supplémentaire à un collaborateur qui
-change de service. Créer un collaborateur crée en même temps son passeport.
+L’onglet **Administration** permet de créer les hôtels, les Officers, les propriétaires et les
+collaborateurs, de les rattacher à un hôtel, et d’attribuer un passeport supplémentaire à un
+collaborateur qui change de service. Créer un collaborateur crée en même temps son passeport ;
+un Officer et un propriétaire n’en ont pas.
 
 ### ⚠️ Ce n’est pas une sécurité
 
@@ -56,16 +64,22 @@ règles de visibilité.
 
 ### Comptes d’amorçage
 
-Au premier chargement, trois comptes de démonstration sont créés, sans code d’accès :
+Au premier chargement, quatre comptes de démonstration sont créés, sans code d’accès :
 
 | Identifiant | Profil |
 |---|---|
 | `admin` | Administrateur — tous les hôtels |
 | `officer` | Officer / buddy — Hôtel de démonstration |
+| `proprietaire` | Propriétaire — Hôtel de démonstration |
 | `camille.durand` | Collaborateur — Hôtel de démonstration |
 
 Ils figurent dans le code source, donc publiquement. **Première chose à faire en production :
-créer les comptes réels avec des codes d’accès, puis supprimer ces trois-là.**
+créer les comptes réels avec des codes d’accès, puis supprimer ces quatre-là.**
+
+Le compte `proprietaire` est arrivé après les trois autres : sur un navigateur qui avait déjà
+ouvert l’outil, il est ajouté une seule fois au chargement (indicateur
+`pds.seeded.proprietaire.v1`), et uniquement si les comptes de démonstration sont encore en place
+— un compte supprimé volontairement ne reparaît pas.
 
 ## Les quatre écrans
 
@@ -125,6 +139,9 @@ Chaque passeport dispose d’un espace dédié qui produit une lecture d’ensem
 regards, en trois sections : **où en est l’intégration**, **points forts**, **écarts de
 perception** entre auto-évaluation et regards externes. Le brief demande explicitement de s’en
 tenir là — ni axes de progression, ni plan d’action, ni verdict sur l’autonomie.
+
+L’Officer / buddy et l’administrateur la produisent ; le collaborateur et le propriétaire la
+consultent, sans pouvoir la modifier ni l’effacer.
 
 **Fonctionnement par défaut, sans serveur :**
 
