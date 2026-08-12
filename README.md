@@ -24,8 +24,8 @@ l’administrateur. Trois profils :
 | Profil | Voit | Remplit | Administre |
 |---|---|---|---|
 | **Collaborateur** | ses passeports uniquement | sa seule colonne d’auto-évaluation | — |
-| **Officer / buddy** | les passeports de son hôtel, plus la démonstration | les trois colonnes | crée des passeports sur son hôtel |
-| **Administrateur** | tous les passeports, tous hôtels | les trois colonnes | hôtels, Officers, collaborateurs, passeports |
+| **Officer / buddy** | les passeports de son hôtel, plus la démonstration | les colonnes buddy et COO | crée des passeports sur son hôtel |
+| **Administrateur** | tous les passeports, tous hôtels | les trois colonnes | hôtels, comptes, passeports |
 
 Le collaborateur consulte sa synthèse sans pouvoir la produire ni l’effacer, et sa couverture de
 passeport est en lecture seule. L’Officer / buddy crée des passeports sur son hôtel ; seul
@@ -122,8 +122,9 @@ de politique (exiger la validation du COO, faire une moyenne…).
 ## Espace synthèse
 
 Chaque passeport dispose d’un espace dédié qui produit une lecture d’ensemble des trois
-regards : où en est l’intégration, points forts, écarts de perception entre auto-évaluation et
-regards externes, axes de progression, plan des 30 prochains jours, verdict sur l’autonomie.
+regards, en trois sections : **où en est l’intégration**, **points forts**, **écarts de
+perception** entre auto-évaluation et regards externes. Le brief demande explicitement de s’en
+tenir là — ni axes de progression, ni plan d’action, ni verdict sur l’autonomie.
 
 **Fonctionnement par défaut, sans serveur :**
 

@@ -1009,11 +1009,15 @@ function canSee(u, rec){
 }
 function visibleRecords(u){ return u ? RECORDS.filter(r => canSee(u, r)) : []; }
 
-/* Colonnes d’évaluation qu’un profil peut remplir : le collaborateur est
-   confiné à son auto-évaluation, l’Officer et l’administrateur mènent
-   l’entretien et remplissent les trois. */
+/* Colonnes d’évaluation qu’un profil peut remplir.
+   Le collaborateur est confiné à son auto-évaluation ; l’Officer / buddy porte
+   les regards externes — buddy et COO — sans pouvoir toucher l’auto-évaluation ;
+   l’administrateur n’est pas restreint. */
 function allowedRoles(u){
-  return (u && u.role === "collaborateur") ? ["auto"] : ["auto","buddy","coo"];
+  if(!u) return [];
+  if(u.role === "collaborateur") return ["auto"];
+  if(u.role === "officer")       return ["buddy","coo"];
+  return ["auto","buddy","coo"];
 }
 const isAdmin = u => !!u && u.role === "admin";
 /* L’Officer / buddy crée et remplit les passeports de son hôtel. */
@@ -1023,7 +1027,11 @@ const canCreate = u => !!u && (u.role === "admin" || u.role === "officer");
    6. ROUTEUR
    ========================================================================== */
 
-function hashParts(){ return location.hash.replace(/^#\/?/, "").split("/").filter(Boolean); }
+/* On écarte l’éventuelle chaîne de requête avant de découper : sans cela,
+   « #/dossiers?s=x » ne serait pas reconnu comme la route « dossiers ». */
+function hashParts(){
+  return location.hash.replace(/^#\/?/, "").split("?")[0].split("/").filter(Boolean);
+}
 
 function route(){
   window.scrollTo(0, 0);
@@ -1123,7 +1131,7 @@ function renderLanding(){
               (user && user.role === "officer"
                 ? '<button class="btn btn-primary btn-sm" data-new="'+svc.id+'">Nouveau passeport →</button>'
                 : "")+
-              (n?'<a class="btn '+(user && user.role === "officer" ? "btn-ghost" : "btn-primary")+' btn-sm" href="#/dossiers?s='+svc.id+'">'+
+              (n?'<a class="btn '+(user && user.role === "officer" ? "btn-ghost" : "btn-primary")+' btn-sm" href="#/dossiers">'+
                  'Voir les '+n+' passeport'+(n>1?"s":"")+'</a>':"")+
               (!n && !(user && user.role === "officer")
                 ? '<span style="font-size:.85rem;color:var(--ink-40)">Aucun passeport enregistré</span>' : "")+
@@ -1247,7 +1255,7 @@ function newRecordModal(serviceId){
 }
 
 /* ==========================================================================
-   7. COLLABORATEURS — la liste des passeports enregistrés
+   7. LES PASSEPORTS — la liste des passeports créés et en cours
    ========================================================================== */
 
 let dossQuery = "", dossFilter = "";
@@ -1255,8 +1263,6 @@ let dossQuery = "", dossFilter = "";
 function renderDossiers(){
   const user = currentUser();
   const scope = visibleRecords(user);            // périmètre du profil connecté
-  const m = location.hash.match(/[?&]s=([a-z0-9_-]+)/i);
-  if(m) dossFilter = m[1];
 
   const chips = '<button class="'+(dossFilter?"":"on")+'" data-f="">Tous</button>'+
     SERVICES.filter(s => scope.some(r => r.service === s.id)).map(s =>
@@ -1345,8 +1351,7 @@ function renderDossiers(){
       const n = $("#q"); if(n){ n.focus(); n.setSelectionRange(p, p); } };
   }
   $$("[data-f]").forEach(b => b.onclick = () => {
-    dossFilter = b.getAttribute("data-f");
-    if(location.hash.indexOf("?") > -1) location.hash = "#/dossiers"; else renderDossiers();
+    dossFilter = b.getAttribute("data-f"); renderDossiers();
   });
   $$("[data-exp]").forEach(b => b.onclick = () => exportRecord(getRecord(b.getAttribute("data-exp"))));
   $$("[data-del]").forEach(b => b.onclick = () => {
@@ -1673,14 +1678,7 @@ function buildPrompt(svc, rec){
 "l’autre. Explique ce que cet écart peut signifier (manque de confiance, angle mort, critères mal partagés).",
 "Si aucun écart notable, dis-le en une ligne.",
 "",
-"## Axes de progression prioritaires",
-"Trois à cinq puces, classées par priorité. Pour chacune : le constat, puis l’action concrète proposée.",
-"",
-"## Plan des 30 prochains jours",
-"Quatre à six actions datées ou séquencées, chacune avec un responsable (collaborateur, buddy ou COO).",
-"",
-"## Prêt pour l’autonomie ?",
-"Un verdict net — oui, pas encore, ou partiellement — avec la ou les conditions qui restent à remplir.",
+"Limite-toi à ces trois sections : ni axes de progression, ni plan d’action, ni verdict sur l’autonomie.",
 "",
 "Ignore les items non renseignés plutôt que de les compter comme des lacunes, mais signale en fin de synthèse",
 "si une part importante du passeport reste à évaluer.",
@@ -1704,7 +1702,7 @@ function renderAI(svc, rec){
       '<div class="ai-seal">✨</div>'+
       '<div class="t"><div class="kick">Espace synthèse</div>'+
       '<h2>La synthèse du passeport</h2>'+
-      '<p>Une lecture d’ensemble des trois regards — collaborateur, buddy et COO — pour préparer le point d’intégration : points forts, écarts de perception, axes de progression et plan des 30 prochains jours.</p></div>'+
+      '<p>Une lecture d’ensemble des trois regards — collaborateur, buddy et COO — pour préparer le point d’intégration : où en est l’intégration, points forts et écarts de perception.</p></div>'+
     '</div>';
 
   let body;
@@ -2298,22 +2296,7 @@ const DEMO_SYNTHESE = [
 "",
 "Ce profil — prudence sur soi, résultats conformes — est un signe de rigueur plus que de fragilité. Il mérite d’être nommé explicitement en entretien : Camille gagnerait en aisance commerciale à s’autoriser plus tôt ce qu’elle sait déjà faire.",
 "",
-"## Axes de progression prioritaires",
-"1. **Vente additionnelle** — constat : l’upsell n’a démarré qu’à mi-parcours, par réserve personnelle, et le cross-sell restaurant reste peu réflexe. Action : objectif de deux propositions par service sur les arrivées corporate, avec suivi hebdomadaire du taux de conversion.",
-"2. **Situations exceptionnelles** — constat : le surbooking n’a été travaillé qu’en simulation, faute de cas réel. Action : maintenir la révision de la procédure au premier surbooking effectif, en binôme.",
-"3. **Contribution collective** — constat : première publication Elium seulement en fin de parcours. Action : une fiche pratique par trimestre, sur un sujet de son choix.",
-"4. **Transmission** — constat : parcours complet et procédures maîtrisées. Action : la positionner comme buddy sur la prochaine arrivée en réception.",
-"",
-"## Plan des 30 prochains jours",
-"- **Semaine 1** — Entretien de fin d’intégration : restituer l’écart d’auto-évaluation et fixer l’objectif upsell. *(COO)*",
-"- **Semaine 1** — Passage de relais : Camille devient buddy du prochain arrivant réception. *(COO)*",
-"- **Semaine 2** — Demi-journée d’observation revenue management, demandée par elle. *(COO)*",
-"- **Semaine 2 à 4** — Suivi hebdomadaire des propositions d’upsell et de cross-sell. *(buddy)*",
-"- **Semaine 3** — Rédaction d’une fiche Elium sur la gestion des arrivées tardives. *(collaborateur)*",
-"- **Semaine 4** — Revue à 30 jours : tenue des objectifs commerciaux et premier retour sur le rôle de buddy. *(COO)*",
-"",
-"## Prêt pour l’autonomie ?",
-"**Oui.** Le passeport est complet, validé item par item par le buddy et le COO, et les rares écarts relevés en cours de route ont tous été résolus. Camille peut travailler en autonomie sur l’ensemble du poste, y compris en shift seule. La seule réserve porte sur le surbooking, jamais rencontré en conditions réelles : à accompagner la première fois. Elle est en capacité d’accompagner à son tour un nouvel arrivant."
+"Deux items ont été jugés **Non acquis** par le buddy en cours de parcours — le cross-sell restaurant et la contribution sur Elium — alors que Camille s’y situait en cours d’acquisition. Les deux ont été repris et validés depuis."
 ].join("\n");
 
 const DEMO_HOTEL = "h-demo";
