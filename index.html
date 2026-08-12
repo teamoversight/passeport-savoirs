@@ -1082,8 +1082,7 @@ function header(active){
     nav = '<a href="#/" class="on">Mon passeport</a>';
   } else {
     nav = '<a href="#/" class="'+(active==="home"?"on":"")+'">Accueil</a>'+
-          '<a href="#services">Les passeports</a>'+
-          '<a href="#/dossiers" class="'+(active==="dossiers"?"on":"")+'">Collaborateurs'+
+          '<a href="#/dossiers" class="'+(active==="dossiers"?"on":"")+'">Les passeports'+
             (n?'<span class="pill">'+n+'</span>':"")+'</a>'+
           (isAdmin(u) ? '<a href="#/admin" class="'+(active==="admin"?"on":"")+'">Administration</a>' : "");
   }
@@ -1120,13 +1119,14 @@ function renderLanding(){
         (ready
           ? '<div class="svc-meta"><span><b>'+n+'</b> '+(n>1?"passeports enregistrés":"passeport enregistré")+'</span></div>'+
             '<div class="svc-actions">'+
-              (canCreate(user)
+              /* l’Officer / buddy crée depuis ici ; l’administrateur passe par Administration */
+              (user && user.role === "officer"
                 ? '<button class="btn btn-primary btn-sm" data-new="'+svc.id+'">Nouveau passeport →</button>'
                 : "")+
-              (n?'<a class="btn '+(canCreate(user)?"btn-ghost":"btn-primary")+' btn-sm" href="#/dossiers?s='+svc.id+'">'+
+              (n?'<a class="btn '+(user && user.role === "officer" ? "btn-ghost" : "btn-primary")+' btn-sm" href="#/dossiers?s='+svc.id+'">'+
                  'Voir les '+n+' passeport'+(n>1?"s":"")+'</a>':"")+
-              (!canCreate(user) && !n
-                ? '<span style="font-size:.85rem;color:var(--ink-40)">Aucun passeport sur votre périmètre</span>' : "")+
+              (!n && !(user && user.role === "officer")
+                ? '<span style="font-size:.85rem;color:var(--ink-40)">Aucun passeport enregistré</span>' : "")+
             '</div>'
           : '<p style="font-size:.9rem;color:var(--ink-55)">Les items de ce service restent à définir.</p>'
         )+
@@ -1161,7 +1161,7 @@ function renderLanding(){
     '<div class="grid-3" style="margin-top:24px">'+
       '<div class="pcard"><div class="ic" style="background:var(--kaki-light)">🎖️</div><h3>Un badge par sous-bloc</h3><p>Le badge s’obtient lorsque <b>100% des items</b> du sous-bloc atteignent le niveau 🟢 Acquis.</p></div>'+
       '<div class="pcard"><div class="ic" style="background:var(--gold-light)">🌟</div><h3>Golden badge</h3><p>Tous les badges acquis débloquent la distinction <b>Ambassadeur de l’hôtel</b>.</p></div>'+
-      '<div class="pcard"><div class="ic">👥</div><h3>Trois regards</h3><p>Chaque item est évalué par le <b>collaborateur</b> (auto-évaluation), le <b>buddy</b> et le <b>COO</b>, avec un commentaire possible pour chacun.</p></div>'+
+      '<div class="pcard"><div class="ic">👥</div><h3>Trois regards</h3><p>Chaque item est évalué par le <b>collaborateur</b> (auto-évaluation), le <b>buddy</b> (facultatif) et le <b>COO</b>, avec un commentaire possible pour chacun.</p></div>'+
     '</div>'+
   '</div></section>'+
 
@@ -1324,8 +1324,8 @@ function renderDossiers(){
 
   $("#app").innerHTML = header("dossiers")+
   '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
-    '<div class="section-head"><div class="section-kicker">Collaborateurs</div>'+
-    '<h2>Les passeports <span class="serif italic">enregistrés</span></h2>'+
+    '<div class="section-head"><div class="section-kicker">Les passeports</div>'+
+    '<h2>Créés et <span class="serif italic">en cours</span></h2>'+
     '<p>'+(isAdmin(user)
         ? 'Tous les passeports, tous hôtels confondus. Retrouvez-en un à tout moment pour poursuivre l’évaluation, l’imprimer ou générer sa synthèse.'
         : user && user.role === "officer"
@@ -1875,7 +1875,7 @@ function renderLogin(){
    12. ADMINISTRATION
    ========================================================================== */
 
-let admTab = "collaborateurs";
+let admTab = "comptes";
 
 function usersByRole(role){ return USERS.filter(u => u.role === role); }
 function recordsOfUser(u){ return (u.recordIds || []).map(getRecord).filter(Boolean); }
@@ -1895,10 +1895,9 @@ function slugLogin(nom){
 
 function renderAdmin(){
   const tabs = [
-    ["collaborateurs", "Collaborateurs", usersByRole("collaborateur").length],
-    ["officers",       "Officers / buddies", usersByRole("officer").length],
-    ["hotels",         "Hôtels",         HOTELS.length],
-    ["passeports",     "Passeports",     RECORDS.length]
+    ["comptes",    "Comptes",    USERS.length],
+    ["hotels",     "Hôtels",     HOTELS.length],
+    ["passeports", "Passeports", RECORDS.length]
   ].map(([id, label, n]) =>
     '<button class="'+(admTab===id?"on":"")+'" data-tab="'+id+'">'+label+'<span class="pill">'+n+'</span></button>').join("");
 
@@ -1906,7 +1905,7 @@ function renderAdmin(){
   '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
     '<div class="section-head"><div class="section-kicker">Administration</div>'+
     '<h2>Comptes, hôtels et <span class="serif italic">passeports</span></h2>'+
-    '<p>Créez les hôtels, les Officers et les collaborateurs, rattachez-les, et attribuez les passeports.</p></div>'+
+    '<p>Créez les hôtels, les comptes — collaborateurs comme Officers / buddies — rattachez-les, et attribuez les passeports.</p></div>'+
     '<div class="warnbar">⚠️ <b>Ces profils organisent l’interface, ils ne protègent pas les données.</b> '+
       'Le site est statique : son code est public et tout est stocké dans le navigateur. '+
       'N’y saisissez rien de confidentiel, et considérez les codes d’accès comme un simple garde-fou, pas comme un secret.</div>'+
@@ -1915,10 +1914,9 @@ function renderAdmin(){
   '</div>'+footer();
 
   $$("[data-tab]").forEach(b => b.onclick = () => { admTab = b.getAttribute("data-tab"); renderAdmin(); });
-  if(admTab === "hotels")            admHotels();
-  else if(admTab === "officers")     admUsers("officer");
-  else if(admTab === "collaborateurs") admUsers("collaborateur");
-  else                               admPasseports();
+  if(admTab === "hotels")          admHotels();
+  else if(admTab === "passeports") admPasseports();
+  else                             admComptes();
 }
 
 /* ---------- Hôtels ---------- */
@@ -1958,20 +1956,42 @@ function admHotels(){
   });
 }
 
-/* ---------- Officers et collaborateurs ---------- */
-function admUsers(role){
-  const list = usersByRole(role);
-  const isCol = role === "collaborateur";
+/* ---------- Comptes : collaborateurs et Officers / buddies ---------- */
+let admHotelFilter = "";     // "" = tous les hôtels
+
+function admComptes(){
+  /* l’administrateur n’a pas d’hôtel et n’apparaît pas dans un filtre par hôtel */
+  const all = USERS.filter(u => u.role !== "admin");
+  const list = all.filter(u =>
+      !admHotelFilter || (admHotelFilter === "__none__" ? !u.hotel : u.hotel === admHotelFilter))
+    .slice().sort((a, b) =>
+      (a.role === b.role ? 0 : a.role === "officer" ? -1 : 1) ||
+      String(a.nom || a.login).localeCompare(String(b.nom || b.login), "fr"));
+
+  const chips = '<button class="'+(admHotelFilter?"":"on")+'" data-fh="">Tous les hôtels'+
+      '<span style="opacity:.6"> '+all.length+'</span></button>'+
+    HOTELS.map(h => {
+      const n = all.filter(u => u.hotel === h.id).length;
+      return '<button class="'+(admHotelFilter===h.id?"on":"")+'" data-fh="'+h.id+'">'+esc(h.name)+
+             '<span style="opacity:.6"> '+n+'</span></button>';
+    }).join("")+
+    (all.some(u => !u.hotel)
+      ? '<button class="'+(admHotelFilter==="__none__"?"on":"")+'" data-fh="__none__">Sans hôtel'+
+        '<span style="opacity:.6"> '+all.filter(u => !u.hotel).length+'</span></button>'
+      : "");
 
   const rows = list.map(u => {
     const recs = recordsOfUser(u);
     return '<tr>'+
       '<td class="nm">'+esc(u.nom || "—")+(u.demo?' <span class="demotag">Démo</span>':"")+'</td>'+
+      '<td><span class="rolechip '+u.role+'">'+esc(ROLE_LABEL[u.role])+'</span></td>'+
       '<td><code>'+esc(u.login)+'</code></td>'+
       '<td><select data-uh="'+u.id+'">'+hotelOptions(u.hotel, true)+'</select></td>'+
-      (isCol ? '<td>'+(recs.length
-          ? recs.map(r => '<a href="#/d/'+r.id+'">'+esc((getService(r.service)||{}).name || r.service)+'</a>').join(", ")
-          : '<span style="color:var(--ink-40)">aucun</span>')+'</td>' : "")+
+      '<td>'+(u.role === "officer"
+          ? '<span style="color:var(--ink-55)">tous ceux de son hôtel</span>'
+          : recs.length
+            ? recs.map(r => '<a href="#/d/'+r.id+'">'+esc((getService(r.service)||{}).name || r.service)+'</a>').join(", ")
+            : '<span style="color:var(--ink-40)">aucun</span>')+'</td>'+
       '<td><input class="codein" data-uc="'+u.id+'" value="'+esc(u.code)+'" placeholder="aucun" '+
         'title="Code d’accès — laisser vide pour une connexion sans code"></td>'+
       '<td class="acts"><button class="iconbtn danger" data-delu="'+u.id+'" title="Supprimer">🗑</button></td></tr>';
@@ -1981,38 +2001,61 @@ function admUsers(role){
     '<option value="'+s.id+'">'+esc(s.name)+'</option>').join("");
 
   $("#admbody").innerHTML = '<div class="panel">'+
-    '<h3>'+(isCol ? "Les collaborateurs" : "Les Officers / buddies")+'</h3>'+
-    '<p class="hint">'+(isCol
-      ? "Créer un collaborateur crée en même temps son passeport. Il ne verra que le sien, et n’y remplira que sa colonne d’auto-évaluation."
-      : "Un Officer / buddy voit tous les passeports de son hôtel, peut en créer et remplir les trois colonnes d’évaluation.")+'</p>'+
+    '<h3>Les comptes</h3>'+
+    '<p class="hint">Un <b>collaborateur</b> possède un passeport, ne voit que le sien et n’y remplit que sa colonne d’auto-évaluation. '+
+      'Un <b>Officer / buddy</b> n’a pas de passeport : il accède à tous ceux de son hôtel, peut en créer et remplir les trois colonnes.</p>'+
+    (HOTELS.length > 1 ? '<div class="filters" style="margin-bottom:20px">'+chips+'</div>' : "")+
     (list.length
-      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Nom</th><th>Identifiant</th><th>Hôtel</th>'+
-        (isCol?'<th>Passeports</th>':"")+'<th>Code d’accès</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
-      : '<p style="font-size:.9rem;color:var(--ink-55)">Aucun compte pour l’instant.</p>')+
+      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Nom</th><th>Profil</th><th>Identifiant</th>'+
+        '<th>Hôtel</th><th>Passeports</th><th>Code d’accès</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      : '<p style="font-size:.9rem;color:var(--ink-55)">'+
+        (all.length ? "Aucun compte sur cet hôtel." : "Aucun compte pour l’instant.")+'</p>')+
 
-    '<div class="addform"><h4>Ajouter '+(isCol?"un collaborateur":"un Officer / buddy")+'</h4>'+
+    '<div class="addform"><h4>Ajouter un compte</h4>'+
       '<div class="addgrid">'+
+        '<div class="f"><label>Profil</label><select id="u-role">'+
+          '<option value="collaborateur">Collaborateur — avec passeport</option>'+
+          '<option value="officer">Officer / buddy — sans passeport</option>'+
+          '</select></div>'+
         '<div class="f"><label>Nom complet</label><input id="u-nom" placeholder="Prénom Nom"></div>'+
         '<div class="f"><label>Identifiant</label><input id="u-login" placeholder="prenom.nom" autocapitalize="off" spellcheck="false"></div>'+
-        '<div class="f"><label>Hôtel</label><select id="u-hot">'+hotelOptions("", true)+'</select></div>'+
+        '<div class="f"><label>Hôtel</label><select id="u-hot">'+hotelOptions(admHotelFilter === "__none__" ? "" : admHotelFilter, true)+'</select></div>'+
         '<div class="f"><label>Code d’accès (optionnel)</label><input id="u-code" placeholder="laisser vide"></div>'+
       '</div>'+
-      (isCol
-        ? '<div class="addgrid">'+
+      '<div id="u-passeport">'+
+        '<div class="addgrid">'+
           '<div class="f"><label>Service du passeport</label><select id="u-svc">'+svcOptions+'</select></div>'+
           '<div class="f"><label>Date d’arrivée</label><input id="u-arr" type="date"></div>'+
           '<div class="f"><label>Buddy (facultatif)</label><input id="u-bud" placeholder="Aucun"></div>'+
-          '</div>'
-        : "")+
-      '<button class="btn btn-primary btn-sm" data-addu>Ajouter '+(isCol?"le collaborateur et son passeport":"l’Officer / buddy")+'</button>'+
+        '</div>'+
+      '</div>'+
+      '<p class="hint" id="u-mention" style="margin:0 0 16px"></p>'+
+      '<button class="btn btn-primary btn-sm" data-addu>Ajouter le compte</button>'+
     '</div></div>';
 
+  const roleI = $("#u-role"), nomI = $("#u-nom"), logI = $("#u-login");
+
+  /* le formulaire s’adapte au profil choisi */
+  const syncRole = () => {
+    const isCol = roleI.value === "collaborateur";
+    $("#u-passeport").style.display = isCol ? "" : "none";
+    $("#u-mention").innerHTML = isCol
+      ? "Son passeport et son compte sont créés ensemble. Il ne verra que ce passeport et n’y remplira que sa colonne d’auto-évaluation."
+      : "Aucun passeport ne lui sera attaché. Il accédera à <b>tous les passeports de son hôtel</b>, pourra en créer et remplir les trois colonnes d’évaluation.";
+  };
+  roleI.onchange = syncRole;
+  syncRole();
+
   /* saisie du nom → identifiant proposé automatiquement */
-  const nomI = $("#u-nom"), logI = $("#u-login");
   nomI.oninput = () => { if(!logI.dataset.touched) logI.value = slugLogin(nomI.value); };
   logI.oninput = () => { logI.dataset.touched = "1"; };
 
+  $$("[data-fh]").forEach(b => b.onclick = () => {
+    admHotelFilter = b.getAttribute("data-fh"); renderAdmin();
+  });
+
   $("[data-addu]").onclick = () => {
+    const role = roleI.value, isCol = role === "collaborateur";
     const nom = nomI.value.trim(), login = logI.value.trim();
     if(!nom){ toast("Indiquez le nom."); nomI.focus(); return; }
     if(!login){ toast("Indiquez un identifiant."); logI.focus(); return; }
@@ -2028,7 +2071,7 @@ function admUsers(role){
       u.recordIds = [rec.id];
     }
     USERS.push(u); saveUsers();
-    toast((isCol?"Collaborateur":"Officer / buddy")+" ajouté.");
+    toast((isCol ? "Collaborateur" : "Officer / buddy")+" ajouté.");
     renderAdmin();
   };
 
@@ -2069,7 +2112,20 @@ function admUsers(role){
 function admPasseports(){
   const cols = usersByRole("collaborateur");
 
-  const rows = RECORDS.slice()
+  /* même filtre par hôtel que l’onglet Comptes */
+  const scope = RECORDS.filter(r =>
+    !admHotelFilter || (admHotelFilter === "__none__" ? !r.hotel : r.hotel === admHotelFilter));
+
+  const chips = '<button class="'+(admHotelFilter?"":"on")+'" data-fh="">Tous les hôtels'+
+      '<span style="opacity:.6"> '+RECORDS.length+'</span></button>'+
+    HOTELS.map(h => '<button class="'+(admHotelFilter===h.id?"on":"")+'" data-fh="'+h.id+'">'+esc(h.name)+
+      '<span style="opacity:.6"> '+RECORDS.filter(r => r.hotel === h.id).length+'</span></button>').join("")+
+    (RECORDS.some(r => !r.hotel)
+      ? '<button class="'+(admHotelFilter==="__none__"?"on":"")+'" data-fh="__none__">Sans hôtel'+
+        '<span style="opacity:.6"> '+RECORDS.filter(r => !r.hotel).length+'</span></button>'
+      : "");
+
+  const rows = scope.slice()
     .sort((a,b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))
     .map(r => {
       const svc = getService(r.service);
@@ -2090,9 +2146,11 @@ function admPasseports(){
   $("#admbody").innerHTML = '<div class="panel">'+
     '<h3>Tous les passeports</h3>'+
     '<p class="hint">Changez le rattachement d’un passeport pour le faire passer d’un hôtel à un autre. La colonne Compte indique quel collaborateur y accède.</p>'+
-    (RECORDS.length
+    (HOTELS.length > 1 ? '<div class="filters" style="margin-bottom:20px">'+chips+'</div>' : "")+
+    (scope.length
       ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Collaborateur</th><th>Service</th><th>Hôtel</th><th>Compte</th><th>Progression</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
-      : '<p style="font-size:.9rem;color:var(--ink-55)">Aucun passeport pour l’instant.</p>')+
+      : '<p style="font-size:.9rem;color:var(--ink-55)">'+
+        (RECORDS.length ? "Aucun passeport sur cet hôtel." : "Aucun passeport pour l’instant.")+'</p>')+
     '<div class="addform"><h4>Ajouter un passeport à un collaborateur existant</h4>'+
       (cols.length
         ? '<div class="addgrid">'+
@@ -2103,8 +2161,12 @@ function admPasseports(){
           '</div>'+
           '<button class="btn btn-primary btn-sm" data-addp>Ajouter le passeport</button>'+
           '<p class="hint" style="margin:14px 0 0">Utile lorsqu’un collaborateur change de service ou en couvre plusieurs : il aura alors accès à chacun de ses passeports.</p>'
-        : '<p style="font-size:.9rem;color:var(--ink-55)">Créez d’abord un collaborateur dans l’onglet Collaborateurs.</p>')+
+        : '<p style="font-size:.9rem;color:var(--ink-55)">Créez d’abord un collaborateur dans l’onglet Comptes.</p>')+
     '</div></div>';
+
+  $$("[data-fh]").forEach(b => b.onclick = () => {
+    admHotelFilter = b.getAttribute("data-fh"); renderAdmin();
+  });
 
   $$("[data-rh]").forEach(s => s.onchange = () => {
     const r = getRecord(s.getAttribute("data-rh"));
