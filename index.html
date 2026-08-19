@@ -1393,9 +1393,6 @@ function renderDossiers(){
     '<div class="doss-tools">'+
       '<div class="search"><span class="mag">🔍</span>'+
         '<input id="q" placeholder="Rechercher un collaborateur, un buddy, un service…" value="'+esc(dossQuery)+'"></div>'+
-      /* créer depuis la liste : le service se choisit dans la modale */
-      (canCreate(user) && SERVICES.some(isReady)
-        ? '<button class="btn btn-primary" data-newrec>＋ Nouveau passeport</button>' : "")+
     '</div>'+
     (scope.length ? '<div class="filters" style="margin-bottom:22px">'+chips+'</div>' : "")+
     body+

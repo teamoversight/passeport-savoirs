@@ -87,10 +87,11 @@ ouvert l’outil, il est ajouté une seule fois au chargement (indicateur
 2. **Les passeports** (`#/`) — **c’est l’accueil** : la liste des passeports du périmètre du
    profil connecté s’affiche à la connexion, sans clic supplémentaire. Recherche (nom du
    collaborateur, nom du buddy, service, hôtel), filtre par service, progression, badges, date
-   de dernière modification. Le bouton « ＋ Nouveau passeport » y figure pour l’administrateur
-   et l’Officer / buddy : le service se choisit dans la modale, plus besoin de passer par une
-   carte de service. Sous la liste, le bloc **Par service** reprend les cartes de chaque
-   service — compteur, création pour l’Officer, et un bouton qui filtre la liste ci-dessus.
+   de dernière modification. Sous la liste, le bloc **Par service** reprend les cartes de
+   chaque service — compteur, bouton « Nouveau passeport → » pour l’Officer / buddy, et un
+   bouton qui filtre la liste ci-dessus. Quand le périmètre est vide, un bouton « Créer un
+   passeport → » s’affiche à la place de la liste ; le service se choisit alors dans la
+   modale.
 3. **Comment ça marche** (`#/guide`) — les explications, sorties de l’accueil : le pitch, les 3
    blocs, l’échelle, la règle des badges, les trois regards, et les passeports par service.
    Accessible à tous les profils, collaborateur compris.
