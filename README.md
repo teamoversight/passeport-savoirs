@@ -84,16 +84,21 @@ ouvert l’outil, il est ajouté une seule fois au chargement (indicateur
 ## Les quatre écrans
 
 1. **Connexion** — identifiant et code d’accès.
-2. **Accueil** — le pitch, les 3 blocs, l’échelle, la règle des badges, puis les passeports par
-   service. Le bouton « Nouveau passeport » apparaît pour l’administrateur et pour
-   l’Officer / buddy.
-3. **Collaborateurs** — la liste des passeports du périmètre du profil connecté, avec recherche
-   (nom du collaborateur, nom du buddy, service, hôtel), filtre par service, progression,
-   badges, date de dernière modification.
-4. **Le passeport** — la couverture, les 3 blocs, les items, la collection de tampons et
-   l’espace synthèse.
+2. **Les passeports** (`#/`) — **c’est l’accueil** : la liste des passeports du périmètre du
+   profil connecté s’affiche à la connexion, sans clic supplémentaire. Recherche (nom du
+   collaborateur, nom du buddy, service, hôtel), filtre par service, progression, badges, date
+   de dernière modification. Le bouton « ＋ Nouveau passeport » y figure pour l’administrateur
+   et l’Officer / buddy : le service se choisit dans la modale, plus besoin de passer par une
+   carte de service.
+3. **Comment ça marche** (`#/guide`) — les explications, sorties de l’accueil : le pitch, les 3
+   blocs, l’échelle, la règle des badges, les trois regards, et les passeports par service.
+   Accessible à tous les profils, collaborateur compris.
+4. **Le passeport** (`#/d/<id>`) — la couverture, les 3 blocs, les items, la collection de
+   tampons et l’espace synthèse.
 
 L’administrateur dispose d’un cinquième écran, **Administration**.
+
+L’ancienne adresse `#/dossiers` reste valable : elle ouvre la même liste que l’accueil.
 
 ## Passeport de démonstration
 

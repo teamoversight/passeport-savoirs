@@ -1052,6 +1052,8 @@ function route(){
 
   /* Le collaborateur ne circule que dans ses propres passeports. */
   if(u.role === "collaborateur"){
+    /* seule échappée hors de son passeport : la page d’explications */
+    if(parts[0] === "guide"){ renderGuide(); return; }
     const mine = (u.recordIds || []).map(getRecord).filter(Boolean);
     if(parts[0] === "d" && parts[1] && canSee(u, getRecord(parts[1]))){ renderPassport(parts[1]); return; }
     if(parts[0] === "d" && parts[1]) toast("Ce passeport n’est pas le vôtre.");
@@ -1076,16 +1078,17 @@ function route(){
     renderPassport(parts[1]);
   }
   else if(parts[0] === "admin"){
-    if(!isAdmin(u)){ location.hash = "#/"; renderLanding(); return; }
+    if(!isAdmin(u)){ location.hash = "#/"; renderDossiers(); return; }
     renderAdmin();
   }
-  else if(parts[0] === "dossiers") renderDossiers();
+  else if(parts[0] === "guide") renderGuide();
   else if(parts[0] === "services"){
-    renderLanding();
+    renderGuide();
     const el = $("#services");
     if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
   }
-  else renderLanding();
+  /* l’accueil — et l’ancienne adresse « dossiers » — ouvrent la liste */
+  else renderDossiers();
 }
 window.addEventListener("hashchange", route);
 
@@ -1095,11 +1098,14 @@ function header(active){
   const n = visibleRecords(u).length;
   let nav;
   if(u.role === "collaborateur"){
-    nav = '<a href="#/" class="on">Mon passeport</a>';
+    nav = '<a href="#/" class="'+(active==="guide"?"":"on")+'">Mon passeport</a>'+
+          '<a href="#/guide" class="'+(active==="guide"?"on":"")+'">Comment ça marche</a>';
   } else {
-    nav = '<a href="#/" class="'+(active==="home"?"on":"")+'">Accueil</a>'+
-          '<a href="#/dossiers" class="'+(active==="dossiers"?"on":"")+'">Les passeports'+
+    /* L’accueil, c’est la liste : on tombe sur les passeports sans un clic de
+       plus, les explications vivent dans leur propre onglet. */
+    nav = '<a href="#/" class="'+(active==="home"?"on":"")+'">Les passeports'+
             (n?'<span class="pill">'+n+'</span>':"")+'</a>'+
+          '<a href="#/guide" class="'+(active==="guide"?"on":"")+'">Comment ça marche</a>'+
           (isAdmin(u) ? '<a href="#/admin" class="'+(active==="admin"?"on":"")+'">Administration</a>' : "");
   }
   return '<div class="topbar"><div class="topbar-in">'+
@@ -1116,10 +1122,11 @@ function footer(){
 }
 
 /* ==========================================================================
-   7. ACCUEIL
+   7. COMMENT ÇA MARCHE — les explications, sorties de l’accueil pour lui
+      laisser la liste des passeports
    ========================================================================== */
 
-function renderLanding(){
+function renderGuide(){
   const user = currentUser();
   const cards = SERVICES.map(svc => {
     const ready = isReady(svc);
@@ -1139,7 +1146,7 @@ function renderLanding(){
               (user && user.role === "officer"
                 ? '<button class="btn btn-primary btn-sm" data-new="'+svc.id+'">Nouveau passeport →</button>'
                 : "")+
-              (n?'<a class="btn '+(user && user.role === "officer" ? "btn-ghost" : "btn-primary")+' btn-sm" href="#/dossiers">'+
+              (n?'<a class="btn '+(user && user.role === "officer" ? "btn-ghost" : "btn-primary")+' btn-sm" href="#/">'+
                  'Voir les '+n+' passeport'+(n>1?"s":"")+'</a>':"")+
               (!n && !(user && user.role === "officer")
                 ? '<span style="font-size:.85rem;color:var(--ink-40)">Aucun passeport enregistré</span>' : "")+
@@ -1152,14 +1159,17 @@ function renderLanding(){
   const scaleCards = SCALE.map((s, i) =>
     '<div class="scale-card l'+i+'"><div class="lv">'+s.e+' '+esc(s.n)+'</div><p>'+esc(s.d)+'</p></div>').join("");
 
-  $("#app").innerHTML = header("home")+
+  $("#app").innerHTML = header("guide")+
   '<section class="hero"><div class="wrap">'+
     '<div class="eyebrow">🛂 Parcours d’intégration</div>'+
     '<h1>Le Passeport <em>des Savoirs</em></h1>'+
     '<p class="hero-lead">Le fil conducteur de l’intégration de chaque nouveau collaborateur. Faisant référence au voyage, il retrace son parcours, les compétences acquises, les étapes franchies et les expériences validées tout au long de son évolution au sein de l’établissement.</p>'+
-    '<div class="hero-cta"><a class="btn btn-primary" href="#services">Découvrir les passeports</a>'+
-      (canSee(user, getRecord(DEMO_ID))?'<a class="btn btn-ghost" href="#/d/'+DEMO_ID+'">🎬 Voir un passeport rempli</a>':"")+
-      (visibleRecords(user).some(r => !r.demo)?'<a class="btn btn-ghost" href="#/dossiers">Les passeports en cours</a>':"")+'</div>'+
+    '<div class="hero-cta">'+
+      (user && user.role === "collaborateur"
+        ? '<a class="btn btn-primary" href="#/">← Mon passeport</a>'
+        : '<a class="btn btn-primary" href="#/">← Les passeports</a>')+
+      '<a class="btn btn-ghost" href="#services">L’échelle et les services</a>'+
+      (canSee(user, getRecord(DEMO_ID))?'<a class="btn btn-ghost" href="#/d/'+DEMO_ID+'">🎬 Voir un passeport rempli</a>':"")+'</div>'+
   '</div></section>'+
 
   '<section class="section"><div class="wrap">'+
@@ -1186,7 +1196,7 @@ function renderLanding(){
     '<h2>Les <span class="serif italic">passeports</span></h2>'+
     '<p>'+(isViewer(user)
       ? 'Un Passeport des Savoirs par service. Vous accédez en lecture aux passeports ouverts sur '+esc(hotelName(user.hotel))+' : progression, badges et synthèse d’intégration.'
-      : 'Un Passeport des Savoirs par service. Ouvrez-en un pour un nouveau collaborateur : son passeport est enregistré et se retrouve à tout moment dans l’onglet Collaborateurs.')+'</p></div>'+
+      : 'Un Passeport des Savoirs par service. Ouvrez-en un pour un nouveau collaborateur : son passeport est enregistré et se retrouve à tout moment dans la liste des passeports.')+'</p></div>'+
     '<div class="svc-grid">'+cards+'</div>'+
   '</div></section>'+
   footer();
@@ -1205,10 +1215,14 @@ function freeLogin(nom){
 
 /* Modale de création d’un passeport pour un collaborateur.
    Crée aussi son compte, sans quoi il ne pourrait pas s’auto-évaluer.
-   L’Officer / buddy ne crée que sur son propre hôtel ; l’administrateur choisit. */
+   L’Officer / buddy ne crée que sur son propre hôtel ; l’administrateur choisit.
+   serviceId est facultatif : appelée depuis la liste, la modale propose
+   elle-même le choix du service parmi ceux dont les items sont définis. */
 function newRecordModal(serviceId){
-  const svc = getService(serviceId);
-  if(!svc) return;
+  const ready = SERVICES.filter(isReady);
+  const svc = getService(serviceId) || ready[0];
+  if(!svc){ toast("Aucun service disponible : définissez d’abord les items d’un service."); return; }
+  const pick = !getService(serviceId) && ready.length > 1;
   const user = currentUser();
   if(!canCreate(user)) return;
   const forced = user.role === "officer" ? user.hotel : "";
@@ -1216,10 +1230,15 @@ function newRecordModal(serviceId){
   const ov = $("#ov");
   ov.innerHTML = '<div class="modal form">'+
     '<button class="modal-x" data-x>✕</button>'+
-    '<div class="kick">'+svc.emoji+' Passeport '+esc(svc.name)+'</div>'+
+    '<div class="kick">'+(pick ? '🛂 Nouveau passeport' : svc.emoji+' Passeport '+esc(svc.name))+'</div>'+
     '<h2 style="margin-bottom:8px">Nouveau collaborateur</h2>'+
     '<p style="font-size:.92rem;color:var(--ink-55);margin-bottom:22px">Son passeport et son compte sont créés ensemble, pour qu’il puisse s’auto-évaluer.</p>'+
     '<div class="f"><label>Nom du collaborateur</label><input id="n-nom" placeholder="Prénom Nom" autocomplete="off"></div>'+
+    (pick
+      ? '<div class="f"><label>Service</label><select id="n-svc">'+
+        ready.map(s => '<option value="'+s.id+'">'+s.emoji+' '+esc(s.name)+'</option>').join("")+
+        '</select></div>'
+      : "")+
     (forced
       ? '<div class="f"><label>Hôtel de rattachement</label><input value="'+esc(hotelName(forced))+'" readonly></div>'
       : '<div class="f"><label>Hôtel de rattachement</label><select id="n-hot">'+
@@ -1242,7 +1261,8 @@ function newRecordModal(serviceId){
     const hotel = forced || ($("#n-hot") ? $("#n-hot").value : "");
     if(!hotel){ toast("Créez d’abord un hôtel dans Administration."); return; }
 
-    const rec = createRecord(serviceId, {nom, arrivee:$("#n-arr").value, buddy:$("#n-bud").value, hotel});
+    const chosen = (pick ? getService($("#n-svc").value) : svc) || svc;
+    const rec = createRecord(chosen.id, {nom, arrivee:$("#n-arr").value, buddy:$("#n-bud").value, hotel});
     const login = freeLogin(nom);
     USERS.push({id:"u"+makeId(), login, code:"", role:"collaborateur", nom, hotel, recordIds:[rec.id]});
     saveUsers();
@@ -1251,9 +1271,9 @@ function newRecordModal(serviceId){
     ov.innerHTML = '<div class="modal">'+
       '<button class="modal-x" data-x>✕</button>'+
       '<div class="kick">Passeport créé</div>'+
-      '<div class="medal">'+svc.emoji+'</div>'+
+      '<div class="medal">'+chosen.emoji+'</div>'+
       '<h2>'+esc(nom)+'</h2>'+
-      '<div class="who">Passeport '+esc(svc.name)+' · '+esc(hotelName(hotel))+'</div>'+
+      '<div class="who">Passeport '+esc(chosen.name)+' · '+esc(hotelName(hotel))+'</div>'+
       '<div class="msg">Son compte est créé avec l’identifiant <b>'+esc(login)+'</b>, sans code d’accès. '+
         'Communiquez-le lui pour qu’il puisse s’auto-évaluer. Un code peut être ajouté depuis Administration.</div>'+
       '<button class="btn btn-primary" data-open>Ouvrir le passeport →</button></div>';
@@ -1295,11 +1315,11 @@ function renderDossiers(){
   if(!scope.length){
     body = '<div class="empty"><div class="big">🛂</div><h3>Aucun passeport sur votre périmètre</h3>'+
       (isAdmin(user)
-        ? '<p>Ouvrez un passeport depuis un service pour démarrer l’intégration d’un collaborateur.</p>'+
-          '<div style="margin-top:22px"><a class="btn btn-primary" href="#services">Choisir un service →</a></div>'
+        ? '<p>Aucun passeport enregistré. Ouvrez-en un pour démarrer l’intégration d’un collaborateur.</p>'+
+          '<div style="margin-top:22px"><button class="btn btn-primary" data-newrec>Créer un passeport →</button></div>'
         : user && user.role === "officer"
           ? '<p>Aucun passeport n’est encore rattaché à '+esc(hotelName(user.hotel))+'.</p>'+
-            '<div style="margin-top:22px"><a class="btn btn-primary" href="#services">Créer un passeport →</a></div>'
+            '<div style="margin-top:22px"><button class="btn btn-primary" data-newrec>Créer un passeport →</button></div>'
           : user && user.role === "proprietaire"
             ? '<p>Aucun passeport n’est encore ouvert sur '+esc(hotelName(user.hotel))+'. Ils apparaîtront ici dès que l’Officer en créera.</p>'
             : '<p>Aucun passeport ne vous est encore attribué. Adressez-vous à votre Officer ou à l’administrateur.</p>')+
@@ -1340,10 +1360,10 @@ function renderDossiers(){
     }).join("")+'</div>';
   }
 
-  $("#app").innerHTML = header("dossiers")+
+  $("#app").innerHTML = header("home")+
   '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
-    '<div class="section-head"><div class="section-kicker">Les passeports</div>'+
-    '<h2>Créés et <span class="serif italic">en cours</span></h2>'+
+    '<div class="section-head"><div class="section-kicker">Passeport des Savoirs</div>'+
+    '<h2>Les passeports <span class="serif italic">en cours</span></h2>'+
     '<p>'+(isAdmin(user)
         ? 'Tous les passeports, tous hôtels confondus. Retrouvez-en un à tout moment pour poursuivre l’évaluation, l’imprimer ou générer sa synthèse.'
         : user && user.role === "officer"
@@ -1354,6 +1374,9 @@ function renderDossiers(){
     '<div class="doss-tools">'+
       '<div class="search"><span class="mag">🔍</span>'+
         '<input id="q" placeholder="Rechercher un collaborateur, un buddy, un service…" value="'+esc(dossQuery)+'"></div>'+
+      /* créer depuis la liste : le service se choisit dans la modale */
+      (canCreate(user) && SERVICES.some(isReady)
+        ? '<button class="btn btn-primary" data-newrec>＋ Nouveau passeport</button>' : "")+
     '</div>'+
     (scope.length ? '<div class="filters" style="margin-bottom:22px">'+chips+'</div>' : "")+
     body+
@@ -1367,6 +1390,7 @@ function renderDossiers(){
   $$("[data-f]").forEach(b => b.onclick = () => {
     dossFilter = b.getAttribute("data-f"); renderDossiers();
   });
+  $$("[data-newrec]").forEach(b => b.onclick = () => newRecordModal());
   $$("[data-exp]").forEach(b => b.onclick = () => exportRecord(getRecord(b.getAttribute("data-exp"))));
   $$("[data-del]").forEach(b => b.onclick = () => {
     const r = getRecord(b.getAttribute("data-del"));
@@ -1415,7 +1439,7 @@ function renderPassport(recId){
 
   $("#app").innerHTML = header()+
   '<div class="wrap" style="padding-top:30px;padding-bottom:50px">'+
-    (soloRole ? "" : '<a class="backlink" href="#/dossiers" style="font-size:.88rem;color:var(--ink-55)">← Tous les collaborateurs</a>')+
+    (soloRole ? "" : '<a class="backlink" href="#/" style="font-size:.88rem;color:var(--ink-55)">← Tous les passeports</a>')+
     (rec.demo ? '<div class="demobar">🎬 <span><b>Passeport de démonstration</b> — dossier fictif, entièrement rempli, pour montrer le passeport en fin de parcours : les 78 items évalués par les trois regards, les 12 badges, le golden badge et la synthèse. Supprimez-le quand vous n’en avez plus besoin, il ne reviendra pas.</span></div>' : "")+
     '<div class="pp-cover" style="margin-top:14px"><div class="pp-cover-in">'+
       '<div class="pp-id">'+
