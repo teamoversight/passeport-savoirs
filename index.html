@@ -1126,12 +1126,17 @@ function footer(){
       laisser la liste des passeports
    ========================================================================== */
 
-function renderGuide(){
-  const user = currentUser();
+/* Le bloc « par service » — une carte par service, avec son compteur et ses
+   actions. Rendu à l’identique sur l’accueil et sur la page d’explications ;
+   sur l’accueil, « Voir les N passeports » filtre la liste juste au-dessus
+   au lieu de renvoyer ailleurs. */
+function servicesSection(user, onHome){
   const cards = SERVICES.map(svc => {
     const ready = isReady(svc);
     /* l’Officer ne compte que les passeports de son hôtel */
     const n = visibleRecords(user).filter(r => r.service === svc.id).length;
+    const voir = n > 1 ? 'Voir les '+n+' passeports' : 'Voir le passeport';
+    const cls  = 'btn '+(user && user.role === "officer" ? "btn-ghost" : "btn-primary")+' btn-sm';
     return '<article class="svc'+(ready?"":" soon")+'">'+
       '<div class="svc-top">'+
         (ready?'<span class="svc-badge ok">Disponible</span>':'<span class="svc-badge todo">À venir</span>')+
@@ -1146,8 +1151,10 @@ function renderGuide(){
               (user && user.role === "officer"
                 ? '<button class="btn btn-primary btn-sm" data-new="'+svc.id+'">Nouveau passeport →</button>'
                 : "")+
-              (n?'<a class="btn '+(user && user.role === "officer" ? "btn-ghost" : "btn-primary")+' btn-sm" href="#/">'+
-                 'Voir les '+n+' passeport'+(n>1?"s":"")+'</a>':"")+
+              (n ? (onHome
+                     ? '<button class="'+cls+'" data-fsvc="'+svc.id+'">'+voir+'</button>'
+                     : '<a class="'+cls+'" href="#/">'+voir+'</a>')
+                 : "")+
               (!n && !(user && user.role === "officer")
                 ? '<span style="font-size:.85rem;color:var(--ink-40)">Aucun passeport enregistré</span>' : "")+
             '</div>'
@@ -1155,6 +1162,31 @@ function renderGuide(){
         )+
       '</div></article>';
   }).join("");
+
+  return '<section class="section" id="services"><div class="wrap">'+
+    '<div class="section-head c"><div class="section-kicker">Par service</div>'+
+    '<h2>Les <span class="serif italic">passeports</span></h2>'+
+    '<p>'+(isViewer(user)
+      ? 'Un Passeport des Savoirs par service. Vous accédez en lecture aux passeports ouverts sur '+esc(hotelName(user.hotel))+' : progression, badges et synthèse d’intégration.'
+      : 'Un Passeport des Savoirs par service. Ouvrez-en un pour un nouveau collaborateur : son passeport est enregistré et '+
+        (onHome ? 'rejoint la liste ci-dessus.' : 'se retrouve à tout moment dans la liste des passeports.'))+'</p></div>'+
+    '<div class="svc-grid">'+cards+'</div>'+
+  '</div></section>';
+}
+
+/* Branchements du bloc « par service », communs aux deux pages. */
+function bindServices(){
+  $$("[data-new]").forEach(b => b.onclick = () => newRecordModal(b.getAttribute("data-new")));
+  $$("[data-fsvc]").forEach(b => b.onclick = () => {
+    dossFilter = b.getAttribute("data-fsvc");
+    renderDossiers();
+    const el = $(".doss-list") || $(".empty");
+    if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+}
+
+function renderGuide(){
+  const user = currentUser();
 
   const scaleCards = SCALE.map((s, i) =>
     '<div class="scale-card l'+i+'"><div class="lv">'+s.e+' '+esc(s.n)+'</div><p>'+esc(s.d)+'</p></div>').join("");
@@ -1191,17 +1223,10 @@ function renderGuide(){
     '</div>'+
   '</div></section>'+
 
-  '<section class="section" id="services"><div class="wrap">'+
-    '<div class="section-head c"><div class="section-kicker">Par service</div>'+
-    '<h2>Les <span class="serif italic">passeports</span></h2>'+
-    '<p>'+(isViewer(user)
-      ? 'Un Passeport des Savoirs par service. Vous accédez en lecture aux passeports ouverts sur '+esc(hotelName(user.hotel))+' : progression, badges et synthèse d’intégration.'
-      : 'Un Passeport des Savoirs par service. Ouvrez-en un pour un nouveau collaborateur : son passeport est enregistré et se retrouve à tout moment dans la liste des passeports.')+'</p></div>'+
-    '<div class="svc-grid">'+cards+'</div>'+
-  '</div></section>'+
+  servicesSection(user, false)+
   footer();
 
-  $$("[data-new]").forEach(b => b.onclick = () => newRecordModal(b.getAttribute("data-new")));
+  bindServices();
 }
 
 /* Trouve un identifiant libre dérivé du nom. */
@@ -1361,16 +1386,10 @@ function renderDossiers(){
   }
 
   $("#app").innerHTML = header("home")+
-  '<div class="wrap" style="padding-top:34px;padding-bottom:56px">'+
+  /* le bloc « par service » apporte sa propre respiration en dessous */
+  '<div class="wrap" style="padding-top:34px">'+
     '<div class="section-head"><div class="section-kicker">Passeport des Savoirs</div>'+
-    '<h2>Les passeports <span class="serif italic">en cours</span></h2>'+
-    '<p>'+(isAdmin(user)
-        ? 'Tous les passeports, tous hôtels confondus. Retrouvez-en un à tout moment pour poursuivre l’évaluation, l’imprimer ou générer sa synthèse.'
-        : user && user.role === "officer"
-          ? 'Les passeports de '+esc(hotelName(user.hotel))+'. Votre profil ne donne accès qu’à cet hôtel.'
-          : user && user.role === "proprietaire"
-            ? 'Les passeports de '+esc(hotelName(user.hotel))+', en lecture seule. Ouvrez-en un pour suivre la progression, les badges et la synthèse d’intégration.'
-            : 'Vos passeports.')+'</p></div>'+
+    '<h2>Les passeports <span class="serif italic">en cours</span></h2></div>'+
     '<div class="doss-tools">'+
       '<div class="search"><span class="mag">🔍</span>'+
         '<input id="q" placeholder="Rechercher un collaborateur, un buddy, un service…" value="'+esc(dossQuery)+'"></div>'+
@@ -1380,7 +1399,10 @@ function renderDossiers(){
     '</div>'+
     (scope.length ? '<div class="filters" style="margin-bottom:22px">'+chips+'</div>' : "")+
     body+
-  '</div>'+footer();
+  '</div>'+
+  /* le bloc « par service » sous la liste : compteurs et création à portée de main */
+  servicesSection(user, true)+
+  footer();
 
   const qi = $("#q");
   if(qi){
@@ -1391,6 +1413,7 @@ function renderDossiers(){
     dossFilter = b.getAttribute("data-f"); renderDossiers();
   });
   $$("[data-newrec]").forEach(b => b.onclick = () => newRecordModal());
+  bindServices();
   $$("[data-exp]").forEach(b => b.onclick = () => exportRecord(getRecord(b.getAttribute("data-exp"))));
   $$("[data-del]").forEach(b => b.onclick = () => {
     const r = getRecord(b.getAttribute("data-del"));

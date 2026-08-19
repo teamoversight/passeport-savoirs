@@ -89,7 +89,8 @@ ouvert l’outil, il est ajouté une seule fois au chargement (indicateur
    collaborateur, nom du buddy, service, hôtel), filtre par service, progression, badges, date
    de dernière modification. Le bouton « ＋ Nouveau passeport » y figure pour l’administrateur
    et l’Officer / buddy : le service se choisit dans la modale, plus besoin de passer par une
-   carte de service.
+   carte de service. Sous la liste, le bloc **Par service** reprend les cartes de chaque
+   service — compteur, création pour l’Officer, et un bouton qui filtre la liste ci-dessus.
 3. **Comment ça marche** (`#/guide`) — les explications, sorties de l’accueil : le pitch, les 3
    blocs, l’échelle, la règle des badges, les trois regards, et les passeports par service.
    Accessible à tous les profils, collaborateur compris.
