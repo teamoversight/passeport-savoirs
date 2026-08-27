@@ -25,7 +25,7 @@ l’administrateur. Quatre profils :
 |---|---|---|---|
 | **Collaborateur** | ses passeports uniquement | sa seule colonne d’auto-évaluation | — |
 | **Officer / buddy** | les passeports de son hôtel, plus la démonstration | les colonnes buddy et COO | crée des passeports sur son hôtel |
-| **Propriétaire** | les passeports de son hôtel | rien — lecture seule | — |
+| **Propriétaire** | les passeports de son hôtel, plus la démonstration | rien — lecture seule | — |
 | **Administrateur** | tous les passeports, tous hôtels | les trois colonnes | hôtels, comptes, passeports |
 
 Le collaborateur consulte sa synthèse sans pouvoir la produire ni l’effacer, et sa couverture de
@@ -35,8 +35,8 @@ l’administrateur supprime, réinitialise et modifie les codes d’accès.
 Le **propriétaire** est un profil de consultation : il ouvre les passeports de son hôtel, lit les
 trois colonnes, la progression, les badges et **la synthèse d’intégration**, et peut exporter ou
 imprimer. Il ne modifie aucun niveau, aucun commentaire, aucune couverture, ne crée ni ne supprime
-de passeport, et ne produit pas la synthèse. Contrairement à l’Officer, il n’a **pas** accès au
-passeport de démonstration, sauf s’il est lui-même rattaché à l’Hôtel de démonstration.
+de passeport, et ne produit pas la synthèse. Comme l’Officer, il accède au passeport de
+démonstration, qui lui sert de référence : il apparaît dans sa liste, repéré « Démo ».
 
 Créer un passeport crée aussi le **compte du collaborateur**, dont l’identifiant est affiché à
 ce moment-là — c’est la seule fois. Sans ce compte, l’intéressé ne pourrait pas s’auto-évaluer.
@@ -73,8 +73,9 @@ Au premier chargement, quatre comptes de démonstration sont créés, sans code 
 | `proprietaire` | Propriétaire — Hôtel de démonstration |
 | `camille.durand` | Collaborateur — Hôtel de démonstration |
 
-Ils figurent dans le code source, donc publiquement. **Première chose à faire en production :
-créer les comptes réels avec des codes d’accès, puis supprimer ces quatre-là.**
+Ils figurent dans le code source, donc publiquement, mais **ne sont plus affichés sur l’écran
+de connexion**. **Première chose à faire en production : créer les comptes réels avec des codes
+d’accès, puis supprimer ces quatre-là.**
 
 Le compte `proprietaire` est arrivé après les trois autres : sur un navigateur qui avait déjà
 ouvert l’outil, il est ajouté une seule fois au chargement (indicateur

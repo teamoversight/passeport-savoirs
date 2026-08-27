@@ -376,11 +376,6 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .login .lead{font-size:.92rem;color:var(--ink-55);margin-bottom:26px;line-height:1.6}
 .login .err{display:none;background:#FBEEEB;border:1px solid rgba(180,69,47,.3);color:#8E3623;border-radius:10px;padding:11px 14px;font-size:.87rem;margin-bottom:16px}
 .login .err.on{display:block}
-.login-note{margin-top:22px;padding-top:20px;border-top:1px solid var(--ink-07);font-size:.82rem;color:var(--ink-55);line-height:1.65}
-.login-note b{color:var(--ink)}
-.roles-legend{display:grid;gap:8px;margin-top:12px}
-.roles-legend div{display:flex;gap:9px;align-items:flex-start;font-size:.82rem;color:var(--ink-55)}
-.roles-legend code{background:var(--grey-light);border-radius:6px;padding:1px 7px;font-size:.78rem;color:var(--ink)}
 
 /* ---------- Administration ---------- */
 .admtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
@@ -1005,10 +1000,11 @@ function signOut(){
 function canSee(u, rec){
   if(!u || !rec) return false;
   if(u.role === "admin")   return true;
-  /* la démonstration sert de référence : tous les Officers y ont accès */
-  if(u.role === "officer") return rec.demo || (!!rec.hotel && rec.hotel === u.hotel);
-  /* le propriétaire est strictement borné à son hôtel */
-  if(u.role === "proprietaire") return !!rec.hotel && rec.hotel === u.hotel;
+  /* la démonstration sert de référence : Officers et propriétaires y ont accès,
+     en plus des passeports de leur hôtel */
+  if(u.role === "officer" || u.role === "proprietaire"){
+    return rec.demo || (!!rec.hotel && rec.hotel === u.hotel);
+  }
   return (u.recordIds || []).includes(rec.id);
 }
 function visibleRecords(u){ return u ? RECORDS.filter(r => canSee(u, r)) : []; }
@@ -1201,7 +1197,10 @@ function renderGuide(){
         ? '<a class="btn btn-primary" href="#/">← Mon passeport</a>'
         : '<a class="btn btn-primary" href="#/">← Les passeports</a>')+
       '<a class="btn btn-ghost" href="#services">L’échelle et les services</a>'+
-      (canSee(user, getRecord(DEMO_ID))?'<a class="btn btn-ghost" href="#/d/'+DEMO_ID+'">🎬 Voir un passeport rempli</a>':"")+'</div>'+
+      /* la démonstration éclaire ceux qui suivent les passeports ; le
+         collaborateur, lui, n’a que le sien à consulter */
+      (getRecord(DEMO_ID) && user && user.role !== "collaborateur"
+        ? '<a class="btn btn-ghost" href="#/d/'+DEMO_ID+'">🎬 Voir un passeport rempli</a>' : "")+'</div>'+
   '</div></section>'+
 
   '<section class="section"><div class="wrap">'+
@@ -1214,7 +1213,7 @@ function renderGuide(){
       '<div class="pcard"><div class="ic">💫</div><h3>Savoir-être</h3><p>Ce qui s’observe au quotidien : sens du service, communication, esprit d’équipe, adaptabilité, professionnalisme.</p></div>'+
     '</div>'+
     '<div class="section-head c" style="margin-top:52px"><div class="section-kicker">L’échelle</div>'+
-    '<h2>Trois niveaux par item</h2></div>'+
+    '<h2>Quatre niveaux par item</h2></div>'+
     '<div class="scale-row">'+scaleCards+'</div>'+
     '<div class="grid-3" style="margin-top:24px">'+
       '<div class="pcard"><div class="ic" style="background:var(--kaki-light)">🎖️</div><h3>Un badge par sous-bloc</h3><p>Le badge s’obtient lorsque <b>100% des items</b> du sous-bloc atteignent le niveau 🟢 Acquis.</p></div>'+
@@ -1914,7 +1913,6 @@ function generateAI(svc, rec, btn){
    ========================================================================== */
 
 function renderLogin(){
-  const demoUsers = USERS.filter(u => u.demo);
   $("#app").innerHTML =
   '<div class="login-wrap"><div class="login">'+
     '<div class="mark">🛂</div>'+
@@ -1925,12 +1923,8 @@ function renderLogin(){
     '<div class="f"><label>Code d’accès</label>'+
       '<input id="l-code" type="password" placeholder="laisser vide si aucun code" autocomplete="current-password"></div>'+
     '<button class="btn btn-primary" data-in style="width:100%;justify-content:center;margin-top:6px">Se connecter</button>'+
-    (demoUsers.length
-      ? '<div class="login-note"><b>Comptes de démonstration</b><div class="roles-legend">'+
-        demoUsers.map(u => '<div><code>'+esc(u.login)+'</code><span>'+esc(ROLE_LABEL[u.role])+
-          (u.hotel ? " — "+esc(hotelName(u.hotel)) : " — tous les hôtels")+'</span></div>').join("")+
-        '</div></div>'
-      : "")+
+    /* les comptes d’amorçage ne sont plus affichés ici : ils figurent dans le
+       README, à l’usage de qui installe l’outil */
   '</div></div>';
 
   const showErr = msg => { const e = $("#err"); e.textContent = msg; e.classList.add("on"); };
