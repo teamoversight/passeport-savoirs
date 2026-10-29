@@ -1,10 +1,14 @@
 -- ============================================================================
 -- Passeport des Savoirs — schéma et droits
 --
--- Installé dans le projet Supabase déjà utilisé par l'Officer Academy.
--- Toutes les tables sont préfixées « pds_ » : rien n'est partagé avec l'Academy
--- en dehors de auth.users, si bien qu'une personne présente dans les deux
--- outils s'y connecte avec le même identifiant et le même mot de passe.
+-- À installer dans un projet Supabase DÉDIÉ au Passeport des Savoirs.
+-- L'Officer Academy a le sien : les deux ne partagent rien, ni comptes, ni
+-- sauvegardes, ni clés, ni quota d'envoi d'e-mails. L'Academy a servi de modèle,
+-- elle n'est pas touchée.
+--
+-- Les tables restent préfixées « pds_ » : cela ne sert plus à cohabiter, mais
+-- à ce qu'on reconnaisse d'un coup d'œil à quel outil appartient un objet si
+-- les deux bases sont ouvertes côte à côte.
 --
 -- Les droits sont appliqués par la base (RLS), pas par l'interface : même en
 -- appelant l'API directement, personne ne voit ni ne modifie ce qui ne le
