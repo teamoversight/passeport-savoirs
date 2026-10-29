@@ -99,6 +99,8 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .topnav a.on{background:var(--blue-dark);color:#fff}
 .topnav .pill{background:var(--blue-light);color:var(--blue-flash);border-radius:999px;padding:1px 7px;font-size:.74rem;margin-left:5px;font-weight:600}
 .topnav a.on .pill{background:rgba(255,255,255,.2);color:#fff}
+.topnav-mini{padding:7px 10px;border-radius:999px;font-size:.95rem;text-decoration:none}
+.topnav-mini:hover{background:var(--blue-light);text-decoration:none}
 
 /* ---------- Hero ---------- */
 .hero{padding:78px 0 54px;text-align:center}
@@ -1228,6 +1230,9 @@ function route(){
   const u = currentUser();
   if(!u){ renderLogin(); return; }
 
+  /* changement de mot de passe à la demande, une fois connecté */
+  if(hashParts()[0] === "motdepasse"){ renderSetPassword(); return; }
+
   const parts = hashParts();
 
   /* Le collaborateur ne circule que dans ses propres passeports. */
@@ -1293,6 +1298,7 @@ function header(active){
     '<nav class="topnav">'+nav+
       '<span class="whoami"><b>'+esc(u.nom || u.login)+'</b>'+
         '<span>'+esc(ROLE_LABEL[u.role])+(u.hotel ? " · "+esc(hotelName(u.hotel)) : "")+'</span></span>'+
+      '<a class="topnav-mini" href="#/motdepasse" title="Changer mon mot de passe">🔑</a>'+
       '<button class="btn btn-ghost btn-sm" data-logout>Déconnexion</button>'+
     '</nav></div></div>';
 }
@@ -2180,14 +2186,15 @@ function renderSetPassword(){
   $("#app").innerHTML =
   '<div class="login-wrap"><div class="login">'+
     '<div class="mark">🛂</div>'+
-    '<h1>Choisissez votre mot de passe</h1>'+
+    '<h1>'+(NEED_PASSWORD ? "Choisissez votre mot de passe" : "Changer votre mot de passe")+'</h1>'+
     '<p class="lead">'+esc((SESSION && SESSION.user && SESSION.user.email) || "")+'</p>'+
     '<div class="err" id="err"></div>'+
     '<div class="f"><label>Mot de passe</label>'+
       '<input id="p1" type="password" autocomplete="new-password" placeholder="au moins 8 caractères"></div>'+
     '<div class="f"><label>Confirmation</label>'+
       '<input id="p2" type="password" autocomplete="new-password"></div>'+
-    '<button class="btn btn-primary" data-go style="width:100%;justify-content:center;margin-top:6px">Enregistrer et entrer</button>'+
+    '<button class="btn btn-primary" data-go style="width:100%;justify-content:center;margin-top:6px">Enregistrer</button>'+
+    (NEED_PASSWORD ? "" : '<button class="btn btn-ghost" data-annuler style="width:100%;justify-content:center;margin-top:10px">Annuler</button>')+
   '</div></div>';
 
   const showErr = m => { const e = $("#err"); e.textContent = m; e.classList.add("on"); };
@@ -2201,17 +2208,21 @@ function renderSetPassword(){
     try{
       await sbCall("/auth/v1/user", {method:"PUT", body: JSON.stringify({password: a})});
       await sbCall("/rest/v1/rpc/pds_activate_me", {method:"POST", body: "{}"});
+      const premiere = NEED_PASSWORD;
       NEED_PASSWORD = false;
       await loadMe();
       if(ME) await loadAll();
       location.hash = "#/";
       route();
+      toast(premiere ? "Bienvenue. Votre mot de passe est enregistré." : "Mot de passe modifié.");
     }catch(e){
       showErr(e.message);
       btn.disabled = false; btn.textContent = "Enregistrer et entrer";
     }
   };
   btn.onclick = submit;
+  const annul = $("[data-annuler]");
+  if(annul) annul.onclick = () => { location.hash = "#/"; route(); };
   $$("#p1, #p2").forEach(i => i.onkeydown = e => { if(e.key === "Enter") submit(); });
   $("#p1").focus();
 }
@@ -2708,7 +2719,12 @@ async function handleAuthFragment(){
   const h = location.hash || "";
   if(h.indexOf("access_token=") === -1 && h.indexOf("error_description=") === -1) return null;
 
-  const grab = n => { const m = h.match(new RegExp(n + "=([^&]+)")); return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : null; };
+  /* Ancré sur « # » ou « & » : sans cela, « type= » serait trouvé à l'intérieur
+     de « token_type=bearer », qui précède toujours le vrai paramètre. */
+  const grab = n => {
+    const m = h.match(new RegExp("[#&]" + n + "=([^&]+)"));
+    return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : null;
+  };
   const erreur = grab("error_description");
   const token  = grab("access_token");
   const type   = grab("type");
