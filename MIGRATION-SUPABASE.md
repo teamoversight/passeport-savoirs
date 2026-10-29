@@ -111,10 +111,19 @@ Contrôle depuis un navigateur non authentifié, avec la clé publique :
 
    Le bandeau orange de Supabase sur Gmail est attendu et sans conséquence à ce
    volume. La limite d'envoi passe à 30 e-mails par heure.
-4. **Créer le projet Cloudflare Pages** connecté au dépôt
-   `teamoversight/passeport-savoirs`. Aucune commande de construction, dossier
-   de sortie `/`, branche `main`.
-5. **Renseigner les variables** dans les réglages du projet Pages :
+4. ~~**Créer le projet Cloudflare Pages**~~ — fait.
+
+   Projet **Pages** `passeport-savoirs`, connecté à `teamoversight/passeport-savoirs`,
+   branche `main`, déploiements automatiques activés. Aucun préréglage de
+   framework, aucune commande de construction, sortie à la racine.
+
+   Adresse : **https://passeport-savoirs.pages.dev**
+
+   L'ancien **Worker** du même nom subsiste et sert une version périmée sous
+   `passeport-savoirs.hoteloversight.workers.dev`. Il n'a jamais redéployé depuis
+   Git. À supprimer une fois le nouveau site validé, pour éviter deux adresses
+   qui ne montrent pas la même chose.
+5. ~~**Renseigner les variables**~~ — fait. Pour mémoire :
    - `SUPABASE_URL` : `https://otynyiemlwbbbnbooktc.supabase.co`
    - `SUPABASE_SERVICE_ROLE_KEY` : la clé **secrète** (`sb_secret_…`), copiée de
      Supabase directement dans Cloudflare. Elle ne transite par aucune conversation et
