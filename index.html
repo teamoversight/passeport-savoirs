@@ -2109,8 +2109,10 @@ function renderLogin(msg){
     '<div class="f"><label>Mot de passe</label>'+
       '<input id="l-pass" type="password" autocomplete="current-password"></div>'+
     '<button class="btn btn-primary" data-in style="width:100%;justify-content:center;margin-top:6px">Se connecter</button>'+
+    '<button class="btn btn-ghost" data-oubli style="width:100%;justify-content:center;margin-top:10px">Mot de passe oublié</button>'+
     '<div class="login-note">Votre accès est créé par l’administrateur. '+
-      'Vous recevez alors un e-mail qui vous invite à choisir votre mot de passe.</div>'+
+      'Vous recevez alors un e-mail qui vous invite à choisir votre mot de passe. '+
+      'Si ce lien a expiré, demandez-en un nouveau ci-dessus.</div>'+
   '</div></div>';
   if(msg) $("#err").classList.add("on");
 
@@ -2148,6 +2150,26 @@ function renderLogin(msg){
     }
   };
   btn.onclick = submit;
+
+  /* Les liens d'invitation expirent au bout d'une heure. Plutôt que de
+     dépendre de l'administrateur, chacun peut s'en faire renvoyer un. */
+  $("[data-oubli]").onclick = async () => {
+    const email = $("#l-mail").value.trim();
+    if(!email){ showErr("Saisissez d’abord votre adresse e-mail."); $("#l-mail").focus(); return; }
+    const b = $("[data-oubli]");
+    b.disabled = true; b.textContent = "Envoi…";
+    try{
+      await sbCall("/auth/v1/recover", {method:"POST", body: JSON.stringify({email})});
+      const e = $("#err");
+      e.textContent = "Si un compte existe pour cette adresse, un lien vient d’y être envoyé. Il reste valable une heure.";
+      e.classList.add("on");
+      e.style.background = "var(--kaki-light)";
+      e.style.borderColor = "rgba(124,145,130,.4)";
+      e.style.color = "#4F6353";
+    }catch(err){ showErr(err.message); }
+    b.disabled = false; b.textContent = "Mot de passe oublié";
+  };
+
   $$("#l-mail, #l-pass").forEach(i => i.onkeydown = e => { if(e.key === "Enter") submit(); });
   $("#l-mail").focus();
 }
