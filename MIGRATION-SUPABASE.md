@@ -53,12 +53,46 @@ comptes distincts**, avec deux mots de passe. C'est le prix de l'isolation.
 | Propriétaire | son hôtel + la démonstration | rien, lecture seule | — |
 | Administrateur | tout | les trois colonnes | tout profil, tout hôtel |
 
+## Le projet, tel qu'installé
+
+| | |
+| --- | --- |
+| Projet Supabase | `passeport-savoirs`, organisation Oversight |
+| Référence | `otynyiemlwbbbnbooktc` |
+| URL | `https://otynyiemlwbbbnbooktc.supabase.co` |
+| Région | eu-west-1, Irlande |
+| Clé publique | `sb_publishable_V-Cd_bR87wDiys4Qv1NXfg_Kw-D0IRx` |
+
+La clé publique part dans le navigateur de chaque visiteur : elle figure dans la
+page, c'est sa raison d'être. Ce qu'elle autorise est entièrement déterminé par
+les politiques RLS.
+
+Ce projet utilise le **nouveau format de clés Supabase** (`sb_publishable_…` et
+`sb_secret_…`), là où l'Officer Academy utilisait l'ancien (jetons JWT `anon` et
+`service_role`). La variable `SUPABASE_SERVICE_ROLE_KEY` contiendra donc une clé
+`sb_secret_…` ; elle se présente dans les mêmes en-têtes et la fonction
+d'invitation n'a pas besoin d'être modifiée.
+
+## Vérifié le 29 octobre 2026
+
+Script exécuté dans le projet dédié, résultat « Success. No rows returned ».
+
+| Table | RLS | Politiques | Colonnes |
+| --- | --- | --- | --- |
+| `pds_evaluations` | active | 4 | 7 |
+| `pds_hotels` | active | 2 | 3 |
+| `pds_passports` | active | 4 | 13 |
+| `pds_profiles` | active | 2 | 9 |
+
+Contrôle depuis un navigateur non authentifié, avec la clé publique :
+
+- lecture des quatre tables : `200` et une liste vide, rien n'est exposé ;
+- tentative d'écriture : `401 — new row violates row-level security policy`.
+
 ## Installation
 
-1. **Créer un projet Supabase** nommé par exemple `passeport-savoirs`, dans la
-   même région que l'Academy (UE).
-2. **Installer la base** — SQL Editor, coller le contenu de
-   `supabase/migrations/001_pds_schema.sql`, exécuter. À faire une fois.
+1. ~~**Créer un projet Supabase**~~ — fait.
+2. ~~**Installer la base**~~ — fait, et vérifié.
 3. **Configurer l'envoi d'e-mails** — sans cela les invitations ne partent pas.
    Le compte Resend de l'Academy et son domaine vérifié se réutilisent : il
    suffit de reprendre la même clé dans les réglages SMTP du nouveau projet.
@@ -66,9 +100,9 @@ comptes distincts**, avec deux mots de passe. C'est le prix de l'isolation.
    `teamoversight/passeport-savoirs`. Aucune commande de construction, dossier
    de sortie `/`, branche `main`.
 5. **Renseigner les variables** dans les réglages du projet Pages :
-   - `SUPABASE_URL` : l'adresse du **nouveau** projet
-   - `SUPABASE_SERVICE_ROLE_KEY` : sa clé `service_role`, copiée de Supabase
-     directement dans Cloudflare. Elle ne transite par aucune conversation et
+   - `SUPABASE_URL` : `https://otynyiemlwbbbnbooktc.supabase.co`
+   - `SUPABASE_SERVICE_ROLE_KEY` : la clé **secrète** (`sb_secret_…`), copiée de
+     Supabase directement dans Cloudflare. Elle ne transite par aucune conversation et
      n'entre jamais dans le dépôt.
    - `SITE_URL` : l'adresse du site une fois connue.
 6. **Créer le premier administrateur** à la main dans Supabase, puis passer sa
