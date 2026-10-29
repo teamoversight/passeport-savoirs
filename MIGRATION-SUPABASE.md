@@ -93,9 +93,24 @@ Contrôle depuis un navigateur non authentifié, avec la clé publique :
 
 1. ~~**Créer un projet Supabase**~~ — fait.
 2. ~~**Installer la base**~~ — fait, et vérifié.
-3. **Configurer l'envoi d'e-mails** — sans cela les invitations ne partent pas.
-   Le compte Resend de l'Academy et son domaine vérifié se réutilisent : il
-   suffit de reprendre la même clé dans les réglages SMTP du nouveau projet.
+3. ~~**Configurer l'envoi d'e-mails**~~ — fait, et testé par un envoi réel.
+
+   | Champ | Valeur |
+   | --- | --- |
+   | Serveur | `smtp.gmail.com`, port 465 |
+   | Identifiant | `team@hoteloversight.com` |
+   | Mot de passe | mot de passe d'application Google, 16 lettres |
+   | Expéditeur | `team@hoteloversight.com`, affiché « Passeport des Savoirs » |
+
+   **Si une invitation échoue avec `500 — Error sending invite email`**, la cause
+   est presque toujours là. Le détail se lit dans *Logs → Auth Logs*, champ
+   `error`. Un `535 BadCredentials` signifie que Gmail refuse le mot de passe :
+   il faut un **mot de passe d'application**, pas le mot de passe habituel du
+   compte, et il doit appartenir au compte `team@hoteloversight.com`. C'est
+   exactement ce qui est arrivé au premier essai.
+
+   Le bandeau orange de Supabase sur Gmail est attendu et sans conséquence à ce
+   volume. La limite d'envoi passe à 30 e-mails par heure.
 4. **Créer le projet Cloudflare Pages** connecté au dépôt
    `teamoversight/passeport-savoirs`. Aucune commande de construction, dossier
    de sortie `/`, branche `main`.
@@ -105,9 +120,14 @@ Contrôle depuis un navigateur non authentifié, avec la clé publique :
      Supabase directement dans Cloudflare. Elle ne transite par aucune conversation et
      n'entre jamais dans le dépôt.
    - `SITE_URL` : l'adresse du site une fois connue.
-6. **Créer le premier administrateur** à la main dans Supabase, puis passer sa
-   ligne `pds_profiles` en `role = 'admin'`. Les suivants sont invités depuis
-   l'interface.
+6. ~~**Créer le premier administrateur**~~ — fait.
+
+   `elina.michel@hoteloversight.com` a été invitée depuis *Authentication →
+   Users → Add user → Send invitation*, puis sa ligne `pds_profiles` créée avec
+   `role = 'admin'`. Son statut restera `invite` jusqu'à ce qu'elle choisisse son
+   mot de passe depuis l'e-mail reçu — ce qui suppose que l'application soit
+   branchée et déployée. Les administrateurs suivants s'inviteront depuis
+   l'interface, sans repasser par le SQL.
 
 ## Reste à faire
 
