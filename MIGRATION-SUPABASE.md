@@ -138,6 +138,25 @@ Contrôle depuis un navigateur non authentifié, avec la clé publique :
    branchée et déployée. Les administrateurs suivants s'inviteront depuis
    l'interface, sans repasser par le SQL.
 
+## Déploiement automatique : la panne et sa cause
+
+Pendant deux mois, le Worker `passeport-savoirs` n'a jamais redéployé après un
+push. Le projet Pages créé ensuite a présenté le même symptôme : un premier
+déploiement à la création, puis plus rien, avec le bandeau « This project is
+disconnected from your Git account ».
+
+**La cause n'était ni le Worker, ni Pages, ni leur configuration** : l'application
+GitHub *Cloudflare Workers and Pages* n'avait plus accès au dépôt. Cloudflare
+pouvait cloner au moment de la création, mais ne recevait plus les notifications
+de commit.
+
+Correction : GitHub → *Settings → Applications → Cloudflare Workers and Pages →
+Configure → Repository access*, et s'assurer que `passeport-savoirs` y figure —
+ou choisir *All repositories* pour que le problème ne se repose pas à chaque
+nouveau dépôt.
+
+À vérifier en premier si un commit ne se déploie plus.
+
 ## Reste à faire
 
 - Brancher l'application sur la base : connexion, chargement et écriture.
