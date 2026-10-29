@@ -402,6 +402,10 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .rolechip.admin{background:var(--blue-dark);color:#fff}
 .rolechip.officer{background:var(--kaki);color:#fff}
 .rolechip.collaborateur{background:var(--blue-light);color:var(--blue-flash)}
+.statut{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;font-weight:600;padding:3px 9px;border-radius:999px}
+.statut.invite{background:var(--gold-light);color:var(--gold)}
+.statut.actif{background:var(--kaki-light);color:#4F6353}
+.statut.desactive{background:rgba(0,1,30,.07);color:var(--ink-40)}
 .rolechip.proprietaire{background:var(--gold-light);color:var(--gold)}
 .addform{background:var(--grey-light);border-radius:var(--radius-sm);padding:20px;margin-top:20px}
 .addform h4{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-55);margin-bottom:16px}
@@ -720,42 +724,128 @@ const getService = id => SERVICES.find(s => s.id === id) || null;
 const isReady    = svc => !!svc && svc.blocks.some(b => b.subs.length);
 
 /* ==========================================================================
-   2. DOSSIERS — un passeport enregistré par collaborateur
+   2. ACCÈS À LA BASE
+
+   Les données vivent dans Supabase. Le navigateur ne garde que le jeton de
+   session et deux préférences d'affichage.
+
+   La clé ci-dessous est publique par construction : elle part dans la page de
+   chaque visiteur. Ce qu'elle autorise est décidé par les politiques de la
+   base, pas par cette page. Un visiteur non connecté ne lit rien.
    ========================================================================== */
 
-const LS_RECORDS = "pds.records.v2";
-const LS_ROLE    = "pds.role.v1";
+const SB_URL = "https://otynyiemlwbbbnbooktc.supabase.co";
+const SB_KEY = "sb_publishable_V-Cd_bR87wDiys4Qv1NXfg_Kw-D0IRx";
 
-function readJSON(key, fallback){
-  try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-  catch(e){ return fallback; }
-}
-function writeJSON(key, val){
-  try{ localStorage.setItem(key, JSON.stringify(val)); return true; }
-  catch(e){ toast("Sauvegarde impossible : stockage du navigateur indisponible."); return false; }
-}
+const LS_SESSION = "pds.session.v3";   // jeton de session
+const LS_ROLE    = "pds.role.v1";      // dernière colonne choisie
+const LS_SEEN    = "pds.badges.v1";    // badges déjà annoncés, par personne
 
-let RECORDS = readJSON(LS_RECORDS, []);
+function readLocal(k, d){
+  try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; }
+}
+function writeLocal(k, v){
+  try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){}
+}
+function dropLocal(k){ try{ localStorage.removeItem(k); }catch(e){} }
+
+let SESSION = null;       // {access_token, refresh_token, expires_at, user}
+let ME      = null;       // profil du connecté
+let HOTELS  = [];
+let USERS   = [];         // profils visibles
+let RECORDS = [];         // passeports visibles
 let ROLE    = localStorage.getItem(LS_ROLE) || "auto";
 
-function saveRecords(){ writeJSON(LS_RECORDS, RECORDS); }
-function touch(rec){ rec.updatedAt = new Date().toISOString(); saveRecords(); }
+/* --- appels à Supabase -------------------------------------------------- */
+
+function sbHeaders(extra){
+  return Object.assign({
+    apikey: SB_KEY,
+    Authorization: "Bearer " + (SESSION ? SESSION.access_token : SB_KEY),
+    "Content-Type": "application/json"
+  }, extra || {});
+}
+
+async function sbCall(path, init){
+  init = init || {};
+  const r = await fetch(SB_URL + path, Object.assign({}, init, {headers: sbHeaders(init.headers)}));
+  const txt = await r.text();
+  let body = null;
+  try{ body = txt ? JSON.parse(txt) : null; }catch(e){ body = txt; }
+  if(!r.ok){
+    const msg = (body && (body.message || body.error_description || body.msg || body.error))
+                || ("erreur " + r.status);
+    const err = new Error(msg); err.status = r.status; throw err;
+  }
+  return body;
+}
+const rest = (query, init) => sbCall("/rest/v1/" + query, init);
+
+/* --- passeports --------------------------------------------------------- */
+
+function rowToRecord(row){
+  return {
+    id: row.id, service: row.service,
+    hotel: row.hotel_id || "", owner: row.owner_id || "",
+    nom: row.nom || "", arrivee: row.arrivee || "", buddy: row.buddy || "",
+    demo: !!row.is_demo,
+    items: {}, unlocked: [],
+    synthese: row.synthese_text ? {text: row.synthese_text, at: row.synthese_at} : null,
+    createdAt: row.created_at, updatedAt: row.updated_at
+  };
+}
 
 function getRecord(id){ return RECORDS.find(r => r.id === id) || null; }
+function demoRecord(){ return RECORDS.find(r => r.demo) || null; }
 function recordsOf(serviceId){ return RECORDS.filter(r => r.service === serviceId); }
 
-function makeId(){
-  return "d" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+/* Badges déjà annoncés : propre à chaque personne, donc gardé localement.
+   Savoir si l'on a déjà vu une pop-up ne regarde pas la base. */
+function seenKey(rec){ return (SESSION && SESSION.user ? SESSION.user.id : "anon") + ":" + rec.id; }
+function seenBadges(rec){ return readLocal(LS_SEEN, {})[seenKey(rec)] || []; }
+function saveSeenBadges(rec){
+  const all = readLocal(LS_SEEN, {});
+  all[seenKey(rec)] = rec.unlocked || [];
+  writeLocal(LS_SEEN, all);
 }
-function createRecord(serviceId, meta){
-  const now = new Date().toISOString();
-  const rec = {
-    id: makeId(), service: serviceId, hotel: meta.hotel || "",
-    nom: (meta.nom || "").trim(), arrivee: meta.arrivee || "", buddy: (meta.buddy || "").trim(),
-    items:{}, unlocked:[], synthese:null, createdAt: now, updatedAt: now
-  };
-  RECORDS.push(rec); saveRecords();
+
+/* Enregistre la couverture d'un passeport. Réservé par la base à
+   l'administrateur et à l'Officer / buddy ; l'interface ne l'appelle pas
+   ailleurs. L'écriture ne bloque pas l'affichage. */
+function touch(rec){
+  rec.updatedAt = new Date().toISOString();
+  rest("pds_passports?id=eq." + rec.id, {
+    method: "PATCH",
+    body: JSON.stringify({
+      nom: rec.nom, arrivee: rec.arrivee || null, buddy: rec.buddy,
+      hotel_id: rec.hotel || null,
+      synthese_text: rec.synthese ? rec.synthese.text : null,
+      synthese_at:   rec.synthese ? rec.synthese.at   : null
+    })
+  }).catch(e => toast("Enregistrement impossible : " + e.message));
+}
+
+async function createRecord(serviceId, meta){
+  const rows = await rest("pds_passports", {
+    method: "POST",
+    headers: {Prefer: "return=representation"},
+    body: JSON.stringify({
+      service: serviceId,
+      hotel_id: meta.hotel || null,
+      owner_id: meta.owner || null,
+      nom: (meta.nom || "").trim(),
+      arrivee: meta.arrivee || null,
+      buddy: (meta.buddy || "").trim()
+    })
+  });
+  const rec = rowToRecord(rows[0]);
+  RECORDS.push(rec);
   return rec;
+}
+
+async function deleteRecord(rec){
+  await rest("pds_passports?id=eq." + rec.id, {method: "DELETE"});
+  RECORDS = RECORDS.filter(r => r.id !== rec.id);
 }
 
 function itemKey(blockId, subId, i){ return blockId+"."+subId+"."+i; }
@@ -764,11 +854,28 @@ function getEval(rec, key, role){
   if(!it || !it[role]) return {lvl:null, note:""};
   return {lvl:(typeof it[role].lvl === "number" ? it[role].lvl : null), note: it[role].note || ""};
 }
+/* L'affichage est mis à jour tout de suite, l'écriture suit. Si la base refuse
+   — colonne qui n'est pas la sienne, compte désactivé — un message le dit et
+   l'on recharge pour ne pas laisser l'écran mentir. */
 function setEval(rec, key, role, patch){
   if(!rec.items[key]) rec.items[key] = {};
   if(!rec.items[key][role]) rec.items[key][role] = {lvl:null, note:""};
   Object.assign(rec.items[key][role], patch);
-  touch(rec);
+  const e = rec.items[key][role];
+  rec.updatedAt = new Date().toISOString();
+
+  rest("pds_evaluations?on_conflict=passport_id,item_key,evaluator", {
+    method: "POST",
+    headers: {Prefer: "resolution=merge-duplicates"},
+    body: JSON.stringify({
+      passport_id: rec.id, item_key: key, evaluator: role,
+      level: e.lvl, note: e.note || "",
+      updated_by: SESSION && SESSION.user ? SESSION.user.id : null
+    })
+  }).catch(err => {
+    toast("Enregistrement refusé : " + err.message);
+    reload().then(() => route());
+  });
 }
 
 /* Niveau retenu : la validation la plus engageante disponible (COO > Buddy > Auto). */
@@ -826,7 +933,7 @@ function checkBadges(svc, rec, silent){
   const hadAmb = rec.unlocked.includes("__ambassadeur__");
   if(stats.ambassador && !hadAmb){ rec.unlocked.push("__ambassadeur__"); queue.push({type:"golden"}); }
   else if(!stats.ambassador && hadAmb){ rec.unlocked = rec.unlocked.filter(x => x !== "__ambassadeur__"); }
-  saveRecords();
+  saveSeenBadges(rec);
   if(queue.length && !silent) showBadgeQueue(svc, rec, queue);
   return stats;
 }
@@ -957,43 +1064,117 @@ function showBadgeQueue(svc, rec, queue){
 }
 
 /* ==========================================================================
-   5. HÔTELS, COMPTES ET SESSION
+   5. COMPTES ET SESSION
 
-   ATTENTION — ceci organise l’interface, ce n’est PAS une sécurité.
-   Le site est statique : tout le code est public et les données vivent dans le
-   localStorage du navigateur. Quiconque ouvre les outils de développement voit
-   l’ensemble des comptes et des passeports, quel que soit le profil connecté.
-   Une vraie séparation des accès exige un serveur qui authentifie et qui ne
-   renvoie à chaque profil que les données auxquelles il a droit.
+   L'authentification est celle de Supabase : e-mail et mot de passe, le compte
+   étant créé par invitation de l'administrateur. Les droits ne sont plus
+   appliqués par cette page mais par la base : même en s'adressant directement
+   à l'API, personne ne lit ni n'écrit ce qui ne le regarde pas.
    ========================================================================== */
-
-const LS_HOTELS  = "pds.hotels.v1";
-const LS_USERS   = "pds.users.v1";
-const LS_SESSION = "pds.session.v1";
-
-let HOTELS = readJSON(LS_HOTELS, []);
-let USERS  = readJSON(LS_USERS, []);
-
-function saveHotels(){ writeJSON(LS_HOTELS, HOTELS); }
-function saveUsers(){ writeJSON(LS_USERS, USERS); }
 
 const ROLE_LABEL = {collaborateur:"Collaborateur", officer:"Officer / buddy",
                     proprietaire:"Propriétaire", admin:"Administrateur"};
+const STATUT_LABEL = {invite:"Invité", actif:"Actif", desactive:"Désactivé"};
 
 const getHotel  = id => HOTELS.find(h => h.id === id) || null;
 const hotelName = id => { const h = getHotel(id); return h ? h.name : "Hôtel non défini"; };
 const getUser   = id => USERS.find(u => u.id === id) || null;
+const currentUser = () => ME;
 
-function findLogin(login){
-  const l = String(login || "").trim().toLowerCase();
-  return USERS.find(u => String(u.login).toLowerCase() === l) || null;
+function profileToUser(p){
+  return {id:p.id, email:p.email, login:p.email, nom:p.nom || "",
+          role:p.role, hotel:p.hotel_id || "", status:p.status,
+          recordIds:[], demo:false};
 }
-function currentUser(){ return getUser(localStorage.getItem(LS_SESSION) || ""); }
-function signIn(u){ try{ localStorage.setItem(LS_SESSION, u.id); }catch(e){} }
+
+/* --- session ------------------------------------------------------------ */
+
+function storeSession(s){
+  if(s){
+    SESSION = {
+      access_token: s.access_token,
+      refresh_token: s.refresh_token || (SESSION && SESSION.refresh_token) || "",
+      expires_at: Math.floor(Date.now()/1000) + (s.expires_in || 3600),
+      user: s.user || (SESSION && SESSION.user) || null
+    };
+    writeLocal(LS_SESSION, SESSION);
+  } else {
+    SESSION = null; dropLocal(LS_SESSION);
+  }
+}
+
+async function tokenCall(grant, payload){
+  const r = await fetch(SB_URL + "/auth/v1/token?grant_type=" + grant, {
+    method: "POST",
+    headers: {apikey: SB_KEY, Authorization: "Bearer " + SB_KEY, "Content-Type": "application/json"},
+    body: JSON.stringify(payload)
+  });
+  const b = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error(b.error_description || b.msg || b.message || "connexion refusée");
+  return b;
+}
+
+async function signInPassword(email, password){
+  storeSession(await tokenCall("password", {email, password}));
+}
+
+async function refreshSession(){
+  if(!SESSION || !SESSION.refresh_token) return false;
+  try{ storeSession(await tokenCall("refresh_token", {refresh_token: SESSION.refresh_token})); return true; }
+  catch(e){ storeSession(null); return false; }
+}
+
+/* Le jeton dure une heure : on le renouvelle avant chaque série d'appels. */
+async function ensureFresh(){
+  if(!SESSION) return false;
+  if(SESSION.expires_at - 60 > Math.floor(Date.now()/1000)) return true;
+  return refreshSession();
+}
+
 function signOut(){
-  try{ localStorage.removeItem(LS_SESSION); }catch(e){}
+  storeSession(null);
+  ME = null; HOTELS = []; USERS = []; RECORDS = [];
   location.hash = "#/";
   route();
+}
+
+/* --- chargement --------------------------------------------------------- */
+
+async function loadMe(){
+  if(!SESSION || !SESSION.user) return null;
+  const rows = await rest("pds_profiles?select=*&id=eq." + SESSION.user.id);
+  ME = rows[0] ? profileToUser(rows[0]) : null;
+  return ME;
+}
+
+/* La base ne renvoie que ce que le profil a le droit de voir : le filtrage
+   n'est pas fait ici, il est fait par les politiques. */
+async function loadAll(){
+  const [hotels, profiles, passports] = await Promise.all([
+    rest("pds_hotels?select=*&order=name"),
+    rest("pds_profiles?select=*"),
+    rest("pds_passports?select=*")
+  ]);
+  HOTELS  = hotels.map(h => ({id:h.id, name:h.name}));
+  USERS   = profiles.map(profileToUser);
+  RECORDS = passports.map(rowToRecord);
+
+  if(RECORDS.length){
+    const evals = await rest("pds_evaluations?select=*");
+    evals.forEach(e => {
+      const rec = getRecord(e.passport_id);
+      if(!rec) return;
+      if(!rec.items[e.item_key]) rec.items[e.item_key] = {};
+      rec.items[e.item_key][e.evaluator] = {lvl: e.level, note: e.note || ""};
+    });
+  }
+  USERS.forEach(u => { u.recordIds = RECORDS.filter(r => r.owner === u.id).map(r => r.id); });
+  RECORDS.forEach(r => { r.unlocked = seenBadges(r); });
+}
+
+async function reload(){
+  if(!await ensureFresh()) return;
+  await loadAll();
 }
 
 /* Qui a le droit de voir quel passeport. */
@@ -1040,6 +1221,9 @@ function hashParts(){
 function route(){
   window.scrollTo(0, 0);
   closeModal();
+
+  /* arrivée depuis un e-mail d'invitation : rien d'autre avant le mot de passe */
+  if(NEED_PASSWORD){ renderSetPassword(); return; }
 
   const u = currentUser();
   if(!u){ renderLogin(); return; }
@@ -1199,8 +1383,8 @@ function renderGuide(){
       '<a class="btn btn-ghost" href="#services">L’échelle et les services</a>'+
       /* la démonstration éclaire ceux qui suivent les passeports ; le
          collaborateur, lui, n’a que le sien à consulter */
-      (getRecord(DEMO_ID) && user && user.role !== "collaborateur"
-        ? '<a class="btn btn-ghost" href="#/d/'+DEMO_ID+'">🎬 Voir un passeport rempli</a>' : "")+'</div>'+
+      (demoRecord() && user && user.role !== "collaborateur"
+        ? '<a class="btn btn-ghost" href="#/d/'+demoRecord().id+'">🎬 Voir un passeport rempli</a>' : "")+'</div>'+
   '</div></section>'+
 
   '<section class="section"><div class="wrap">'+
@@ -1228,25 +1412,12 @@ function renderGuide(){
   bindServices();
 }
 
-/* Trouve un identifiant libre dérivé du nom. */
-function freeLogin(nom){
-  const base = slugLogin(nom);
-  if(!loginTaken(base)) return base;
-  let i = 2;
-  while(loginTaken(base+i)) i++;
-  return base+i;
-}
-
-/* Modale de création d’un passeport pour un collaborateur.
-   Crée aussi son compte, sans quoi il ne pourrait pas s’auto-évaluer.
-   L’Officer / buddy ne crée que sur son propre hôtel ; l’administrateur choisit.
-   serviceId est facultatif : appelée depuis la liste, la modale propose
-   elle-même le choix du service parmi ceux dont les items sont définis. */
+/* Modale de création d’un passeport. Le compte du collaborateur est créé en
+   même temps, par invitation : sans compte, l’intéressé ne pourrait pas
+   s’auto-évaluer. L’Officer / buddy ne crée que sur son propre hôtel. */
 function newRecordModal(serviceId){
-  const ready = SERVICES.filter(isReady);
-  const svc = getService(serviceId) || ready[0];
-  if(!svc){ toast("Aucun service disponible : définissez d’abord les items d’un service."); return; }
-  const pick = !getService(serviceId) && ready.length > 1;
+  const svc = getService(serviceId);
+  if(!svc) return;
   const user = currentUser();
   if(!canCreate(user)) return;
   const forced = user.role === "officer" ? user.hotel : "";
@@ -1254,15 +1425,13 @@ function newRecordModal(serviceId){
   const ov = $("#ov");
   ov.innerHTML = '<div class="modal form">'+
     '<button class="modal-x" data-x>✕</button>'+
-    '<div class="kick">'+(pick ? '🛂 Nouveau passeport' : svc.emoji+' Passeport '+esc(svc.name))+'</div>'+
+    '<div class="kick">'+svc.emoji+' Passeport '+esc(svc.name)+'</div>'+
     '<h2 style="margin-bottom:8px">Nouveau collaborateur</h2>'+
-    '<p style="font-size:.92rem;color:var(--ink-55);margin-bottom:22px">Son passeport et son compte sont créés ensemble, pour qu’il puisse s’auto-évaluer.</p>'+
+    '<p style="font-size:.92rem;color:var(--ink-55);margin-bottom:22px">Il recevra une invitation par e-mail '+
+      'et choisira son mot de passe. Son passeport est créé dans la foulée.</p>'+
     '<div class="f"><label>Nom du collaborateur</label><input id="n-nom" placeholder="Prénom Nom" autocomplete="off"></div>'+
-    (pick
-      ? '<div class="f"><label>Service</label><select id="n-svc">'+
-        ready.map(s => '<option value="'+s.id+'">'+s.emoji+' '+esc(s.name)+'</option>').join("")+
-        '</select></div>'
-      : "")+
+    '<div class="f"><label>Adresse e-mail</label><input id="n-mail" type="email" '+
+      'placeholder="prenom.nom@hoteloversight.com" autocapitalize="off" spellcheck="false"></div>'+
     (forced
       ? '<div class="f"><label>Hôtel de rattachement</label><input value="'+esc(hotelName(forced))+'" readonly></div>'
       : '<div class="f"><label>Hôtel de rattachement</label><select id="n-hot">'+
@@ -1274,35 +1443,49 @@ function newRecordModal(serviceId){
       '<div class="f"><label>Buddy (facultatif)</label><input id="n-bud" placeholder="Aucun" autocomplete="off"></div>'+
     '</div>'+
     '<div class="modal-acts"><button class="btn btn-ghost" data-x>Annuler</button>'+
-    '<button class="btn btn-primary" data-ok>Créer le passeport →</button></div></div>';
+    '<button class="btn btn-primary" data-ok>Créer et inviter →</button></div></div>';
   ov.classList.add("on");
   $("#n-nom").focus();
   $$("[data-x]", ov).forEach(b => b.onclick = closeModal);
 
-  const submit = () => {
+  const submit = async () => {
     const nom = $("#n-nom").value.trim();
+    const email = $("#n-mail").value.trim().toLowerCase();
     if(!nom){ toast("Indiquez le nom du collaborateur."); $("#n-nom").focus(); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast("Adresse e-mail invalide."); $("#n-mail").focus(); return; }
     const hotel = forced || ($("#n-hot") ? $("#n-hot").value : "");
     if(!hotel){ toast("Créez d’abord un hôtel dans Administration."); return; }
 
-    const chosen = (pick ? getService($("#n-svc").value) : svc) || svc;
-    const rec = createRecord(chosen.id, {nom, arrivee:$("#n-arr").value, buddy:$("#n-bud").value, hotel});
-    const login = freeLogin(nom);
-    USERS.push({id:"u"+makeId(), login, code:"", role:"collaborateur", nom, hotel, recordIds:[rec.id]});
-    saveUsers();
+    const ok = $("[data-ok]", ov);
+    ok.disabled = true; ok.textContent = "Envoi…";
+    try{
+      const r = await fetch("/api/admin/invite", {
+        method: "POST",
+        headers: {"Content-Type": "application/json", Authorization: "Bearer " + SESSION.access_token},
+        body: JSON.stringify({email, nom, role: "collaborateur", hotel_id: hotel})
+      });
+      const b = await r.json().catch(() => ({}));
+      if(!r.ok) throw new Error(b.error || ("erreur " + r.status));
 
-    /* on affiche l’identifiant : c’est la seule fois où il est présenté */
-    ov.innerHTML = '<div class="modal">'+
-      '<button class="modal-x" data-x>✕</button>'+
-      '<div class="kick">Passeport créé</div>'+
-      '<div class="medal">'+chosen.emoji+'</div>'+
-      '<h2>'+esc(nom)+'</h2>'+
-      '<div class="who">Passeport '+esc(chosen.name)+' · '+esc(hotelName(hotel))+'</div>'+
-      '<div class="msg">Son compte est créé avec l’identifiant <b>'+esc(login)+'</b>, sans code d’accès. '+
-        'Communiquez-le lui pour qu’il puisse s’auto-évaluer. Un code peut être ajouté depuis Administration.</div>'+
-      '<button class="btn btn-primary" data-open>Ouvrir le passeport →</button></div>';
-    $("[data-x]", ov).onclick = closeModal;
-    $("[data-open]", ov).onclick = () => { closeModal(); location.hash = "#/d/"+rec.id; };
+      const rec = await createRecord(serviceId, {nom, arrivee:$("#n-arr").value,
+                                                 buddy:$("#n-bud").value, hotel, owner: b.id});
+      await reload();
+
+      ov.innerHTML = '<div class="modal">'+
+        '<button class="modal-x" data-x>✕</button>'+
+        '<div class="kick">Passeport créé</div>'+
+        '<div class="medal">'+svc.emoji+'</div>'+
+        '<h2>'+esc(nom)+'</h2>'+
+        '<div class="who">Passeport '+esc(svc.name)+' · '+esc(hotelName(hotel))+'</div>'+
+        '<div class="msg">Une invitation vient de partir vers <b>'+esc(email)+'</b>. '+
+          'En l’ouvrant, il choisira son mot de passe et accédera à son passeport.</div>'+
+        '<button class="btn btn-primary" data-open>Ouvrir le passeport →</button></div>';
+      $("[data-x]", ov).onclick = closeModal;
+      $("[data-open]", ov).onclick = () => { closeModal(); location.hash = "#/d/" + rec.id; };
+    }catch(e){
+      toast("Création refusée : " + e.message);
+      ok.disabled = false; ok.textContent = "Créer et inviter →";
+    }
   };
   $("[data-ok]", ov).onclick = submit;
   ov.addEventListener("keydown", e => { if(e.key === "Enter" && $("[data-ok]", ov)) submit(); });
@@ -1411,12 +1594,14 @@ function renderDossiers(){
   $$("[data-newrec]").forEach(b => b.onclick = () => newRecordModal());
   bindServices();
   $$("[data-exp]").forEach(b => b.onclick = () => exportRecord(getRecord(b.getAttribute("data-exp"))));
-  $$("[data-del]").forEach(b => b.onclick = () => {
+  $$("[data-del]").forEach(b => b.onclick = async () => {
     const r = getRecord(b.getAttribute("data-del"));
     if(!r) return;
     if(!confirm("Supprimer définitivement le passeport de « "+(r.nom||"Sans nom")+" » ? Les évaluations, commentaires et la synthèse seront perdus.")) return;
-    RECORDS = RECORDS.filter(x => x.id !== r.id); saveRecords();
-    toast("Passeport supprimé."); renderDossiers();
+    try{
+      await deleteRecord(r);
+      toast("Passeport supprimé."); renderDossiers();
+    }catch(e){ toast("Suppression refusée : " + e.message); }
   });
 }
 
@@ -1912,35 +2097,101 @@ function generateAI(svc, rec, btn){
    11. IDENTIFICATION
    ========================================================================== */
 
-function renderLogin(){
+function renderLogin(msg){
   $("#app").innerHTML =
   '<div class="login-wrap"><div class="login">'+
     '<div class="mark">🛂</div>'+
     '<h1>Passeport des Savoirs</h1>'+
-    '<div class="err" id="err"></div>'+
-    '<div class="f"><label>Identifiant</label>'+
-      '<input id="l-login" placeholder="prenom.nom" autocomplete="username" autocapitalize="off" spellcheck="false"></div>'+
-    '<div class="f"><label>Code d’accès</label>'+
-      '<input id="l-code" type="password" placeholder="laisser vide si aucun code" autocomplete="current-password"></div>'+
+    '<div class="err" id="err">'+(msg ? esc(msg) : "")+'</div>'+
+    '<div class="f"><label>Adresse e-mail</label>'+
+      '<input id="l-mail" type="email" placeholder="prenom.nom@hoteloversight.com" '+
+      'autocomplete="username" autocapitalize="off" spellcheck="false"></div>'+
+    '<div class="f"><label>Mot de passe</label>'+
+      '<input id="l-pass" type="password" autocomplete="current-password"></div>'+
     '<button class="btn btn-primary" data-in style="width:100%;justify-content:center;margin-top:6px">Se connecter</button>'+
-    /* les comptes d’amorçage ne sont plus affichés ici : ils figurent dans le
-       README, à l’usage de qui installe l’outil */
+    '<div class="login-note">Votre accès est créé par l’administrateur. '+
+      'Vous recevez alors un e-mail qui vous invite à choisir votre mot de passe.</div>'+
+  '</div></div>';
+  if(msg) $("#err").classList.add("on");
+
+  const showErr = m => { const e = $("#err"); e.textContent = m; e.classList.add("on"); };
+  const btn = $("[data-in]");
+
+  const submit = async () => {
+    const email = $("#l-mail").value.trim();
+    const pass  = $("#l-pass").value;
+    if(!email){ showErr("Saisissez votre adresse e-mail."); $("#l-mail").focus(); return; }
+    if(!pass){ showErr("Saisissez votre mot de passe."); $("#l-pass").focus(); return; }
+    btn.disabled = true; btn.textContent = "Connexion…";
+    try{
+      await signInPassword(email, pass);
+      await loadMe();
+      if(!ME){
+        storeSession(null);
+        showErr("Ce compte existe, mais aucun profil ne lui est rattaché. Contactez l’administrateur.");
+        btn.disabled = false; btn.textContent = "Se connecter"; return;
+      }
+      if(ME.status === "desactive"){
+        storeSession(null); ME = null;
+        showErr("Ce compte a été désactivé.");
+        btn.disabled = false; btn.textContent = "Se connecter"; return;
+      }
+      await loadAll();
+      location.hash = "#/";
+      route();
+    }catch(e){
+      const m = /invalid|credentials|grant/i.test(e.message)
+        ? "Adresse e-mail ou mot de passe incorrect."
+        : e.message;
+      showErr(m);
+      btn.disabled = false; btn.textContent = "Se connecter";
+    }
+  };
+  btn.onclick = submit;
+  $$("#l-mail, #l-pass").forEach(i => i.onkeydown = e => { if(e.key === "Enter") submit(); });
+  $("#l-mail").focus();
+}
+
+/* Écran d'arrivée depuis l'e-mail d'invitation : on choisit son mot de passe.
+   La session est déjà ouverte à ce stade, par le lien lui-même. */
+function renderSetPassword(){
+  $("#app").innerHTML =
+  '<div class="login-wrap"><div class="login">'+
+    '<div class="mark">🛂</div>'+
+    '<h1>Choisissez votre mot de passe</h1>'+
+    '<p class="lead">'+esc((SESSION && SESSION.user && SESSION.user.email) || "")+'</p>'+
+    '<div class="err" id="err"></div>'+
+    '<div class="f"><label>Mot de passe</label>'+
+      '<input id="p1" type="password" autocomplete="new-password" placeholder="au moins 8 caractères"></div>'+
+    '<div class="f"><label>Confirmation</label>'+
+      '<input id="p2" type="password" autocomplete="new-password"></div>'+
+    '<button class="btn btn-primary" data-go style="width:100%;justify-content:center;margin-top:6px">Enregistrer et entrer</button>'+
   '</div></div>';
 
-  const showErr = msg => { const e = $("#err"); e.textContent = msg; e.classList.add("on"); };
-  const submit = () => {
-    const login = $("#l-login").value.trim();
-    if(!login){ showErr("Saisissez votre identifiant."); $("#l-login").focus(); return; }
-    const u = findLogin(login);
-    if(!u){ showErr("Identifiant inconnu. Vérifiez l’orthographe ou contactez l’administrateur."); return; }
-    if((u.code || "") !== $("#l-code").value){ showErr("Code d’accès incorrect."); $("#l-code").focus(); return; }
-    signIn(u);
-    location.hash = "#/";
-    route();
+  const showErr = m => { const e = $("#err"); e.textContent = m; e.classList.add("on"); };
+  const btn = $("[data-go]");
+
+  const submit = async () => {
+    const a = $("#p1").value, b = $("#p2").value;
+    if(a.length < 8){ showErr("Huit caractères au minimum."); $("#p1").focus(); return; }
+    if(a !== b){ showErr("Les deux saisies diffèrent."); $("#p2").focus(); return; }
+    btn.disabled = true; btn.textContent = "Enregistrement…";
+    try{
+      await sbCall("/auth/v1/user", {method:"PUT", body: JSON.stringify({password: a})});
+      await sbCall("/rest/v1/rpc/pds_activate_me", {method:"POST", body: "{}"});
+      NEED_PASSWORD = false;
+      await loadMe();
+      if(ME) await loadAll();
+      location.hash = "#/";
+      route();
+    }catch(e){
+      showErr(e.message);
+      btn.disabled = false; btn.textContent = "Enregistrer et entrer";
+    }
   };
-  $("[data-in]").onclick = submit;
-  $$("#l-login, #l-code").forEach(i => i.onkeydown = e => { if(e.key === "Enter") submit(); });
-  $("#l-login").focus();
+  btn.onclick = submit;
+  $$("#p1, #p2").forEach(i => i.onkeydown = e => { if(e.key === "Enter") submit(); });
+  $("#p1").focus();
 }
 
 /* ==========================================================================
@@ -1956,15 +2207,6 @@ function hotelOptions(sel, allowEmpty){
   return (allowEmpty ? '<option value="">— Aucun —</option>' : "")+
     HOTELS.map(h => '<option value="'+h.id+'"'+(h.id===sel?" selected":"")+'>'+esc(h.name)+'</option>').join("");
 }
-function loginTaken(login, exceptId){
-  const l = String(login).trim().toLowerCase();
-  return USERS.some(u => u.id !== exceptId && String(u.login).toLowerCase() === l);
-}
-function slugLogin(nom){
-  return String(nom).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
-    .trim().replace(/[^a-z0-9]+/g,".").replace(/^\.|\.$/g,"") || "utilisateur";
-}
-
 function renderAdmin(){
   const tabs = [
     ["comptes",    "Comptes",    USERS.length],
@@ -2012,20 +2254,27 @@ function admHotels(){
       '<button class="btn btn-primary btn-sm" data-addh>Ajouter l’hôtel</button></div>'+
   '</div>';
 
-  $("[data-addh]").onclick = () => {
+  $("[data-addh]").onclick = async () => {
     const name = $("#h-nom").value.trim();
     if(!name){ toast("Indiquez le nom de l’hôtel."); return; }
     if(HOTELS.some(h => h.name.toLowerCase() === name.toLowerCase())){ toast("Cet hôtel existe déjà."); return; }
-    HOTELS.push({id:"h"+makeId(), name}); saveHotels();
-    toast("Hôtel ajouté."); renderAdmin();
+    try{
+      const rows = await rest("pds_hotels", {method:"POST", headers:{Prefer:"return=representation"},
+                                             body: JSON.stringify({name})});
+      HOTELS.push({id: rows[0].id, name: rows[0].name});
+      toast("Hôtel ajouté."); renderAdmin();
+    }catch(e){ toast("Ajout refusé : " + e.message); }
   };
-  $$("[data-delh]").forEach(b => b.onclick = () => {
+  $$("[data-delh]").forEach(b => b.onclick = async () => {
     const id = b.getAttribute("data-delh"), h = getHotel(id);
     const nU = USERS.filter(u => u.hotel === id).length, nR = RECORDS.filter(r => r.hotel === id).length;
     if(nU || nR){ toast("Détachez d’abord les "+nU+" compte(s) et "+nR+" passeport(s) de cet hôtel."); return; }
     if(!confirm("Supprimer l’hôtel « "+h.name+" » ?")) return;
-    HOTELS = HOTELS.filter(x => x.id !== id); saveHotels();
-    toast("Hôtel supprimé."); renderAdmin();
+    try{
+      await rest("pds_hotels?id=eq." + id, {method:"DELETE"});
+      HOTELS = HOTELS.filter(x => x.id !== id);
+      toast("Hôtel supprimé."); renderAdmin();
+    }catch(e){ toast("Suppression refusée : " + e.message); }
   });
 }
 
@@ -2033,44 +2282,40 @@ function admHotels(){
 let admHotelFilter = "";     // "" = tous les hôtels
 
 function admComptes(){
-  /* l’administrateur n’a pas d’hôtel et n’apparaît pas dans un filtre par hôtel */
-  const all = USERS.filter(u => u.role !== "admin");
-  const rank = {officer:0, proprietaire:1, collaborateur:2};
+  const all = USERS.filter(u => u.role !== "admin" || u.id !== (ME && ME.id));
   const list = all.filter(u =>
       !admHotelFilter || (admHotelFilter === "__none__" ? !u.hotel : u.hotel === admHotelFilter))
     .slice().sort((a, b) =>
-      (rank[a.role] - rank[b.role]) ||
-      String(a.nom || a.login).localeCompare(String(b.nom || b.login), "fr"));
+      (a.role === b.role ? 0 : a.role === "officer" ? -1 : 1) ||
+      String(a.nom || a.email).localeCompare(String(b.nom || b.email), "fr"));
 
   const chips = '<button class="'+(admHotelFilter?"":"on")+'" data-fh="">Tous les hôtels'+
       '<span style="opacity:.6"> '+all.length+'</span></button>'+
-    HOTELS.map(h => {
-      const n = all.filter(u => u.hotel === h.id).length;
-      return '<button class="'+(admHotelFilter===h.id?"on":"")+'" data-fh="'+h.id+'">'+esc(h.name)+
-             '<span style="opacity:.6"> '+n+'</span></button>';
-    }).join("")+
+    HOTELS.map(h => '<button class="'+(admHotelFilter===h.id?"on":"")+'" data-fh="'+h.id+'">'+esc(h.name)+
+      '<span style="opacity:.6"> '+all.filter(u => u.hotel === h.id).length+'</span></button>').join("")+
     (all.some(u => !u.hotel)
       ? '<button class="'+(admHotelFilter==="__none__"?"on":"")+'" data-fh="__none__">Sans hôtel'+
-        '<span style="opacity:.6"> '+all.filter(u => !u.hotel).length+'</span></button>'
-      : "");
+        '<span style="opacity:.6"> '+all.filter(u => !u.hotel).length+'</span></button>' : "");
 
   const rows = list.map(u => {
     const recs = recordsOfUser(u);
     return '<tr>'+
-      '<td class="nm">'+esc(u.nom || "—")+(u.demo?' <span class="demotag">Démo</span>':"")+'</td>'+
+      '<td class="nm">'+esc(u.nom || "—")+'</td>'+
       '<td><span class="rolechip '+u.role+'">'+esc(ROLE_LABEL[u.role])+'</span></td>'+
-      '<td><code>'+esc(u.login)+'</code></td>'+
+      '<td><code>'+esc(u.email)+'</code></td>'+
       '<td><select data-uh="'+u.id+'">'+hotelOptions(u.hotel, true)+'</select></td>'+
-      '<td>'+(u.role === "officer"
-          ? '<span style="color:var(--ink-55)">tous ceux de son hôtel</span>'
-          : u.role === "proprietaire"
-            ? '<span style="color:var(--ink-55)">tous ceux de son hôtel — lecture seule</span>'
-            : recs.length
+      '<td>'+(u.role === "officer" || u.role === "proprietaire"
+          ? '<span style="color:var(--ink-55)">ceux de son hôtel</span>'
+          : recs.length
             ? recs.map(r => '<a href="#/d/'+r.id+'">'+esc((getService(r.service)||{}).name || r.service)+'</a>').join(", ")
             : '<span style="color:var(--ink-40)">aucun</span>')+'</td>'+
-      '<td><input class="codein" data-uc="'+u.id+'" value="'+esc(u.code)+'" placeholder="aucun" '+
-        'title="Code d’accès — laisser vide pour une connexion sans code"></td>'+
-      '<td class="acts"><button class="iconbtn danger" data-delu="'+u.id+'" title="Supprimer">🗑</button></td></tr>';
+      '<td><span class="statut '+u.status+'">'+esc(STATUT_LABEL[u.status] || u.status)+'</span></td>'+
+      '<td class="acts">'+
+        (u.status === "invite" ? '<button class="btn btn-ghost btn-sm" data-resend="'+u.id+'">Renvoyer</button>' : "")+
+        (u.status === "desactive"
+          ? '<button class="btn btn-ghost btn-sm" data-act="'+u.id+'">Réactiver</button>'
+          : '<button class="btn btn-ghost btn-sm btn-danger" data-deact="'+u.id+'">Désactiver</button>')+
+      '</td></tr>';
   }).join("");
 
   const svcOptions = SERVICES.filter(isReady).map(s =>
@@ -2078,27 +2323,30 @@ function admComptes(){
 
   $("#admbody").innerHTML = '<div class="panel">'+
     '<h3>Les comptes</h3>'+
-    '<p class="hint">Un <b>collaborateur</b> possède un passeport, ne voit que le sien et n’y remplit que sa colonne d’auto-évaluation. '+
-      'Un <b>Officer / buddy</b> n’a pas de passeport : il accède à tous ceux de son hôtel, peut en créer et remplir les trois colonnes. '+
-      'Un <b>propriétaire</b> voit les passeports de son hôtel et leur synthèse, sans rien pouvoir remplir ni créer.</p>'+
+    '<p class="hint">Un compte se crée par <b>invitation</b> : la personne reçoit un e-mail et choisit '+
+      'son mot de passe. Un <b>collaborateur</b> a un passeport, ne voit que le sien et n’y remplit que '+
+      'son auto-évaluation. Un <b>Officer / buddy</b> n’a pas de passeport : il accède à tous ceux de son '+
+      'hôtel, peut en créer et remplir les colonnes buddy et COO. Un <b>propriétaire</b> consulte sans écrire.</p>'+
     (HOTELS.length > 1 ? '<div class="filters" style="margin-bottom:20px">'+chips+'</div>' : "")+
     (list.length
-      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Nom</th><th>Profil</th><th>Identifiant</th>'+
-        '<th>Hôtel</th><th>Passeports</th><th>Code d’accès</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      ? '<div class="tblwrap"><table class="tbl"><thead><tr><th>Nom</th><th>Profil</th><th>E-mail</th>'+
+        '<th>Hôtel</th><th>Passeports</th><th>Statut</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
       : '<p style="font-size:.9rem;color:var(--ink-55)">'+
         (all.length ? "Aucun compte sur cet hôtel." : "Aucun compte pour l’instant.")+'</p>')+
 
-    '<div class="addform"><h4>Ajouter un compte</h4>'+
+    '<div class="addform"><h4>Inviter quelqu’un</h4>'+
       '<div class="addgrid">'+
         '<div class="f"><label>Profil</label><select id="u-role">'+
           '<option value="collaborateur">Collaborateur — avec passeport</option>'+
           '<option value="officer">Officer / buddy — sans passeport</option>'+
           '<option value="proprietaire">Propriétaire — lecture seule</option>'+
+          '<option value="admin">Administrateur</option>'+
           '</select></div>'+
         '<div class="f"><label>Nom complet</label><input id="u-nom" placeholder="Prénom Nom"></div>'+
-        '<div class="f"><label>Identifiant</label><input id="u-login" placeholder="prenom.nom" autocapitalize="off" spellcheck="false"></div>'+
-        '<div class="f"><label>Hôtel</label><select id="u-hot">'+hotelOptions(admHotelFilter === "__none__" ? "" : admHotelFilter, true)+'</select></div>'+
-        '<div class="f"><label>Code d’accès (optionnel)</label><input id="u-code" placeholder="laisser vide"></div>'+
+        '<div class="f"><label>Adresse e-mail</label><input id="u-mail" type="email" '+
+          'placeholder="prenom.nom@hoteloversight.com" autocapitalize="off" spellcheck="false"></div>'+
+        '<div class="f"><label>Hôtel</label><select id="u-hot">'+
+          hotelOptions(admHotelFilter === "__none__" ? "" : admHotelFilter, true)+'</select></div>'+
       '</div>'+
       '<div id="u-passeport">'+
         '<div class="addgrid">'+
@@ -2108,84 +2356,98 @@ function admComptes(){
         '</div>'+
       '</div>'+
       '<p class="hint" id="u-mention" style="margin:0 0 16px"></p>'+
-      '<button class="btn btn-primary btn-sm" data-addu>Ajouter le compte</button>'+
+      '<button class="btn btn-primary btn-sm" data-invite>Envoyer l’invitation</button>'+
     '</div></div>';
 
-  const roleI = $("#u-role"), nomI = $("#u-nom"), logI = $("#u-login");
+  const roleI = $("#u-role"), nomI = $("#u-nom"), mailI = $("#u-mail"), btn = $("[data-invite]");
 
-  /* le formulaire s’adapte au profil choisi */
   const syncRole = () => {
     const isCol = roleI.value === "collaborateur";
     $("#u-passeport").style.display = isCol ? "" : "none";
     $("#u-mention").innerHTML = isCol
-      ? "Son passeport et son compte sont créés ensemble. Il ne verra que ce passeport et n’y remplira que sa colonne d’auto-évaluation."
-      : roleI.value === "proprietaire"
-        ? "Aucun passeport ne lui sera attaché. Il consultera <b>tous les passeports de son hôtel</b> et leur synthèse, <b>sans pouvoir en remplir ni en créer aucun</b>."
-        : "Aucun passeport ne lui sera attaché. Il accédera à <b>tous les passeports de son hôtel</b>, pourra en créer et remplir les trois colonnes d’évaluation.";
+      ? "Son passeport est créé en même temps que son compte. Il ne verra que ce passeport et n’y remplira que son auto-évaluation."
+      : roleI.value === "officer"
+        ? "Aucun passeport ne lui sera attaché. Il accédera à <b>tous les passeports de son hôtel</b>."
+        : roleI.value === "proprietaire"
+          ? "Lecture seule sur les passeports de son hôtel : il ne remplit aucune colonne."
+          : "Accès complet : tous les hôtels, tous les passeports, et la gestion des comptes.";
   };
-  roleI.onchange = syncRole;
-  syncRole();
+  roleI.onchange = syncRole; syncRole();
 
-  /* saisie du nom → identifiant proposé automatiquement */
-  nomI.oninput = () => { if(!logI.dataset.touched) logI.value = slugLogin(nomI.value); };
-  logI.oninput = () => { logI.dataset.touched = "1"; };
+  $$("[data-fh]").forEach(b => b.onclick = () => { admHotelFilter = b.getAttribute("data-fh"); renderAdmin(); });
 
-  $$("[data-fh]").forEach(b => b.onclick = () => {
-    admHotelFilter = b.getAttribute("data-fh"); renderAdmin();
-  });
+  /* Les opérations sur les comptes passent par la fonction serveur : elle seule
+     détient la clé qui permet de créer un accès et d'envoyer un e-mail. */
+  const adminCall = async (action, payload) => {
+    const r = await fetch("/api/admin/" + action, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", Authorization: "Bearer " + SESSION.access_token},
+      body: JSON.stringify(payload)
+    });
+    const b = await r.json().catch(() => ({}));
+    if(!r.ok) throw new Error(b.error || ("erreur " + r.status));
+    return b;
+  };
 
-  $("[data-addu]").onclick = () => {
+  btn.onclick = async () => {
     const role = roleI.value, isCol = role === "collaborateur";
-    const nom = nomI.value.trim(), login = logI.value.trim();
+    const nom = nomI.value.trim(), email = mailI.value.trim().toLowerCase();
     if(!nom){ toast("Indiquez le nom."); nomI.focus(); return; }
-    if(!login){ toast("Indiquez un identifiant."); logI.focus(); return; }
-    if(loginTaken(login)){ toast("Cet identifiant est déjà utilisé."); logI.focus(); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast("Adresse e-mail invalide."); mailI.focus(); return; }
     const hotel = $("#u-hot").value;
-    if(!hotel){ toast("Rattachez ce compte à un hôtel."); return; }
+    if(role !== "admin" && !hotel){ toast("Rattachez ce compte à un hôtel."); return; }
+    const svcId = isCol ? $("#u-svc").value : null;
+    if(isCol && !svcId){ toast("Aucun service disponible : définissez d’abord les items d’un service."); return; }
 
-    const u = {id:"u"+makeId(), login, code:$("#u-code").value.trim(), role, nom, hotel, recordIds:[]};
-    if(isCol){
-      const svcId = $("#u-svc").value;
-      if(!svcId){ toast("Aucun service disponible : définissez d’abord les items d’un service."); return; }
-      const rec = createRecord(svcId, {nom, arrivee:$("#u-arr").value, buddy:$("#u-bud").value, hotel});
-      u.recordIds = [rec.id];
+    btn.disabled = true; btn.textContent = "Envoi…";
+    try{
+      const res = await adminCall("invite", {email, nom, role, hotel_id: hotel || null});
+      if(isCol){
+        await createRecord(svcId, {nom, arrivee: $("#u-arr").value, buddy: $("#u-bud").value,
+                                   hotel, owner: res.id});
+      }
+      await reload();
+      toast("Invitation envoyée à " + email + ".");
+      renderAdmin();
+    }catch(e){
+      toast("Invitation refusée : " + e.message);
+      btn.disabled = false; btn.textContent = "Envoyer l’invitation";
     }
-    USERS.push(u); saveUsers();
-    toast(ROLE_LABEL[role]+" ajouté.");
-    renderAdmin();
   };
 
-  $$("[data-uc]").forEach(i => {
-    i.onchange = () => {
-      const u = getUser(i.getAttribute("data-uc"));
-      u.code = i.value.trim(); saveUsers();
-      toast(u.code ? "Code de "+(u.nom||u.login)+" mis à jour." : "Code de "+(u.nom||u.login)+" retiré.");
-    };
-    i.onkeydown = e => { if(e.key === "Enter") i.blur(); };
+  $$("[data-uh]").forEach(sel => sel.onchange = async () => {
+    const u = getUser(sel.getAttribute("data-uh"));
+    try{
+      await rest("pds_profiles?id=eq." + u.id, {method:"PATCH", body: JSON.stringify({hotel_id: sel.value || null})});
+      u.hotel = sel.value;
+      /* les passeports du collaborateur suivent son rattachement */
+      for(const r of recordsOfUser(u)){ r.hotel = sel.value; touch(r); }
+      toast(u.hotel ? "Rattaché à " + hotelName(u.hotel) + "." : "Détaché de tout hôtel.");
+      renderAdmin();
+    }catch(e){ toast("Changement refusé : " + e.message); renderAdmin(); }
   });
 
-  $$("[data-uh]").forEach(s => s.onchange = () => {
-    const u = getUser(s.getAttribute("data-uh"));
-    u.hotel = s.value; saveUsers();
-    /* les passeports du collaborateur suivent son rattachement */
-    recordsOfUser(u).forEach(r => { r.hotel = s.value; });
-    saveRecords();
-    toast(u.hotel ? "Rattaché à "+hotelName(u.hotel)+"." : "Détaché de tout hôtel.");
+  $$("[data-resend]").forEach(b => b.onclick = async () => {
+    const u = getUser(b.getAttribute("data-resend"));
+    b.disabled = true; b.textContent = "Envoi…";
+    try{ await adminCall("resend", {user_id: u.id}); toast("Invitation renvoyée à " + u.email + "."); }
+    catch(e){ toast("Envoi refusé : " + e.message); }
     renderAdmin();
   });
 
-  $$("[data-delu]").forEach(b => b.onclick = () => {
-    const u = getUser(b.getAttribute("data-delu"));
-    const recs = recordsOfUser(u);
-    const msg = recs.length
-      ? "Supprimer le compte de « "+(u.nom||u.login)+" » ainsi que ses "+recs.length+" passeport(s) ? Les évaluations, commentaires et synthèses seront perdus."
-      : "Supprimer le compte de « "+(u.nom||u.login)+" » ?";
-    if(!confirm(msg)) return;
-    const ids = recs.map(r => r.id);
-    RECORDS = RECORDS.filter(r => ids.indexOf(r.id) === -1); saveRecords();
-    USERS = USERS.filter(x => x.id !== u.id); saveUsers();
-    toast("Compte supprimé."); renderAdmin();
+  const setStatut = async (id, statut) => {
+    try{
+      await adminCall("status", {user_id: id, status: statut});
+      await reload(); renderAdmin();
+      toast(statut === "desactive" ? "Compte désactivé." : "Compte réactivé.");
+    }catch(e){ toast("Changement refusé : " + e.message); }
+  };
+  $$("[data-deact]").forEach(b => b.onclick = () => {
+    const u = getUser(b.getAttribute("data-deact"));
+    if(!confirm("Désactiver le compte de « "+(u.nom||u.email)+" » ? Il ne pourra plus se connecter. Son passeport et ses évaluations sont conservés.")) return;
+    setStatut(u.id, "desactive");
   });
+  $$("[data-act]").forEach(b => b.onclick = () => setStatut(b.getAttribute("data-act"), "actif"));
 }
 
 /* ---------- Passeports ---------- */
@@ -2215,7 +2477,9 @@ function admPasseports(){
         '<td class="nm">'+esc(r.nom || "Sans nom")+(r.demo?' <span class="demotag">Démo</span>':"")+'</td>'+
         '<td>'+esc(svc ? svc.name : r.service)+'</td>'+
         '<td><select data-rh="'+r.id+'">'+hotelOptions(r.hotel, true)+'</select></td>'+
-        '<td>'+(owner ? '<code>'+esc(owner.login)+'</code>' : '<span style="color:var(--ink-40)">aucun compte</span>')+'</td>'+
+        '<td><select data-ro="'+r.id+'"><option value="">— aucun compte —</option>'+
+          cols.map(c => '<option value="'+c.id+'"'+(owner && owner.id===c.id?" selected":"")+'>'+
+                        esc(c.nom || c.email)+'</option>').join("")+'</select></td>'+
         '<td>'+st.pct+'% · '+st.badges+'/'+st.badgesTotal+'</td>'+
         '<td class="acts"><a class="btn btn-ghost btn-sm" href="#/d/'+r.id+'">Ouvrir</a></td></tr>';
     }).join("");
@@ -2241,7 +2505,17 @@ function admPasseports(){
           '</div>'+
           '<button class="btn btn-primary btn-sm" data-addp>Ajouter le passeport</button>'+
           '<p class="hint" style="margin:14px 0 0">Utile lorsqu’un collaborateur change de service ou en couvre plusieurs : il aura alors accès à chacun de ses passeports.</p>'
-        : '<p style="font-size:.9rem;color:var(--ink-55)">Créez d’abord un collaborateur dans l’onglet Comptes.</p>')+
+        : '<p style="font-size:.9rem;color:var(--ink-55)">Invitez d’abord un collaborateur dans l’onglet Comptes.</p>')+
+    '</div>'+
+
+    '<div class="addform"><h4>Reprendre une sauvegarde</h4>'+
+      '<p class="hint" style="margin:0 0 14px">Reprend les hôtels, les passeports et toutes les évaluations '+
+        'd’un fichier exporté depuis la version navigateur. Les comptes ne sont pas repris — ils n’avaient '+
+        'pas d’adresse e-mail — il faudra inviter les personnes, puis rattacher chaque passeport à son compte '+
+        'dans la colonne ci-dessus.</p>'+
+      '<input type="file" accept="application/json" id="imp-file" style="display:none">'+
+      '<button class="btn btn-ghost btn-sm" data-imp>⬆︎ Choisir un fichier…</button>'+
+      '<span id="imp-etat" style="margin-left:12px;font-size:.85rem;color:var(--ink-55)"></span>'+
     '</div></div>';
 
   $$("[data-fh]").forEach(b => b.onclick = () => {
@@ -2255,8 +2529,26 @@ function admPasseports(){
     renderAdmin();
   });
 
+  $$("[data-ro]").forEach(sel => sel.onchange = async () => {
+    const rec = getRecord(sel.getAttribute("data-ro"));
+    try{
+      await rest("pds_passports?id=eq." + rec.id, {method:"PATCH",
+        body: JSON.stringify({owner_id: sel.value || null})});
+      rec.owner = sel.value;
+      await reload();
+      toast(sel.value ? "Passeport rattaché au compte." : "Passeport détaché de tout compte.");
+      renderAdmin();
+    }catch(e){ toast("Rattachement refusé : " + e.message); renderAdmin(); }
+  });
+
+  const bImp = $("[data-imp]");
+  if(bImp){
+    bImp.onclick = () => $("#imp-file").click();
+    $("#imp-file").onchange = e => { if(e.target.files[0]) importBackup(e.target.files[0]); };
+  }
+
   const bAdd = $("[data-addp]");
-  if(bAdd) bAdd.onclick = () => {
+  if(bAdd) bAdd.onclick = async () => {
     const u = getUser($("#p-col").value);
     if(!u){ toast("Choisissez un collaborateur."); return; }
     const svcId = $("#p-svc").value;
@@ -2265,11 +2557,95 @@ function admPasseports(){
     if(recordsOfUser(u).some(r => r.service === svcId)){
       toast("Ce collaborateur a déjà un passeport pour ce service."); return;
     }
-    const rec = createRecord(svcId, {nom:u.nom, arrivee:$("#p-arr").value, buddy:$("#p-bud").value, hotel:u.hotel});
-    u.recordIds = (u.recordIds || []).concat(rec.id); saveUsers();
-    toast("Passeport ajouté à "+(u.nom||u.login)+".");
-    renderAdmin();
+    try{
+      await createRecord(svcId, {nom:u.nom, arrivee:$("#p-arr").value,
+                                 buddy:$("#p-bud").value, hotel:u.hotel, owner:u.id});
+      await reload();
+      toast("Passeport ajouté à " + (u.nom || u.email) + ".");
+      renderAdmin();
+    }catch(e){ toast("Ajout refusé : " + e.message); }
   };
+}
+
+/* Reprise d'une sauvegarde de la version navigateur. Écrit dans la base par la
+   session de l'administrateur : les politiques s'appliquent comme pour toute
+   autre écriture, rien n'est contourné. */
+async function importBackup(file){
+  const etat = m => { const e = $("#imp-etat"); if(e) e.textContent = m; };
+  let data;
+  try{ data = JSON.parse(await file.text()); }
+  catch(e){ toast("Fichier illisible : ce n’est pas un JSON valide."); return; }
+
+  const g = data.donnees || data;
+  let oldHotels = [], oldRecs = [];
+  try{
+    oldHotels = JSON.parse(g["pds.hotels.v1"] || "[]");
+    oldRecs   = JSON.parse(g["pds.records.v2"] || "[]");
+  }catch(e){ toast("Ce fichier n’a pas la forme attendue."); return; }
+  if(!oldRecs.length){ toast("Aucun passeport dans ce fichier."); return; }
+
+  const nbEval = oldRecs.reduce((n, r) => n + Object.values(r.items || {})
+                   .reduce((m, it) => m + Object.values(it).filter(v => v && v.lvl !== null && v.lvl !== undefined).length, 0), 0);
+  if(!confirm("Reprendre "+oldRecs.length+" passeport(s) et "+nbEval+" évaluation(s) ?\n\n"+
+              "Les passeports déjà présents ne sont pas remplacés : ceux du fichier s’ajoutent.")) return;
+
+  etat("Reprise en cours…");
+  try{
+    /* hôtels : on rapproche par le nom, on crée ce qui manque */
+    const mapHotel = {};
+    for(const h of oldHotels){
+      let found = HOTELS.find(x => x.name.trim().toLowerCase() === String(h.name).trim().toLowerCase());
+      if(!found){
+        const rows = await rest("pds_hotels", {method:"POST", headers:{Prefer:"return=representation"},
+                                               body: JSON.stringify({name: h.name})});
+        found = {id: rows[0].id, name: rows[0].name};
+        HOTELS.push(found);
+      }
+      mapHotel[h.id] = found.id;
+    }
+
+    let nP = 0, nE = 0;
+    for(const r of oldRecs){
+      if(!getService(r.service)) continue;
+      const rows = await rest("pds_passports", {method:"POST", headers:{Prefer:"return=representation"},
+        body: JSON.stringify({
+          service: r.service,
+          hotel_id: mapHotel[r.hotel] || null,
+          nom: r.nom || "", buddy: r.buddy || "",
+          arrivee: /^\d{4}-\d{2}-\d{2}$/.test(r.arrivee || "") ? r.arrivee : null,
+          is_demo: !!r.demo,
+          synthese_text: r.synthese ? r.synthese.text : null,
+          synthese_at:   r.synthese ? r.synthese.at   : null
+        })});
+      const id = rows[0].id; nP++;
+
+      const lignes = [];
+      Object.keys(r.items || {}).forEach(k => {
+        ["auto","buddy","coo"].forEach(ev => {
+          const v = r.items[k][ev];
+          if(!v || (v.lvl === null || v.lvl === undefined) && !(v.note || "").trim()) return;
+          lignes.push({passport_id:id, item_key:k, evaluator:ev,
+                       level: (v.lvl === null || v.lvl === undefined) ? null : v.lvl,
+                       note: v.note || ""});
+        });
+      });
+      /* par paquets : une requête par passeport serait énorme sur 234 lignes */
+      for(let i = 0; i < lignes.length; i += 100){
+        await rest("pds_evaluations", {method:"POST", body: JSON.stringify(lignes.slice(i, i+100))});
+        nE += Math.min(100, lignes.length - i);
+      }
+      etat(nP + " passeport(s), " + nE + " évaluation(s)…");
+    }
+
+    await reload();
+    etat("");
+    toast("Reprise terminée : " + nP + " passeport(s), " + nE + " évaluation(s).");
+    renderAdmin();
+  }catch(e){
+    etat("");
+    toast("Reprise interrompue : " + e.message);
+    await reload(); renderAdmin();
+  }
 }
 
 /* ==========================================================================
@@ -2294,176 +2670,64 @@ function exportRecord(rec){
 }
 
 /* ==========================================================================
-   11. PASSEPORT DE DÉMONSTRATION
-   Un dossier fictif entièrement rempli, posé au premier chargement pour montrer
-   le passeport en fin de parcours : les 78 items évalués par les trois regards,
-   les 12 badges, le golden badge et une synthèse. Supprimable comme un autre ;
-   une fois supprimé il ne revient pas.
-   ========================================================================== */
-
-const LS_SEEDED = "pds.seeded.v1";
-const DEMO_ID   = "demo-receptionniste";
-
-/* Par défaut chaque item est à 🟢 Acquis pour les trois évaluateurs. Ce tableau
-   ne porte que les écarts et les commentaires. a/b/c = niveau auto/buddy/COO sur
-   l’échelle 0 non vérifié · 1 non acquis · 2 en cours d’acquisition · 3 acquis.
-   na/nb/nc = commentaire correspondant. */
-const DEMO_NOTES = {
-  "savoir.s1.0":{nb:"A relu le brand book et su restituer l’histoire du bâtiment lors du briefing du 12 juin."},
-  "savoir.s1.3":{a:2, na:"Je confonds encore Deluxe et Junior Suite sur les surfaces.",
-                 nb:"Hésitation levée après le tour des chambres du 18 juin.", nc:"Vérifié en entretien, plus d’erreur."},
-  "savoir.s1.5":{nb:"Connaît l’offre Séjour Prolongé. À réactualiser à chaque changement de saison."},
-  "savoir.s2.1":{a:3, b:2, na:"Je pense les maîtriser.",
-                 nb:"Formule d’accueil téléphonique incomplète : oublie de se présenter par son prénom.",
-                 nc:"Reprise en binôme, conforme depuis début juillet."},
-  "savoir.s2.4":{nb:"A participé à l’exercice d’évacuation du 25 juin : position et consignes maîtrisées."},
-  "savoir.s2.5":{a:2, na:"Je ne sais pas toujours si un cas justifie d’appeler le COO.",
-                 nc:"Cas d’escalade cadrés le 3 juillet, jugement fiable depuis."},
-  "savoir.s3.1":{nb:"A suivi une matinée avec Marc en maintenance, comprend les délais d’intervention."},
-  "savoir.s3.2":{nb:"Une matinée en salle PDJ le 2 juillet, sait dépanner au débarrassage en cas de rush."},
-  "savoir.s3.6":{a:2, na:"J’utilise Slack mais je ne sais pas toujours quel canal choisir.",
-                 nb:"Canaux clarifiés, utilise #reception-hk correctement."},
-
-  "faire.f1.1":{b:2, nb:"Très à l’aise avec la clientèle loisirs, plus scolaire avec les corporate.",
-                nc:"Écart normal à ce stade, progression nette en juillet."},
-  "faire.f1.5":{nc:"Retour client Booking du 8 juillet la citant par son prénom."},
-  "faire.f2.0":{nb:"12 check-in observés en autonomie, aucun oubli de procédure."},
-  "faire.f2.4":{a:2, b:2, na:"Les pré-autorisations me demandent encore de vérifier la procédure.",
-                nb:"Sait faire, mais avec le mémo sous les yeux.", nc:"Autonome depuis le 20 juillet."},
-  "faire.f2.5":{nb:"A géré seule une arrivée à 2h du matin le 14 juillet, sans réveiller le manager."},
-  "faire.f2.7":{a:2, na:"Les extras groupés sur une facture longue me ralentissent.",
-                nb:"Exactitude bonne, rapidité à gagner.", nc:"Rythme conforme fin juillet."},
-  "faire.f3.0":{nb:"Maîtrise Mews, plus rapide que la moyenne de l’équipe."},
-  "faire.f3.6":{a:2, na:"Je n’osais pas proposer, j’ai commencé mi-juillet.",
-                nb:"3 upsells convertis sur la dernière semaine de juillet.",
-                nc:"Belle progression, à encourager sur les arrivées corporate."},
-  "faire.f3.7":{a:2, b:1, na:"Je pense encore rarement au restaurant.",
-                nb:"Réflexe absent début juillet : aucune proposition sur 15 check-in observés.", nc:"Cadré au point du 1er août, réflexe acquis."},
-  "faire.f3.9":{nb:"Réponses claires, ton conforme aux modèles, aucune relance client."},
-  "faire.f4.1":{nb:"Chambre non prête le 21 juillet : a désamorcé seule, client reparti satisfait."},
-  "faire.f4.5":{a:2, b:2, na:"Je n’ai pas encore vécu de surbooking réel.",
-                nb:"Procédure connue en théorie, jamais mise en pratique.",
-                nc:"Cas simulé le 5 août : réaction et délogement conformes."},
-  "faire.f4.7":{nc:"Dossier de dédommagement suivi jusqu’au bout, sans aucune relance de ma part."},
-
-  "etre.e1.1":{nb:"Propose spontanément un plan de quartier aux nouveaux arrivants."},
-  "etre.e1.4":{nc:"Jamais un client en attente sans être salué, y compris en plein check-out."},
-  "etre.e2.3":{nb:"Prend les remarques sans se justifier et applique dès le service suivant."},
-  "etre.e3.1":{nb:"Partage l’état d’occupation chaque matin sur le canal réception."},
-  "etre.e3.2":{a:2, b:1, na:"Je consulte Elium mais je ne publie pas.",
-               nb:"Aucune contribution au 1er juillet, malgré deux relances.",
-               nc:"A publié la fiche « gérer une arrivée tardive » le 4 août."},
-  "etre.e4.0":{nb:"Week-end du 19 juillet à 92% d’occupation : calme et méthodique."},
-  "etre.e4.2":{a:2, na:"Je me sens encore déstabilisée sur le moment.",
-               nb:"Ne le montre pas, la voix reste posée.", nc:"Ressenti interne, sans effet sur le service."},
-  "etre.e5.1":{nb:"Aucun retard sur neuf semaines."},
-  "etre.e5.3":{nc:"A demandé d’elle-même à suivre une journée de revenue management."}
-};
-
-const DEMO_SYNTHESE = [
-"## Où en est l’intégration",
-"Camille Durand a validé **100 % des items au niveau Acquis** et obtenu les **12 badges** du passeport Réceptionniste, golden badge *Ambassadeur de l’hôtel* inclus. Le parcours a duré dix semaines, du 2 juin au 10 août. Les blocs Savoir et Savoir-être ont été acquis rapidement ; le Savoir-faire a demandé plus de temps, en particulier sur la vente additionnelle et les situations exceptionnelles.",
-"",
-"## Points forts",
-"- **Check-in & Check-out** : autonomie complète et rapide, 12 arrivées observées sans oubli de procédure, dont une arrivée à 2h du matin gérée seule.",
-"- **Maîtrise de Mews** : plus rapide que la moyenne de l’équipe dès la quatrième semaine.",
-"- **Sens du service** : anticipation spontanée des besoins, retour client Booking la citant par son prénom.",
-"- **Sang-froid** : week-end à 92 % d’occupation traversé avec méthode ; réclamation « chambre non prête » désamorcée seule.",
-"- **Réceptivité au feedback** : prend les remarques sans se justifier et corrige dès le service suivant.",
-"",
-"## Écarts de perception",
-"Camille s’est systématiquement **sous-évaluée** par rapport à son buddy et au COO. Sept items sont concernés : catégories de chambres, escalade managériale, canaux interservices, encaissement à l’arrivée, explication de facture, upsell, cross-sell, sang-froid face à un client mécontent, contribution sur Elium.",
-"",
-"Un seul écart en sens inverse : sur les **standards de service attendus**, elle s’était placée au niveau Acquis quand le buddy relevait une formule d’accueil téléphonique incomplète. Point corrigé début juillet.",
-"",
-"Ce profil — prudence sur soi, résultats conformes — est un signe de rigueur plus que de fragilité. Il mérite d’être nommé explicitement en entretien : Camille gagnerait en aisance commerciale à s’autoriser plus tôt ce qu’elle sait déjà faire.",
-"",
-"Deux items ont été jugés **Non acquis** par le buddy en cours de parcours — le cross-sell restaurant et la contribution sur Elium — alors que Camille s’y situait en cours d’acquisition. Les deux ont été repris et validés depuis."
-].join("\n");
-
-const DEMO_HOTEL = "h-demo";
-
-function seedDemo(){
-  const svc = getService("receptionniste");
-  if(!svc) return;
-  const now = new Date().toISOString();
-  const rec = {
-    id: DEMO_ID, service:"receptionniste", demo:true, hotel: DEMO_HOTEL,
-    nom:"Camille Durand", arrivee:"2026-06-02", buddy:"Léa Martin",
-    items:{}, unlocked:[], synthese:{text:DEMO_SYNTHESE, at:now},
-    createdAt:"2026-06-02T09:00:00.000Z", updatedAt:now
-  };
-  svc.blocks.forEach(b => b.subs.forEach(s => {
-    s.items.forEach((_, i) => {
-      const key = itemKey(b.id, s.id, i);
-      const o = DEMO_NOTES[key] || {};
-      rec.items[key] = {
-        auto: {lvl: o.a === undefined ? ACQUIS : o.a, note: o.na || ""},
-        buddy:{lvl: o.b === undefined ? ACQUIS : o.b, note: o.nb || ""},
-        coo:  {lvl: o.c === undefined ? ACQUIS : o.c, note: o.nc || ""}
-      };
-    });
-    rec.unlocked.push(b.id+"."+s.id);
-  }));
-  rec.unlocked.push("__ambassadeur__");
-  RECORDS.push(rec); saveRecords();
-}
-
-/* Comptes d’amorçage. Ils figurent dans le code source, qui est public :
-   ils servent à ouvrir l’outil la première fois, pas à protéger quoi que ce
-   soit. L’administrateur crée les comptes réels puis supprime ceux-ci. */
-function seedAccounts(){
-  if(!HOTELS.length){
-    HOTELS.push({id: DEMO_HOTEL, name:"Hôtel de démonstration"});
-    saveHotels();
-  }
-  if(!USERS.length){
-    USERS.push(
-      {id:"u-admin", login:"admin", code:"", role:"admin", nom:"Administrateur",
-       hotel:"", recordIds:[], demo:true},
-      {id:"u-officer", login:"officer", code:"", role:"officer", nom:"Léa Martin",
-       hotel:DEMO_HOTEL, recordIds:[], demo:true},
-      {id:"u-proprio", login:"proprietaire", code:"", role:"proprietaire", nom:"Claire Vasseur",
-       hotel:DEMO_HOTEL, recordIds:[], demo:true},
-      {id:"u-collab", login:"camille.durand", code:"", role:"collaborateur", nom:"Camille Durand",
-       hotel:DEMO_HOTEL, recordIds:[DEMO_ID], demo:true}
-    );
-    saveUsers();
-  }
-}
-
-/* Le profil propriétaire est arrivé après les trois premiers : sur un navigateur
-   déjà amorcé, son compte de démonstration n’existe pas. On le pose une fois, et
-   seulement si les comptes de démonstration sont encore en place — un compte
-   supprimé volontairement ne doit pas reparaître. */
-const LS_SEEDED_PROPRIO = "pds.seeded.proprietaire.v1";
-function seedProprietaire(){
-  if(localStorage.getItem(LS_SEEDED_PROPRIO)) return;
-  try{ localStorage.setItem(LS_SEEDED_PROPRIO, "1"); }catch(e){}
-  if(findLogin("proprietaire") || !getHotel(DEMO_HOTEL)) return;
-  if(!USERS.some(u => u.demo && u.hotel === DEMO_HOTEL)) return;
-  USERS.push({id:"u-proprio", login:"proprietaire", code:"", role:"proprietaire",
-              nom:"Claire Vasseur", hotel:DEMO_HOTEL, recordIds:[], demo:true});
-  saveUsers();
-}
-
-/* ==========================================================================
    14. DÉMARRAGE
+
+   Le passeport de démonstration et les comptes ne sont plus écrits en dur :
+   ils vivent dans la base. Les comptes se créent par invitation depuis
+   l'administration.
    ========================================================================== */
 
-if(!localStorage.getItem(LS_SEEDED)){
-  try{ localStorage.setItem(LS_SEEDED, "1"); }catch(e){}
-  if(!RECORDS.length) seedDemo();
+let NEED_PASSWORD = false;
+
+/* Retour depuis un e-mail d'invitation ou de réinitialisation : Supabase
+   renvoie les jetons dans le fragment d'adresse. On les récupère, on nettoie
+   l'adresse, et on dirige vers le choix du mot de passe. */
+async function handleAuthFragment(){
+  const h = location.hash || "";
+  if(h.indexOf("access_token=") === -1 && h.indexOf("error_description=") === -1) return null;
+
+  const grab = n => { const m = h.match(new RegExp(n + "=([^&]+)")); return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : null; };
+  const erreur = grab("error_description");
+  const token  = grab("access_token");
+  const type   = grab("type");
+
+  history.replaceState(null, "", location.pathname + location.search + "#/");
+
+  if(erreur) return erreur;
+  if(!token) return null;
+
+  storeSession({access_token: token, refresh_token: grab("refresh_token") || "", expires_in: 3600, user: null});
+  try{
+    SESSION.user = await sbCall("/auth/v1/user");
+    writeLocal(LS_SESSION, SESSION);
+  }catch(e){ storeSession(null); return "Ce lien a expiré. Demandez une nouvelle invitation."; }
+
+  NEED_PASSWORD = /invite|recovery|signup/.test(type || "");
+  return null;
 }
-seedAccounts();
-seedProprietaire();
 
-/* Déconnexion : le bouton est reconstruit à chaque rendu, on délègue. */
-$("#app").addEventListener("click", e => {
-  if(e.target.closest("[data-logout]")) signOut();
-});
+async function boot(){
+  SESSION = readLocal(LS_SESSION, null);
+  const erreur = await handleAuthFragment();
 
-route();
+  if(SESSION && await ensureFresh()){
+    try{
+      await loadMe();
+      if(ME && ME.status !== "desactive") await loadAll();
+      else if(ME) { storeSession(null); ME = null; }
+    }catch(e){ storeSession(null); ME = null; }
+  }
+
+  /* Déconnexion : le bouton est reconstruit à chaque rendu, on délègue. */
+  $("#app").addEventListener("click", e => {
+    if(e.target.closest("[data-logout]")) signOut();
+  });
+
+  if(erreur){ renderLogin(erreur); return; }
+  route();
+}
+
+boot();
 </script>
 </body>
 </html>
