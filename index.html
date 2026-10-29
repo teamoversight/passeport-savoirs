@@ -2516,7 +2516,8 @@ function admPasseports(){
           cols.map(c => '<option value="'+c.id+'"'+(owner && owner.id===c.id?" selected":"")+'>'+
                         esc(c.nom || c.email)+'</option>').join("")+'</select></td>'+
         '<td>'+st.pct+'% · '+st.badges+'/'+st.badgesTotal+'</td>'+
-        '<td class="acts"><a class="btn btn-ghost btn-sm" href="#/d/'+r.id+'">Ouvrir</a></td></tr>';
+        '<td class="acts"><a class="btn btn-ghost btn-sm" href="#/d/'+r.id+'">Ouvrir</a>'+
+        '<button class="iconbtn danger" data-delp="'+r.id+'" title="Supprimer ce passeport">🗑</button></td></tr>';
     }).join("");
 
   const svcOptions = SERVICES.filter(isReady).map(s => '<option value="'+s.id+'">'+esc(s.name)+'</option>').join("");
@@ -2562,6 +2563,19 @@ function admPasseports(){
     r.hotel = s.value; touch(r);
     toast(r.hotel ? "Passeport rattaché à "+hotelName(r.hotel)+"." : "Passeport détaché.");
     renderAdmin();
+  });
+
+  $$("[data-delp]").forEach(b => b.onclick = async () => {
+    const rec = getRecord(b.getAttribute("data-delp"));
+    if(!rec) return;
+    if(!confirm("Supprimer définitivement le passeport de « "+(rec.nom||"Sans nom")+" » ?\n\n"+
+                "Les évaluations, les commentaires et la synthèse seront perdus. "+
+                "Le compte de la personne, lui, est conservé.")) return;
+    try{
+      await deleteRecord(rec);
+      toast("Passeport supprimé.");
+      renderAdmin();
+    }catch(e){ toast("Suppression refusée : " + e.message); }
   });
 
   $$("[data-ro]").forEach(sel => sel.onchange = async () => {
