@@ -48,19 +48,18 @@ collaborateurs, de les rattacher à un hôtel, et d’attribuer un passeport sup
 collaborateur qui change de service. Créer un collaborateur crée en même temps son passeport ;
 un Officer et un propriétaire n’en ont pas.
 
-### ⚠️ Ce n’est pas une sécurité
+### Les droits sont réels
 
-Le site est statique : **tout son code est public** et les données vivent dans le `localStorage`
-du navigateur. Le contrôle par profil organise l’interface, il ne protège rien. Quiconque ouvre
-les outils de développement voit l’ensemble des comptes et des passeports, quel que soit le
-profil connecté. Les codes d’accès sont un garde-fou contre l’erreur, pas un secret.
+Depuis le passage à Supabase, ce ne sont plus des conventions d’interface. La base
+applique elle-même les règles : un collaborateur qui interrogerait l’API directement
+ne verrait que son passeport, et une écriture dans la colonne d’autrui est refusée
+par Postgres, pas par la page.
 
-**N’y saisissez donc aucune information que vous ne pourriez pas rendre publique.**
+Ce qui reste dans le navigateur : le jeton de session, la dernière colonne choisie,
+et la liste des badges dont la pop-up a déjà été montrée — qui regarde la personne,
+pas le passeport.
 
-Pour une vraie séparation des accès, il faut un serveur qui authentifie et qui ne renvoie à
-chaque profil que les données auxquelles il a droit. Le modèle de données y est prêt : `HOTELS`,
-`USERS`, `RECORDS`, et les fonctions `canSee()` et `allowedRoles()` qui concentrent toutes les
-règles de visibilité.
+Voir `MIGRATION-SUPABASE.md` pour le détail des tables et des politiques.
 
 ### Comptes d’amorçage
 
